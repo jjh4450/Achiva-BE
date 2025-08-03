@@ -1,5 +1,7 @@
 package unicon.Achiva.member.interfaces;
 
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -34,7 +36,15 @@ public class AuthController {
     }
 
     @PostMapping("/api/auth/login")
-    public String login(@RequestBody Map<String, String> loginRequest) {
+    public String login(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "로그인 요청 JSON 데이터",
+                    required = true,
+                    content = @Content(
+                            schema = @Schema(type = "object", example = "{\"email\": \"user@example.com\", \"password\": \"password1234\"}")
+                    )
+            )
+            @RequestBody Map<String, String> loginRequest) {
         return "로그인 성공"; // 실제 로그인 처리는 Security 필터에서 수행
     }
 }
