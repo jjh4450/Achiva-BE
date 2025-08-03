@@ -27,6 +27,8 @@ public class Member extends BaseEntity {
     @Column(nullable = false)
     private String nickName;
 
+    private String profileImageUrl;
+
     private LocalDate birthDate;
 
     private Gender gender;
