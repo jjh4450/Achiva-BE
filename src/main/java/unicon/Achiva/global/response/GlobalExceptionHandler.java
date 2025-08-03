@@ -28,7 +28,7 @@ public class GlobalExceptionHandler {
                 request.getRequestURI(), request.getMethod(), (request.getUserPrincipal() != null) ? request.getUserPrincipal().getName() : "Anonymous", request.getRemoteAddr(), "HttpMessageNotReadableException", "요청 형식이 올바르지 않습니다.", 400);
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body(ApiResponseForm.error("400", "요청 형식이 올바르지 않습니다."));
+                .body(ApiResponseForm.error(400, "요청 형식이 올바르지 않습니다."));
     }
 
 
@@ -45,7 +45,7 @@ public class GlobalExceptionHandler {
             }
         }
 
-        String errorCode = "400";
+        Integer errorCode = 400;
 
         log.warn("[Warning Log] requestUrl: {}, requestMethod: {}, userId: {}, clientIp: {}, exception: {}, message: {}, responseStatus: {}",
                 request.getRequestURI(), request.getMethod(), (request.getUserPrincipal() != null) ? request.getUserPrincipal().getName() : "Anonymous", request.getRemoteAddr(), ex.getClass().getSimpleName(), errorMessage, HttpStatus.BAD_REQUEST.value()); // 로그 레벨 Warn으로 조정

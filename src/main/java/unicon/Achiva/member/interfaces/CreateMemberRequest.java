@@ -12,6 +12,7 @@ import java.util.List;
 public class CreateMemberRequest {
     private String email;
     private String password;
+    private String confirmPassword;
     private String nickName;
     private String profileImageUrl;
     private String birth;

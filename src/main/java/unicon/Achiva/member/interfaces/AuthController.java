@@ -1,7 +1,10 @@
 package unicon.Achiva.member.interfaces;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,24 +20,52 @@ public class AuthController {
 
     private final AuthService authService;
 
+    @Operation(summary = "헤더에 JWT토큰 없이 요청해도 됨")
     @PostMapping("api/auth/register")
     public ResponseEntity<ApiResponseForm<CreateMemberResponse>> signup(@RequestBody CreateMemberRequest requestDto) {
         CreateMemberResponse createMemberResponse = authService.signup(requestDto);
         return ResponseEntity.ok(ApiResponseForm.created(createMemberResponse, "회원가입 성공"));
     }
 
+    @Operation(summary = "헤더에 JWT토큰 없이 요청해도 됨")
     @GetMapping("api/auth/check-email")
     public ResponseEntity<ApiResponseForm<CheckEmailResponse>> checkEmailDuplication(@RequestParam String email) {
         CheckEmailResponse checkEmailResponse = authService.validateDuplicateEmail(email);
         return ResponseEntity.ok(ApiResponseForm.success(checkEmailResponse, "이메일 중복 확인 성공"));
     }
 
+    @Operation(summary = "헤더에 JWT토큰 없이 요청해도 됨")
     @GetMapping("api/auth/check-nickname")
     public ResponseEntity<ApiResponseForm<CheckNicknameResponse>> checkNicknameDuplication(@RequestParam String nickname) {
         CheckNicknameResponse checkNicknameResponse = authService.validateDuplicateNickName(nickname);
         return ResponseEntity.ok(ApiResponseForm.success(checkNicknameResponse, "닉네임 중복 확인 성공"));
     }
 
+    @Operation(summary = "헤더에 JWT토큰 없이 요청해도 됨")
+    @PostMapping("api/auth/send-verification-code")
+    public ResponseEntity<ApiResponseForm<SendVerificationCodeResponse>> sendCode(@RequestParam String email) {
+        SendVerificationCodeResponse sendVerificationCodeResponse = authService.sendVerificationCode(email);
+        return ResponseEntity.ok(ApiResponseForm.success(sendVerificationCodeResponse ,"인증 코드 전송 성공"));
+    }
+
+    @Operation(summary = "헤더에 JWT토큰 없이 요청해도 됨")
+    @PostMapping("api/auth/verify-code")
+    public ResponseEntity<ApiResponseForm<VerifyCodeResponse>> verifyCode(@RequestParam String email,
+                                             @RequestParam String code) {
+        VerifyCodeResponse verifyCodeResponse = authService.verifyCode(email, code);
+        return ResponseEntity.ok(ApiResponseForm.success(verifyCodeResponse, "인증 코드 확인 성공"));
+    }
+
+    @PostMapping("api/auth/reset-password")
+    public ResponseEntity<ApiResponseForm<ResetPasswordResponse>> resetPassword(@RequestBody ResetPasswordRequest request) {
+        ResetPasswordResponse resetPasswordResponse = authService.resetPassword(request);
+        return ResponseEntity.ok(ApiResponseForm.success(resetPasswordResponse, "비밀번호 재설정 성공"));
+    }
+
+    @Operation(summary = "헤더에 JWT토큰 없이 요청해도 됨")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "일반 로그인 성공", content = @Content(mediaType = "application/json", schema = @Schema(example = "{\n  \"status\": \"success\", \"code\": 200, \"message\": \"로그인 성공\", \"data\": {\"id\": 1, \"email\": \"user@example.com\", \"nickname\": \"user\", \"birth\": \"2000-01-01\", \"gender\": \"MALE\", \"categories\": [\"공부\", \"운동\"], \"createdAt\": \"2023-01-01T00:00:00.000000\"}}"))),
+    })
     @PostMapping("/api/auth/login")
     public String login(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(

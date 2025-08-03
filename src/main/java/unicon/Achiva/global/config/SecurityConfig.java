@@ -51,7 +51,7 @@ public class SecurityConfig {
                         .frameOptions(frameOptions -> frameOptions.disable()))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/css/**", "/images/**", "/js/**", "/favicon.ico", "/h2-console/**").permitAll()
-                        .requestMatchers("/api/auth/register", "/api/auth/login", "/api/auth/check-email", "/api/auth/check-nickname").permitAll()
+                        .requestMatchers("/api/auth/register", "/api/auth/login", "/api/auth/check-email", "/api/auth/check-nickname", "api/auth/send-verification-code", "api/auth/verify-code").permitAll()
                         .requestMatchers( "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/error").permitAll()
                         .anyRequest().authenticated()

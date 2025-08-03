@@ -3,7 +3,7 @@ package unicon.Achiva.global.response;
 import org.springframework.http.HttpStatus;
 
 public interface ErrorCode {
-    String getCode();
+    Integer getCode();
     String getMessage();
     HttpStatus getHttpStatus();
 }

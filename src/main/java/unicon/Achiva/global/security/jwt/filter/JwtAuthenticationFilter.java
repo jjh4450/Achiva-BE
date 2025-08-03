@@ -29,6 +29,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private static final Map<String, List<String>> NO_CHECK_METHODS = Map.of(
             "/api/auth/login", List.of("POST"),
             "/api/auth/register", List.of("POST"),
+            "/api/auth/check-email", List.of("GET"),
+            "/api/auth/check-nickname", List.of("GET"),
+            "/api/auth/send-verification-code", List.of("POST"),
+            "/api/auth/verify-code", List.of("POST"),
             "/swagger-ui", List.of("GET"),
             "/v3/api-docs", List.of("GET")
     );

@@ -42,4 +42,8 @@ public class Member extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    public void updatePassword(String encodedPassword) {
+        this.password = encodedPassword;
+    }
 }
