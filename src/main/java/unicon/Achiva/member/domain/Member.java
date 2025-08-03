@@ -29,12 +29,17 @@ public class Member extends BaseEntity {
 
     private String profileImageUrl;
 
-    private LocalDate birthDate;
+    private LocalDate birth;
 
+    @Enumerated(EnumType.STRING)
     private Gender gender;
 
     private String region;
 
-    private Category category;
+    @ElementCollection(targetClass = Category.class)
+    @Enumerated(EnumType.STRING)
+    private List<Category> categories;
 
+    @Enumerated(EnumType.STRING)
+    private Role role;
 }

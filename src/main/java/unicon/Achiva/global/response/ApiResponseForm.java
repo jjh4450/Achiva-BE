@@ -3,7 +3,7 @@ package unicon.Achiva.global.response;
 import lombok.Getter;
 
 @Getter
-public class ApiResponseForm {
+public class ApiResponseForm<T> {
     // 제네릭 api 응답 객체
     private String status;
     private String code;
@@ -24,6 +24,11 @@ public class ApiResponseForm {
     // 성공 응답을 위한 메서드 (message를 받지 않는 경우)
     public static <T> ApiResponseForm<T> success(T data) {
         return new ApiResponseForm<>("success", "200", "OK", data);
+    }
+
+    // 성공 응답 for 생성
+    public static <T> ApiResponseForm<T> created(T data, String message) {
+        return new ApiResponseForm<>("success", "201", message, data);
     }
 
     // 오류 응답을 위한 메서드
