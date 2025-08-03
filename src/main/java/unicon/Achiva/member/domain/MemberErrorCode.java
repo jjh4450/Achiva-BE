@@ -4,7 +4,9 @@ import org.springframework.http.HttpStatus;
 import unicon.Achiva.global.response.ErrorCode;
 
 public enum MemberErrorCode implements ErrorCode {
-    DUPLICATE_EMAIL("1001", "이미 사용 중인 이메일입니다.", HttpStatus.BAD_REQUEST);
+    DUPLICATE_EMAIL("1001", "이미 사용 중인 이메일입니다.", HttpStatus.BAD_REQUEST),
+    DUPLICATE_NICKNAME("1002", "이미 사용 중인 닉네임입니다.", HttpStatus.BAD_REQUEST),
+    ;
 
     private final String code;
     private final String message;

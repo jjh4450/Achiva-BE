@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import unicon.Achiva.global.response.GeneralException;
 import unicon.Achiva.member.infrastructure.MemberRepository;
+import unicon.Achiva.member.interfaces.CheckEmailResponse;
+import unicon.Achiva.member.interfaces.CheckNicknameResponse;
 import unicon.Achiva.member.interfaces.CreateMemberRequest;
 import unicon.Achiva.member.interfaces.CreateMemberResponse;
 
@@ -23,7 +25,7 @@ public class AuthService {
 
     @Transactional
     public CreateMemberResponse signup(CreateMemberRequest requestDto) {
-        validateDuplicateAuthId(requestDto.getEmail());
+        validateDuplication(requestDto.getNickName(), requestDto.getEmail());
 
         Member member = Member.builder()
                 .email(requestDto.getEmail())
@@ -44,10 +46,23 @@ public class AuthService {
         return CreateMemberResponse.fromEntity(savedMember);
     }
 
-    private void validateDuplicateAuthId(String email) {
+    public void validateDuplication(String email, String nickName) {
+        validateDuplicateEmail(email);
+        validateDuplicateNickName(nickName);
+    }
+
+    public CheckEmailResponse validateDuplicateEmail(String email) {
         boolean isExists = memberRepository.existsByEmail(email);
         if (isExists) {
             throw new GeneralException(MemberErrorCode.DUPLICATE_EMAIL);
         }
+        return new CheckEmailResponse(true);
+    }
+    public CheckNicknameResponse validateDuplicateNickName(String nickName) {
+        boolean isExists = memberRepository.existsByNickName(nickName);
+        if (isExists) {
+            throw new GeneralException(MemberErrorCode.DUPLICATE_NICKNAME);
+        }
+        return new CheckNicknameResponse(true);
     }
 }
