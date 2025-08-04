@@ -7,7 +7,14 @@ import java.util.Arrays;
 @Getter
 public enum Category {
     STUDY("공부"),
-    WORKOUT("운동")
+    WORKOUT("운동"),
+    CAREER("커리어"),
+    READING("독서"),
+    SELF_DEVELOPMENT("자기계발"),
+    HOBBY("취미"),
+    INVESTMENT("투자"),
+    ROUTINE("루틴"),
+    MINDSET("마인드셋")
     ;
 
     private final String description;
