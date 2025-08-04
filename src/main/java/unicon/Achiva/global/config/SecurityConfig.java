@@ -52,7 +52,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/css/**", "/images/**", "/js/**", "/favicon.ico", "/h2-console/**").permitAll()
                         .requestMatchers("/api/auth/register", "/api/auth/login", "/api/auth/check-email", "/api/auth/check-nickname", "api/auth/send-verification-code", "api/auth/verify-code").permitAll()
-                        .requestMatchers("/api/members/presigned-url", "/api/members/confirm-upload").permitAll()
+                        .requestMatchers("/api/members/presigned-url").permitAll()
                         .requestMatchers( "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/error").permitAll()
                         .anyRequest().authenticated()

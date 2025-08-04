@@ -20,7 +20,7 @@ public class AuthController {
 
     private final AuthService authService;
 
-    @Operation(summary = "자체 회원가입 - JWT 필요 X")
+    @Operation(summary = "자체 회원가입. presigned URL 발급 및 업로드가 선행되어야 함. - JWT 필요 X")
     @PostMapping("api/auth/register")
     public ResponseEntity<ApiResponseForm<CreateMemberResponse>> signup(@RequestBody CreateMemberRequest requestDto) {
         CreateMemberResponse createMemberResponse = authService.signup(requestDto);

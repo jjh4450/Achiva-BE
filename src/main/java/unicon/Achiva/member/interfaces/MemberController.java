@@ -29,7 +29,7 @@ public class MemberController {
         return ResponseEntity.ok(ApiResponseForm.success(memberResponse, "내 정보 조회 성공"));
     }
 
-    @Operation(summary = "유저 프로필 사진 저장용 presigned URL 발급")
+    @Operation(summary = "유저 프로필 사진 저장용 presigned URL 발급(이후 회원가입이나 프로필이미지 수정시 쿼리파라미터를 제외한 url을 BE에 보내야함.) - JWT 필요 X")
     @GetMapping("/api/members/presigned-url")
     public ResponseEntity<ApiResponseForm<Map<String, String>>> getPresignedUrl(
             @RequestParam(defaultValue = "application/octet-stream") String contentType
@@ -40,8 +40,8 @@ public class MemberController {
         return ResponseEntity.ok(ApiResponseForm.success(response, "Presigned URL 발급 성공"));
     }
 
-    @Operation(summary = "presigned URL로 프로필 사진 업데이트 후, 이미지 url(presignedURL에서 쿼리파라미터 뗀 주소) BE로 전달")
-    @PostMapping("/api/members/confirm-upload")
+    @Operation(summary = "프로필 이미지 수정 API. presigned URL 발급 및 업로드가 선행되어야 함.")
+    @PutMapping("/api/members/confirm-upload")
     public ResponseEntity<ApiResponseForm<Map<String, Boolean>>> confirmProfileImageUpload(
             @RequestBody ConfirmProfileImageUploadRequest confirmProfileImageUploadRequest,
             HttpServletRequest request
