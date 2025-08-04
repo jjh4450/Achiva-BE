@@ -33,6 +33,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             "/api/auth/check-nickname", List.of("GET"),
             "/api/auth/send-verification-code", List.of("POST"),
             "/api/auth/verify-code", List.of("POST"),
+            "/api/members/presigned-url", List.of("GET"),
+            "/api/members/confirm-upload", List.of("POST"),
             "/swagger-ui", List.of("GET"),
             "/v3/api-docs", List.of("GET")
     );
