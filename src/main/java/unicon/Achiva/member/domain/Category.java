@@ -29,4 +29,8 @@ public enum Category {
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("잘못된 카테고리: " + name));
     }
+
+    public static String getDisplayName(Category category) {
+        return category.getDescription();
+    }
 }

@@ -1,11 +1,13 @@
 package unicon.Achiva.member.domain;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import unicon.Achiva.global.response.GeneralException;
+import unicon.Achiva.global.security.jwt.utils.JwtTokenProvider;
 import unicon.Achiva.member.infrastructure.EmailVerificationRepository;
 import unicon.Achiva.member.infrastructure.MemberRepository;
 import unicon.Achiva.member.interfaces.*;
@@ -24,6 +26,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
     private final EmailVerificationRepository emailVerificationRepository;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Transactional
     public CreateMemberResponse signup(CreateMemberRequest requestDto) {
@@ -123,5 +126,10 @@ public class AuthService {
         memberRepository.save(member);
 
         return new ResetPasswordResponse(member.getEmail());
+    }
+
+    public Long getMemberIdFromToken(HttpServletRequest request) {
+        String accessToken = request.getHeader("Authorization").substring(7);
+        return jwtTokenProvider.extractUserId(accessToken).orElseThrow(() -> new GeneralException(MemberErrorCode.INVALID_TOKEN));
     }
 }
