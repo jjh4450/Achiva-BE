@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import unicon.Achiva.global.response.GeneralException;
 import unicon.Achiva.member.domain.MemberErrorCode;
 import unicon.Achiva.member.infrastructure.MemberRepository;
+import unicon.Achiva.member.interfaces.ConfirmProfileImageUploadRequest;
 import unicon.Achiva.member.interfaces.MemberResponse;
 
 @Slf4j
@@ -21,5 +22,18 @@ public class MemberService {
         return memberRepository.findById(memberId)
                 .map(MemberResponse::fromEntity)
                 .orElseThrow(() -> new GeneralException(MemberErrorCode.MEMBER_NOT_FOUND));
+    }
+
+    @Transactional
+    public void updateProfileImageUrl(Long memberId, ConfirmProfileImageUploadRequest confirmProfileImageUploadRequest) {
+        memberRepository.findById(memberId).ifPresentOrElse(
+                member -> {
+                    member.updateProfileImageUrl(confirmProfileImageUploadRequest.getUrl());
+                    memberRepository.save(member);
+                },
+                () -> {
+                    throw new GeneralException(MemberErrorCode.MEMBER_NOT_FOUND);
+                }
+        );
     }
 }
