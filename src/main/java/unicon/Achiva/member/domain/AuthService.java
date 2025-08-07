@@ -41,12 +41,12 @@ public class AuthService {
                 .password(passwordEncoder.encode(requestDto.getPassword()))
                 .profileImageUrl(requestDto.getProfileImageUrl())
                 .birth(LocalDate.parse(requestDto.getBirth()))
-                .gender(Gender.valueOf(requestDto.getGender().toUpperCase()))
-                .region(requestDto.getRegion())
+                .gender(requestDto.getGender() != null ? Gender.valueOf(requestDto.getGender().toUpperCase()) : null)
+                .region(requestDto.getRegion() != null ? requestDto.getRegion() : null)
                 .categories(requestDto.getCategories().stream()
                         .map(Category::fromDisplayName)
                         .toList())
-                .role(Role.GUEST)
+                .role(Role.USER)
                 .build();
 
         Member savedMember = memberRepository.save(member);
