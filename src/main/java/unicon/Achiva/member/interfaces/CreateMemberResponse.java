@@ -29,8 +29,8 @@ public class CreateMemberResponse {
                 .nickName(member.getNickName())
                 .profileImageUrl(member.getProfileImageUrl())
                 .birth(member.getBirth().toString())
-                .gender(member.getGender().name())
-                .region(member.getRegion())
+                .gender(member.getGender() != null ? member.getGender().name() : null)
+                .region(member.getRegion() != null ? member.getRegion() : null)
                 .categories(
                         member.getCategories().stream()
                         .map(Category::getDescription)
