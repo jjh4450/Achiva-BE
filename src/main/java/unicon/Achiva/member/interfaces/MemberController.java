@@ -40,16 +40,16 @@ public class MemberController {
         return ResponseEntity.ok(ApiResponseForm.success(response, "Presigned URL 발급 성공"));
     }
 
-    @Operation(summary = "프로필 이미지 수정 API. presigned URL 발급 및 업로드가 선행되어야 함.")
-    @PutMapping("/api/members/confirm-upload")
-    public ResponseEntity<ApiResponseForm<Map<String, Boolean>>> confirmProfileImageUpload(
-            @RequestBody ConfirmProfileImageUploadRequest confirmProfileImageUploadRequest,
-            HttpServletRequest request
-    ) {
-        Long memberId = authService.getMemberIdFromToken(request);
-        memberService.updateProfileImageUrl(memberId, confirmProfileImageUploadRequest);
-        Map<String, Boolean> response = new HashMap<>();
-        response.put("updated", true);
-        return ResponseEntity.ok(ApiResponseForm.success(response, "프로필 사진 업데이트 성공"));
-    }
+//    @Operation(summary = "프로필 이미지 수정 API. presigned URL 발급 및 업로드가 선행되어야 함.")
+//    @PutMapping("/api/members/confirm-upload")
+//    public ResponseEntity<ApiResponseForm<Map<String, Boolean>>> confirmProfileImageUpload(
+//            @RequestBody ConfirmProfileImageUploadRequest confirmProfileImageUploadRequest,
+//            HttpServletRequest request
+//    ) {
+//        Long memberId = authService.getMemberIdFromToken(request);
+//        memberService.updateProfileImageUrl(memberId, confirmProfileImageUploadRequest);
+//        Map<String, Boolean> response = new HashMap<>();
+//        response.put("updated", true);
+//        return ResponseEntity.ok(ApiResponseForm.success(response, "프로필 사진 업데이트 성공"));
+//    }
 }

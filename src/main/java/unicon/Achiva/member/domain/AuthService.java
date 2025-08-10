@@ -58,7 +58,7 @@ public class AuthService {
     }
 
     @Transactional
-    public MemberResponse updateMember(Long memberId, MemberRequest requestDto) {
+    public MemberResponse updateMember(Long memberId, UpdateMemberRequest requestDto) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new GeneralException(MemberErrorCode.MEMBER_NOT_FOUND));
 

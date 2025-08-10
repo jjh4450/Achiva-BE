@@ -30,7 +30,7 @@ public class AuthController {
     @Operation(summary = "회원 정보 수정")
     @PutMapping("api/auth")
     public ResponseEntity<ApiResponseForm<MemberResponse>> updateMemberInfo(
-            @RequestBody MemberRequest requestDto,
+            @RequestBody UpdateMemberRequest requestDto,
             HttpServletRequest request) {
         Long memberId = authService.getMemberIdFromToken(request);
         MemberResponse memberResponse = authService.updateMember(memberId, requestDto);
