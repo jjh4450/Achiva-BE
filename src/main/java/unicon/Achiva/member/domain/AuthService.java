@@ -57,6 +57,13 @@ public class AuthService {
         return CreateMemberResponse.fromEntity(savedMember);
     }
 
+    @Transactional
+    public void deleteMember(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new GeneralException(MemberErrorCode.MEMBER_NOT_FOUND));
+        memberRepository.delete(member);
+    }
+
     public void validateDuplication(String email, String nickName) {
         validateDuplicateEmail(email);
         validateDuplicateNickName(nickName);

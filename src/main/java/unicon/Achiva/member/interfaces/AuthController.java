@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +26,14 @@ public class AuthController {
     public ResponseEntity<ApiResponseForm<CreateMemberResponse>> signup(@RequestBody CreateMemberRequest requestDto) {
         CreateMemberResponse createMemberResponse = authService.signup(requestDto);
         return ResponseEntity.ok(ApiResponseForm.created(createMemberResponse, "회원가입 성공"));
+    }
+
+    @Operation(summary = "회원탈퇴(유저 정보 삭제)")
+    @DeleteMapping("api/auth/delete")
+    public ResponseEntity<ApiResponseForm<Void>> deleteMember(HttpServletRequest request) {
+        Long memberId = authService.getMemberIdFromToken(request);
+        authService.deleteMember(memberId);
+        return ResponseEntity.ok(ApiResponseForm.success(null, "회원 탈퇴 성공"));
     }
 
     @Operation(summary = "이메일 중복 체크 - JWT 필요 X")
