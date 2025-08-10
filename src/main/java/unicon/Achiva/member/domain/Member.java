@@ -43,11 +43,36 @@ public class Member extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+
     public void updatePassword(String encodedPassword) {
         this.password = encodedPassword;
     }
 
     public void updateProfileImageUrl(String profileImageUrl) {
         this.profileImageUrl = profileImageUrl;
+    }
+
+    public void updateNickName(String nickName) {
+        this.nickName = nickName;
+    }
+
+    public void updateBirth(LocalDate parse) {
+        this.birth = parse;
+    }
+
+    public void updateGender(Gender gender) {
+        this.gender = gender;
+    }
+
+    public void updateRegion(String region) {
+        this.region = region;
+    }
+
+    public void updateCategories(List<Category> list) {
+        if (this.categories == null) {
+            this.categories = new ArrayList<>();
+        }
+        this.categories.clear();
+        this.categories.addAll(list);
     }
 }

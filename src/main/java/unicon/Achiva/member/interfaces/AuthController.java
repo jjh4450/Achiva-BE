@@ -6,7 +6,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,13 +22,23 @@ public class AuthController {
 
     @Operation(summary = "자체 회원가입. presigned URL 발급 및 업로드가 선행되어야 함. - JWT 필요 X")
     @PostMapping("api/auth/register")
-    public ResponseEntity<ApiResponseForm<CreateMemberResponse>> signup(@RequestBody CreateMemberRequest requestDto) {
+    public ResponseEntity<ApiResponseForm<CreateMemberResponse>> signup(@RequestBody MemberRequest requestDto) {
         CreateMemberResponse createMemberResponse = authService.signup(requestDto);
         return ResponseEntity.ok(ApiResponseForm.created(createMemberResponse, "회원가입 성공"));
     }
 
+    @Operation(summary = "회원 정보 수정")
+    @PutMapping("api/auth")
+    public ResponseEntity<ApiResponseForm<MemberResponse>> updateMemberInfo(
+            @RequestBody MemberRequest requestDto,
+            HttpServletRequest request) {
+        Long memberId = authService.getMemberIdFromToken(request);
+        MemberResponse memberResponse = authService.updateMember(memberId, requestDto);
+        return ResponseEntity.ok(ApiResponseForm.success(memberResponse, "회원 정보 수정 성공"));
+    }
+
     @Operation(summary = "회원탈퇴(유저 정보 삭제)")
-    @DeleteMapping("api/auth/delete")
+    @DeleteMapping("api/auth")
     public ResponseEntity<ApiResponseForm<Void>> deleteMember(HttpServletRequest request) {
         Long memberId = authService.getMemberIdFromToken(request);
         authService.deleteMember(memberId);

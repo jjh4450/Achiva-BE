@@ -29,7 +29,7 @@ public class AuthService {
     private final JwtTokenProvider jwtTokenProvider;
 
     @Transactional
-    public CreateMemberResponse signup(CreateMemberRequest requestDto) {
+    public CreateMemberResponse signup(MemberRequest requestDto) {
         validateDuplication(requestDto.getNickName(), requestDto.getEmail());
         if (!requestDto.getPassword().equals(requestDto.getConfirmPassword())) {
             throw new GeneralException(MemberErrorCode.PASSWORD_MISMATCH);
@@ -55,6 +55,36 @@ public class AuthService {
                 .ifPresent(emailVerificationRepository::delete);
 
         return CreateMemberResponse.fromEntity(savedMember);
+    }
+
+    @Transactional
+    public MemberResponse updateMember(Long memberId, MemberRequest requestDto) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new GeneralException(MemberErrorCode.MEMBER_NOT_FOUND));
+
+        if (requestDto.getNickName() != null) {
+            validateDuplicateNickName(requestDto.getNickName());
+            member.updateNickName(requestDto.getNickName());
+        }
+        if (requestDto.getProfileImageUrl() != null) {
+            member.updateProfileImageUrl(requestDto.getProfileImageUrl());
+        }
+        if (requestDto.getBirth() != null) {
+            member.updateBirth(LocalDate.parse(requestDto.getBirth()));
+        }
+        if (requestDto.getGender() != null) {
+            member.updateGender(Gender.valueOf(requestDto.getGender()));
+        }
+        if (requestDto.getRegion() != null) {
+            member.updateRegion(requestDto.getRegion());
+        }
+        if (requestDto.getCategories() != null) {
+            member.updateCategories(requestDto.getCategories().stream()
+                    .map(Category::fromDisplayName)
+                    .toList());
+        }
+        memberRepository.save(member);
+        return MemberResponse.fromEntity(member);
     }
 
     @Transactional

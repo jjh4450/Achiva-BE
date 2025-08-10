@@ -1,0 +1,108 @@
+package unicon.Achiva.member.domain;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import unicon.Achiva.global.response.GeneralException;
+import unicon.Achiva.member.infrastructure.FriendshipRepository;
+import unicon.Achiva.member.infrastructure.MemberRepository;
+import unicon.Achiva.member.interfaces.FriendshipRequest;
+import unicon.Achiva.member.interfaces.FriendshipResponse;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Slf4j
+@Service
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
+public class FriendshipService {
+
+    private final FriendshipRepository friendshipRepository;
+    private final MemberRepository memberRepository;
+
+    @Transactional
+    public FriendshipResponse sendFriendRequest(FriendshipRequest friendshipRequest, Long fromMemberId) {
+        Long toMemberId = friendshipRequest.getRecieverId();
+
+        if (!memberRepository.existsById(fromMemberId) || !memberRepository.existsById(toMemberId)) {
+            throw new GeneralException(MemberErrorCode.MEMBER_NOT_FOUND);
+        }
+
+        Friendship friendship = Friendship.builder()
+                .requesterId(fromMemberId)
+                .receiverId(toMemberId)
+                .status(FriendshipStatus.PENDING)
+                .build();
+
+        friendshipRepository.save(friendship);
+        return FriendshipResponse.fromEntity(friendship);
+    }
+
+    @Transactional
+    public FriendshipResponse acceptFriendRequest(Long friendshipId, Long memberId) {
+        Friendship friendship = friendshipRepository.findById(friendshipId)
+                .orElseThrow(() -> new GeneralException(FriendshipErrorCode.FRIENDSHIP_NOT_FOUND));
+
+        if (friendship.getStatus() != FriendshipStatus.PENDING) {
+            throw new GeneralException(FriendshipErrorCode.FRIENDSHIP_ALREADY_PROCESSED);
+        }
+
+        if (friendship.getReceiverId() != memberId) {
+            throw new GeneralException(FriendshipErrorCode.FRIENDSHIP_NOT_RECEIVER);
+        }
+
+        friendship.updateStatus(FriendshipStatus.ACCEPTED);
+        friendshipRepository.save(friendship);
+        return FriendshipResponse.fromEntity(friendship);
+    }
+
+    @Transactional
+    public FriendshipResponse rejectFriendRequest(Long friendshipId, Long memberId) {
+        Friendship friendship = friendshipRepository.findById(friendshipId)
+                .orElseThrow(() -> new GeneralException(FriendshipErrorCode.FRIENDSHIP_NOT_FOUND));
+
+        if (friendship.getStatus() != FriendshipStatus.PENDING) {
+            throw new GeneralException(FriendshipErrorCode.FRIENDSHIP_ALREADY_PROCESSED);
+        }
+
+        if (friendship.getReceiverId() != memberId) {
+            throw new GeneralException(FriendshipErrorCode.FRIENDSHIP_NOT_RECEIVER);
+        }
+
+        friendship.updateStatus(FriendshipStatus.REJECTED);
+        friendshipRepository.save(friendship);
+        return FriendshipResponse.fromEntity(friendship);
+    }
+
+    public List<FriendshipResponse> getFriendRequests(Long memberId) {
+        return friendshipRepository.findByReceiverIdAndStatus(memberId, FriendshipStatus.PENDING)
+                .stream()
+                .map(FriendshipResponse::fromEntity)
+                .collect(Collectors.toList());
+    }
+
+    public List<FriendshipResponse> getSentFriendRequests(Long memberId) {
+        return friendshipRepository.findByRequesterIdAndStatus(memberId, FriendshipStatus.PENDING)
+                .stream()
+                .map(FriendshipResponse::fromEntity)
+                .collect(Collectors.toList());
+    }
+
+    public List<FriendshipResponse> getFriends(Long memberId) {
+        return friendshipRepository.findByRequesterIdOrReceiverId(memberId, memberId)
+                .stream()
+                .filter(friendship -> friendship.getStatus() == FriendshipStatus.ACCEPTED)
+                .map(FriendshipResponse::fromEntity)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void removeFriendship(Long friendshipId) {
+        Friendship friendship = friendshipRepository.findById(friendshipId)
+                .orElseThrow(() -> new GeneralException(FriendshipErrorCode.FRIENDSHIP_NOT_FOUND));
+
+        friendshipRepository.delete(friendship);
+    }
+}

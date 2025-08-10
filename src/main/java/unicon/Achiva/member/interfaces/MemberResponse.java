@@ -9,6 +9,7 @@ import unicon.Achiva.member.domain.Member;
 import unicon.Achiva.member.domain.Role;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -23,6 +24,7 @@ public class MemberResponse {
     private List<String> categories;
     private String profileImageUrl;
     private Role role;
+    private LocalDateTime createdAt;
 
 
     public static MemberResponse fromEntity(Member member) {
@@ -41,6 +43,7 @@ public class MemberResponse {
                 )
                 .profileImageUrl(member.getProfileImageUrl())
                 .role(member.getRole())
+                .createdAt(LocalDateTime.now())
                 .build();
     }
 
