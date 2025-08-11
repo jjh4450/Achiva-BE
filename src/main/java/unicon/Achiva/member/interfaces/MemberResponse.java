@@ -23,6 +23,7 @@ public class MemberResponse {
     private String region;
     private List<String> categories;
     private String profileImageUrl;
+    private String description;
     private Role role;
     private LocalDateTime createdAt;
 
@@ -42,6 +43,7 @@ public class MemberResponse {
                                 .toList()
                 )
                 .profileImageUrl(member.getProfileImageUrl())
+                .description(member.getDescription())
                 .role(member.getRole())
                 .createdAt(LocalDateTime.now())
                 .build();
