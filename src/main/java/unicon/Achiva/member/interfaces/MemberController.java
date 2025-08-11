@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import unicon.Achiva.common.S3Service;
 import unicon.Achiva.global.response.ApiResponseForm;
-import unicon.Achiva.member.application.MemberService;
+import unicon.Achiva.member.domain.MemberService;
 import unicon.Achiva.member.domain.AuthService;
 
 import java.util.HashMap;

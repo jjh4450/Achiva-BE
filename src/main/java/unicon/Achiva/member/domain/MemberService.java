@@ -1,11 +1,10 @@
-package unicon.Achiva.member.application;
+package unicon.Achiva.member.domain;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import unicon.Achiva.global.response.GeneralException;
-import unicon.Achiva.member.domain.MemberErrorCode;
 import unicon.Achiva.member.infrastructure.MemberRepository;
 import unicon.Achiva.member.interfaces.ConfirmProfileImageUploadRequest;
 import unicon.Achiva.member.interfaces.MemberResponse;

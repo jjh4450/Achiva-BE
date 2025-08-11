@@ -83,6 +83,9 @@ public class AuthService {
                     .map(Category::fromDisplayName)
                     .toList());
         }
+        if(requestDto.getDescription() != null) {
+            member.updateDescription(requestDto.getDescription());
+        }
         memberRepository.save(member);
         return MemberResponse.fromEntity(member);
     }

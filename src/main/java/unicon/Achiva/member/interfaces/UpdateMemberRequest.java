@@ -13,4 +13,5 @@ public class UpdateMemberRequest {
     private String gender;
     private String region;
     private List<String> categories;
+    private String description;
 }

@@ -36,6 +36,9 @@ public class Member extends BaseEntity {
 
     private String region;
 
+    @Column(length = 500)
+    private String description;
+
     @ElementCollection(targetClass = Category.class)
     @Enumerated(EnumType.STRING)
     private List<Category> categories;
@@ -74,5 +77,9 @@ public class Member extends BaseEntity {
         }
         this.categories.clear();
         this.categories.addAll(list);
+    }
+
+    public void updateDescription(String description) {
+        this.description = description;
     }
 }
