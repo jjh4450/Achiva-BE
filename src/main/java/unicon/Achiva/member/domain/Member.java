@@ -46,6 +46,7 @@ public class Member extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    private boolean pushEnabled;
 
     public void updatePassword(String encodedPassword) {
         this.password = encodedPassword;
