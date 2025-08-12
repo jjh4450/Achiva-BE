@@ -11,8 +11,12 @@ import unicon.Achiva.member.infrastructure.ArticleRepository;
 import unicon.Achiva.member.infrastructure.MemberRepository;
 import unicon.Achiva.member.interfaces.ArticleResponse;
 import unicon.Achiva.member.interfaces.ArticleRequest;
+import unicon.Achiva.member.interfaces.CategoryCountResponse;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -81,6 +85,32 @@ public class ArticleService {
     public Page<ArticleResponse> getArticlesByMember(Long memberId, Pageable pageable) {
         return articleRepository.findAllByMemberId(memberId, pageable)
                 .map(ArticleResponse::fromEntity);
+    }
+
+    public CategoryCountResponse getArticleCountByCategory(Long memberId) {
+        List<Object[]> result = articleRepository.countArticlesByCategoryForMember(memberId);
+
+        // 결과를 Map으로 변환 (key: Category, value: Long)
+        Map<Category, Long> categoryCountMap = result.stream()
+                .collect(Collectors.toMap(
+                        row -> (Category) row[0],
+                        row -> (Long) row[1]
+                ));
+
+        // 모든 카테고리를 순회하면서 없는 건 0L로 추가
+        for (Category category : Category.values()) {
+            categoryCountMap.putIfAbsent(category, 0L);
+        }
+
+        // 다시 List<Object[]> 형태로 변환하면서 getDisplayName 적용
+        List<Object[]> completeResult = categoryCountMap.entrySet().stream()
+                .map(entry -> new Object[]{
+                        Category.getDisplayName(entry.getKey()),
+                        entry.getValue()
+                })
+                .collect(Collectors.toList());
+
+        return CategoryCountResponse.fromObjectList(completeResult);
     }
 
 

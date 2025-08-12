@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import unicon.Achiva.common.S3Service;
 import unicon.Achiva.global.response.ApiResponseForm;
+import unicon.Achiva.member.domain.ArticleService;
+import unicon.Achiva.member.domain.Category;
 import unicon.Achiva.member.domain.MemberService;
 import unicon.Achiva.member.domain.AuthService;
 
@@ -18,6 +20,7 @@ import java.util.Map;
 public class MemberController {
 
     private final MemberService memberService;
+    private final ArticleService articleService;
     private final AuthService authService;
     private final S3Service s3Service;
 
@@ -56,6 +59,14 @@ public class MemberController {
         Map<String, String> response = new HashMap<>();
         response.put("url", url);
         return ResponseEntity.ok(ApiResponseForm.success(response, "Presigned URL 발급 성공"));
+    }
+
+    @GetMapping("/api/members/{memberId}/count-by-category")
+    public ResponseEntity<ApiResponseForm<CategoryCountResponse>> getArticleCountByCategory(
+            @RequestParam Long memberId
+    ) {
+        CategoryCountResponse result = articleService.getArticleCountByCategory(memberId);
+        return ResponseEntity.ok(ApiResponseForm.success(result, "카테고리별 작성 수 조회 성공"));
     }
 
 //    @Operation(summary = "프로필 이미지 수정 API. presigned URL 발급 및 업로드가 선행되어야 함.")
