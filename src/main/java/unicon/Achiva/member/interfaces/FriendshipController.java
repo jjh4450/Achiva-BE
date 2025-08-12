@@ -61,6 +61,24 @@ public class FriendshipController {
         return ResponseEntity.ok(ApiResponseForm.success(friendList, "친구 목록 조회 성공"));
     }
 
+    @Operation(summary = "특정 유저 친구 목록 조회")
+    @GetMapping("/api/friendships/{memberId}")
+    public ResponseEntity<ApiResponseForm<List<FriendshipResponse>>> getFriendListByMemberId(
+            @PathVariable Long memberId
+    ) {
+        List<FriendshipResponse> friendList = friendshipService.getFriends(memberId);
+        return ResponseEntity.ok(ApiResponseForm.success(friendList, "특정 유저 친구 목록 조회 성공"));
+    }
+
+    @Operation(summary = "특정 유저 친구 목록 조회 (닉네임으로)")
+    @GetMapping("/api2/friendships/{nickname}")
+    public ResponseEntity<ApiResponseForm<List<FriendshipResponse>>> getFriendListByNickname(
+            @PathVariable String nickname
+    ) {
+        List<FriendshipResponse> friendList = friendshipService.getFriendsByNickname(nickname);
+        return ResponseEntity.ok(ApiResponseForm.success(friendList, "닉네임으로 친구 목록 조회 성공"));
+    }
+
     @Operation(summary = "내게 온 친구 신청 목록 조회")
     @GetMapping("/api/friendships/requests")
     public ResponseEntity<ApiResponseForm<List<FriendshipResponse>>> getFriendRequests(

@@ -98,6 +98,18 @@ public class FriendshipService {
                 .collect(Collectors.toList());
     }
 
+    public List<FriendshipResponse> getFriendsByNickname(String nickname) {
+        Long memberId = memberRepository.findByNickName(nickname)
+                .orElseThrow(() -> new GeneralException(MemberErrorCode.MEMBER_NOT_FOUND))
+                .getId();
+
+        return friendshipRepository.findByRequesterIdOrReceiverId(memberId, memberId)
+                .stream()
+                .filter(friendship -> friendship.getStatus() == FriendshipStatus.ACCEPTED)
+                .map(FriendshipResponse::fromEntity)
+                .collect(Collectors.toList());
+    }
+
     @Transactional
     public void removeFriendship(Long friendshipId) {
         Friendship friendship = friendshipRepository.findById(friendshipId)
