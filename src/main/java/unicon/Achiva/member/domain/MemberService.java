@@ -23,6 +23,12 @@ public class MemberService {
                 .orElseThrow(() -> new GeneralException(MemberErrorCode.MEMBER_NOT_FOUND));
     }
 
+    public MemberResponse getMemberInfoByNickname(String nickname) {
+        return memberRepository.findByNickName(nickname)
+                .map(MemberResponse::fromEntity)
+                .orElseThrow(() -> new GeneralException(MemberErrorCode.MEMBER_NOT_FOUND));
+    }
+
     @Transactional
     public void updateProfileImageUrl(Long memberId, ConfirmProfileImageUploadRequest confirmProfileImageUploadRequest) {
         memberRepository.findById(memberId).ifPresentOrElse(

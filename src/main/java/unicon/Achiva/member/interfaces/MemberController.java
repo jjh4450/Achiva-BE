@@ -38,6 +38,15 @@ public class MemberController {
         return ResponseEntity.ok(ApiResponseForm.success(memberResponse, "유저 정보 조회 성공"));
     }
 
+    @Operation(summary = "닉네임으로 유저 정보 조회")
+    @GetMapping("/api2/members/{nickname}")
+    public ResponseEntity<ApiResponseForm<MemberResponse>> getMemberInfoByNickname(
+            @PathVariable String nickname
+    ) {
+        MemberResponse memberResponse = memberService.getMemberInfoByNickname(nickname);
+        return ResponseEntity.ok(ApiResponseForm.success(memberResponse, "닉네임으로 유저 정보 조회 성공"));
+    }
+
     @Operation(summary = "유저 프로필 사진 저장용 presigned URL 발급(이후 회원가입이나 프로필이미지 수정시 쿼리파라미터를 제외한 url을 BE에 보내야함.) - JWT 필요 X")
     @GetMapping("/api/members/presigned-url")
     public ResponseEntity<ApiResponseForm<Map<String, String>>> getPresignedUrl(
