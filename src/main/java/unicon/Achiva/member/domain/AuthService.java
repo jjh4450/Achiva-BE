@@ -62,7 +62,7 @@ public class AuthService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new GeneralException(MemberErrorCode.MEMBER_NOT_FOUND));
 
-        if (requestDto.getNickName() != null) {
+        if (requestDto.getNickName() != null && !member.getNickName().equals(requestDto.getNickName())) {
             validateDuplicateNickName(requestDto.getNickName());
             member.updateNickName(requestDto.getNickName());
         }
