@@ -19,6 +19,7 @@ public class ArticleResponse {
     private Long memberId;
     private String memberNickName;
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     public static ArticleResponse fromEntity(Article article) {
         return ArticleResponse.builder()
@@ -35,6 +36,7 @@ public class ArticleResponse {
                 .memberId(article.getMember().getId())
                 .memberNickName(article.getMember().getNickName())
                 .createdAt(article.getCreatedAt())
+                .updatedAt(article.getUpdatedAt())
                 .build();
     }
 }
