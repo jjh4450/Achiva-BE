@@ -1,0 +1,31 @@
+package unicon.Achiva.member.domain;
+
+
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import unicon.Achiva.common.BaseEntity;
+
+@Getter
+@Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class Cheering extends BaseEntity {
+
+    @Lob
+    private String content;
+
+    // 응원카테고리 정의되면 enum으로 변경
+    private String cheeringCategory;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "article_id")
+    private Article article;
+}
