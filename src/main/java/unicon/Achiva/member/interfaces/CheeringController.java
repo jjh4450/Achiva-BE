@@ -3,12 +3,16 @@ package unicon.Achiva.member.interfaces;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import unicon.Achiva.global.response.ApiResponseForm;
 import unicon.Achiva.member.domain.AuthService;
 import unicon.Achiva.member.domain.CheeringRequest;
 import unicon.Achiva.member.domain.CheeringService;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -60,5 +64,15 @@ public class CheeringController {
     ) {
         CheeringResponse response = cheeringService.getCheering(cheeringId);
         return ResponseEntity.ok(ApiResponseForm.success(response, "응원 조회 성공"));
+    }
+
+    @Operation(summary = "특정 게시글의 응원 목록 조회")
+    @GetMapping("api/articles/{articleId}/cheerings")
+    public ResponseEntity<ApiResponseForm<Page<CheeringResponse>>> getCheeringsByArticleId(
+            @PathVariable Long articleId,
+            Pageable pageable
+    ) {
+        Page<CheeringResponse> responses = cheeringService.getCheeringsByArticleId(articleId, pageable);
+        return ResponseEntity.ok(ApiResponseForm.success(responses, "응원 목록 조회 성공"));
     }
 }

@@ -2,10 +2,13 @@ package unicon.Achiva.member.domain;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import unicon.Achiva.global.response.GeneralException;
 import unicon.Achiva.member.infrastructure.ArticleRepository;
+import unicon.Achiva.member.infrastructure.CheeringRepository;
 import unicon.Achiva.member.infrastructure.MemberRepository;
 import unicon.Achiva.member.interfaces.CheeringResponse;
 
@@ -15,7 +18,7 @@ import unicon.Achiva.member.interfaces.CheeringResponse;
 @Transactional(readOnly = true)
 public class CheeringService {
 
-    private final CheeringServiceRepository cheeringRepository;
+    private final CheeringRepository cheeringRepository;
     private final MemberRepository memberRepository;
     private final ArticleRepository articleRepository;
 
@@ -70,5 +73,10 @@ public class CheeringService {
         Cheering cheering = cheeringRepository.findById(cheeringId)
                 .orElseThrow(() -> new GeneralException(CheeringErrorCode.CHEERING_NOT_FOUND));
         return CheeringResponse.fromEntity(cheering);
+    }
+
+    public Page<CheeringResponse> getCheeringsByArticleId(Long articleId, Pageable pageable) {
+        return cheeringRepository.findAllByArticleId(articleId, pageable)
+                .map(CheeringResponse::fromEntity);
     }
 }
