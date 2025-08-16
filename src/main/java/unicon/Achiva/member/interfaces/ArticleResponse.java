@@ -14,7 +14,7 @@ public class ArticleResponse {
     private Long id;
     private String photoUrl;
     private String title;
-    private Category category;
+    private String category;
     private List<ArticleRequest.QuestionDTO> question;
     private Long memberId;
     private String memberNickName;
@@ -26,7 +26,7 @@ public class ArticleResponse {
                 .id(article.getId())
                 .photoUrl(article.getPhotoUrl())
                 .title(article.getTitle())
-                .category(article.getCategory())
+                .category(Category.getDisplayName(article.getCategory()))
                 .question(
                         article.getQuestions()
                                 .stream()
