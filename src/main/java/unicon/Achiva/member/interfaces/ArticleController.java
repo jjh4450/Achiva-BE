@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import unicon.Achiva.common.S3Service;
@@ -90,4 +91,14 @@ public class ArticleController {
         return ResponseEntity.ok(ApiResponseForm.success(response, "Presigned URL 발급 성공"));
     }
 
+    @Operation(summary = "홈화면 게시글 목록 조회")
+    @GetMapping("/api/articles/home")
+    public ResponseEntity<Page<ArticleResponse>> getCombinedFeed(
+            @PageableDefault(size = 10) Pageable pageable,
+            HttpServletRequest request
+    ) {
+        Long memberId = authService.getMemberIdFromToken(request);
+        Page<ArticleResponse> page = articleService.getHomeArticles(memberId, pageable);
+        return ResponseEntity.ok(page);
+    }
 }

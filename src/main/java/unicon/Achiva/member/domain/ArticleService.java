@@ -8,14 +8,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import unicon.Achiva.global.response.GeneralException;
 import unicon.Achiva.member.infrastructure.ArticleRepository;
+import unicon.Achiva.member.infrastructure.CheeringRepository;
+import unicon.Achiva.member.infrastructure.FriendshipRepository;
 import unicon.Achiva.member.infrastructure.MemberRepository;
 import unicon.Achiva.member.interfaces.ArticleResponse;
 import unicon.Achiva.member.interfaces.ArticleRequest;
 import unicon.Achiva.member.interfaces.CategoryCountResponse;
+import unicon.Achiva.member.interfaces.HomeArticleRequest;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -26,6 +27,9 @@ public class ArticleService {
 
     private final ArticleRepository articleRepository;
     private final MemberRepository memberRepository;
+    private final FriendshipRepository friendshipRepository;
+    private final CheeringRepository cheeringRepository;
+
 
     @Transactional
     public ArticleResponse createArticle(ArticleRequest request, Long memberId) {
@@ -113,5 +117,21 @@ public class ArticleService {
         return CategoryCountResponse.fromObjectList(completeResult);
     }
 
+    public Page<ArticleResponse> getHomeArticles(Long myId, Pageable pageable) {
+        List<Long> friendIds  = friendshipRepository.findFriendIdsOf(myId);
+        List<Long> cheererIds = cheeringRepository.findDistinctCheererIdsWhoCheeredMyArticles(myId);
+
+        if ((friendIds == null || friendIds.isEmpty()) && (cheererIds == null || cheererIds.isEmpty())) {
+            return Page.empty(pageable);
+        }
+
+        Set<Long> friendSet = new HashSet<>(friendIds);
+        List<Long> cheererOnly = cheererIds.stream()
+                .filter(id -> !friendSet.contains(id))
+                .toList();
+
+        Page<Article> page = articleRepository.findCombinedFeed(friendIds, cheererOnly, pageable);
+        return page.map(ArticleResponse::fromEntity);
+    }
 
 }
