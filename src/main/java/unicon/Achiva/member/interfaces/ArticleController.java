@@ -59,6 +59,16 @@ public class ArticleController {
         return ResponseEntity.ok(ApiResponseForm.success(null, "게시글 삭제 성공"));
     }
 
+    @Operation(summary = "게시글 검색")
+    @GetMapping("/api/articles")
+    public ResponseEntity<ApiResponseForm<Page<ArticleResponse>>> searchArticles(
+            SearchArticleCondition condition,
+            Pageable pageable
+    ) {
+        Page<ArticleResponse> response = articleService.getArticles(condition, pageable);
+        return ResponseEntity.ok(ApiResponseForm.success(response, "게시글 검색 성공"));
+    }
+
     @Operation(summary = "게시글 상세 조회")
     @GetMapping("/api/articles/{articleId}")
     public ResponseEntity<ApiResponseForm<ArticleResponse>> getArticle(

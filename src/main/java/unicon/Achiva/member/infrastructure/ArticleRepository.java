@@ -10,11 +10,15 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import unicon.Achiva.member.domain.Article;
 import unicon.Achiva.member.domain.Category;
+import unicon.Achiva.member.interfaces.SearchArticleCondition;
 
+import java.nio.channels.FileChannel;
 import java.util.Collection;
 import java.util.List;
 
 public interface ArticleRepository extends JpaRepository<Article, Long>, ArticleRepositoryCustom {
+
+
     @Query("SELECT a.category, COUNT(a) FROM Article a WHERE a.member.id = :memberId GROUP BY a.category")
     List<Object[]> countArticlesByCategoryForMember(@Param("memberId") Long memberId);
 
@@ -27,13 +31,14 @@ public interface ArticleRepository extends JpaRepository<Article, Long>, Article
     order by
        case when a.member.id in :friendIds then 0 else 1 end,
        a.createdAt desc
-""",
+    """,
             countQuery = """
     select count(a)
     from Article a
     where a.member.id in :friendIds
        or a.member.id in :cheererIds
-""")
+    """)
+
     Page<Article> findCombinedFeed(
             @Param("friendIds") Collection<Long> friendIds,
             @Param("cheererIds") Collection<Long> cheererIds,
@@ -52,4 +57,8 @@ public interface ArticleRepository extends JpaRepository<Article, Long>, Article
                   @Param("category") Category category,
                   @Param("fromSeq") long fromSeq);
 
+
+    Page<Article> searchByCondition(SearchArticleCondition condition, Pageable pageable);
+
+    Page<Article> findAllByMemberId(Long memberId, Pageable pageable);
 }

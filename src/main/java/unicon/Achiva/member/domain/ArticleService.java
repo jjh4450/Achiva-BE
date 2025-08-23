@@ -8,10 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import unicon.Achiva.global.response.GeneralException;
 import unicon.Achiva.member.infrastructure.*;
-import unicon.Achiva.member.interfaces.ArticleResponse;
-import unicon.Achiva.member.interfaces.ArticleRequest;
-import unicon.Achiva.member.interfaces.CategoryCountResponse;
-import unicon.Achiva.member.interfaces.HomeArticleRequest;
+import unicon.Achiva.member.interfaces.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -132,6 +129,11 @@ public class ArticleService {
         Article article = articleRepository.findById(articleId)
                 .orElseThrow(() -> new GeneralException(ArticleErrorCode.ARTICLE_NOT_FOUND));
         return ArticleResponse.fromEntity(article);
+    }
+
+    public Page<ArticleResponse> getArticles(SearchArticleCondition condition, Pageable pageable) {
+        return articleRepository.searchByCondition(condition, pageable)
+                .map(ArticleResponse::fromEntity);
     }
 
     public Page<ArticleResponse> getArticlesByMember(Long memberId, Pageable pageable) {
