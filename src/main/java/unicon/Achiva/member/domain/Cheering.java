@@ -29,11 +29,21 @@ public class Cheering extends BaseEntity {
     @JoinColumn(name = "article_id")
     private Article article;
 
+    private boolean isRead = false;
+
     public void updateContent(String content) {
         this.content = content;
     }
 
     public void updateCheeringCategory(String cheeringCategory) {
         this.cheeringCategory = cheeringCategory;
+    }
+
+    public boolean getIsRead() {
+        return isRead;
+    }
+
+    public void markAsRead() {
+        this.isRead = true;
     }
 }

@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import unicon.Achiva.member.domain.Cheering;
+import unicon.Achiva.member.domain.Member;
 
 import java.util.List;
 
@@ -19,4 +20,7 @@ public interface CheeringRepository extends JpaRepository<Cheering, Long>, Cheer
     """)
     List<Long> findDistinctCheererIdsWhoCheeredMyArticles(@Param("me") Long me);
 
+    Long countByArticle_MemberAndIsReadFalse(Member member);
+
+    Page<Cheering> findAllByArticle_Member_Id(Long memberId, Pageable pageable);
 }

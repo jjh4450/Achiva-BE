@@ -75,4 +75,35 @@ public class CheeringController {
         Page<CheeringResponse> responses = cheeringService.getCheeringsByArticleId(articleId, pageable);
         return ResponseEntity.ok(ApiResponseForm.success(responses, "응원 목록 조회 성공"));
     }
+
+    @Operation(summary = "내 읽지 않은 응원 개수 조회")
+    @GetMapping("/api/cheerings/unread-count")
+    public ResponseEntity<ApiResponseForm<UnreadCheeringResponse>> getUnreadCheeringCount(
+            HttpServletRequest httpServletRequest
+    ) {
+        Long memberId = authService.getMemberIdFromToken(httpServletRequest);
+        UnreadCheeringResponse response = cheeringService.getUnreadCheeringCount(memberId);
+        return ResponseEntity.ok(ApiResponseForm.success(response, "내 읽지 않은 응원 개수 조회 성공"));
+    }
+
+    @Operation(summary = "내가 받은 응원 목록 조회 - 응원함 조회용으로 호출했다면 PATCH/api/cheering/read API로 읽음 처리 필요")
+    @GetMapping("/api/members/me/cheerings")
+    public ResponseEntity<ApiResponseForm<Page<CheeringResponse>>> getMyCheerings(
+            HttpServletRequest httpServletRequest,
+            Pageable pageable
+    ) {
+        Long memberId = authService.getMemberIdFromToken(httpServletRequest);
+        Page<CheeringResponse> responses = cheeringService.getCheeringsByMemberId(memberId, pageable);
+        return ResponseEntity.ok(ApiResponseForm.success(responses, "내가 받은 응원 목록 조회 성공"));
+    }
+
+    @Operation(summary = "응원 읽음 처리")
+    @PatchMapping("/api/cheerings/read")
+    public ResponseEntity<ApiResponseForm<List<CheeringResponse>>> readCheering(
+            @RequestBody CheeringReadRequest request
+    ) {
+        List<CheeringResponse> response = cheeringService.readCheering(request);
+        return ResponseEntity.ok(ApiResponseForm.success(response, "응원 읽음 처리 성공"));
+    }
+
 }

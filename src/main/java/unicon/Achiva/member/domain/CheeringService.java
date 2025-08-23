@@ -10,7 +10,11 @@ import unicon.Achiva.global.response.GeneralException;
 import unicon.Achiva.member.infrastructure.ArticleRepository;
 import unicon.Achiva.member.infrastructure.CheeringRepository;
 import unicon.Achiva.member.infrastructure.MemberRepository;
+import unicon.Achiva.member.interfaces.CheeringReadRequest;
 import unicon.Achiva.member.interfaces.CheeringResponse;
+import unicon.Achiva.member.interfaces.UnreadCheeringResponse;
+
+import java.util.List;
 
 @Slf4j
 @Service
@@ -78,5 +82,35 @@ public class CheeringService {
     public Page<CheeringResponse> getCheeringsByArticleId(Long articleId, Pageable pageable) {
         return cheeringRepository.findAllByArticleId(articleId, pageable)
                 .map(CheeringResponse::fromEntity);
+    }
+
+    public UnreadCheeringResponse getUnreadCheeringCount(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new GeneralException(MemberErrorCode.MEMBER_NOT_FOUND));
+
+        Long count = cheeringRepository.countByArticle_MemberAndIsReadFalse(member);
+        return UnreadCheeringResponse.builder()
+                .unreadCheeringCount(count)
+                .build();
+    }
+
+    public Page<CheeringResponse> getCheeringsByMemberId(Long memberId, Pageable pageable) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new GeneralException(MemberErrorCode.MEMBER_NOT_FOUND));
+
+        Page<Cheering> cheerings = cheeringRepository.findAllByArticle_Member_Id(memberId, pageable);
+
+        return cheerings.map(CheeringResponse::fromEntity);
+    }
+
+    @Transactional
+    public List<CheeringResponse> readCheering(CheeringReadRequest request) {
+        List<Cheering> cheerings = cheeringRepository.findAllById(request.getCheeringIds());
+        cheerings.stream()
+                .filter(cheering -> !cheering.getIsRead())
+                .forEach(Cheering::markAsRead);
+        return cheerings.stream()
+                .map(CheeringResponse::fromEntity)
+                .toList();
     }
 }

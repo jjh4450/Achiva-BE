@@ -15,6 +15,7 @@ public class CheeringResponse {
     private Long memberId;
     private String memberName;
     private Long articleId;
+    private Boolean isRead;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -26,6 +27,7 @@ public class CheeringResponse {
                 .memberId(cheering.getMember().getId())
                 .memberName(cheering.getMember().getNickName())
                 .articleId(cheering.getArticle().getId())
+                .isRead(cheering.getIsRead())
                 .createdAt(cheering.getCreatedAt())
                 .updatedAt(cheering.getUpdatedAt())
                 .build();
