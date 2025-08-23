@@ -47,6 +47,7 @@ public class ArticleService {
                         .toList())
                 .member(member)
                 .authorCategorySeq(newSeq)
+                .backgroundColor(request.getBackgroundColor())
                 .build();
 
         article.getQuestions().forEach(q -> q.setArticle(article));

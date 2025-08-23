@@ -23,6 +23,8 @@ public class Article extends BaseEntity {
 
     private Category category;
 
+    private String backgroundColor;
+
     @Column(name = "author_category_seq", nullable = false)
     private Long authorCategorySeq;
 
@@ -36,7 +38,7 @@ public class Article extends BaseEntity {
     public void update(ArticleRequest request) {
         this.photoUrl = request.getPhotoUrl();
         this.title = request.getTitle();
-        //this.category = Category.fromDisplayName(request.getCategory());
+        this.backgroundColor = request.getBackgroundColor();
 
         this.questions.clear();
         for (ArticleRequest.QuestionDTO questionDTO : request.getQuestion()) {

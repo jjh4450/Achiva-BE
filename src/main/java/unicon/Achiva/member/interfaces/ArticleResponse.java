@@ -18,6 +18,8 @@ public class ArticleResponse {
     private List<ArticleRequest.QuestionDTO> question;
     private Long memberId;
     private String memberNickName;
+    private String memberProfileUrl;
+    private String backgroundColor;
     private Long authorCategorySeq;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -36,7 +38,9 @@ public class ArticleResponse {
                 )
                 .memberId(article.getMember().getId())
                 .memberNickName(article.getMember().getNickName())
+                .memberProfileUrl(article.getMember().getProfileImageUrl())
                 .authorCategorySeq(article.getAuthorCategorySeq())
+                .backgroundColor(article.getBackgroundColor())
                 .createdAt(article.getCreatedAt())
                 .updatedAt(article.getUpdatedAt())
                 .build();

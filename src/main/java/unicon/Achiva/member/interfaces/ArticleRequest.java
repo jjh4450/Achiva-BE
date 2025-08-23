@@ -12,12 +12,14 @@ public class ArticleRequest {
     private String title;
     private String category;
     private List<QuestionDTO> question;
+    private String backgroundColor;
 
-    public ArticleRequest(String photoUrl, String title, String category, List<QuestionDTO> question) {
+    public ArticleRequest(String photoUrl, String title, String category, List<QuestionDTO> question, String backgroundColor) {
         this.photoUrl = photoUrl;
         this.title = title;
         this.category = category;
         this.question = question;
+        this.backgroundColor = backgroundColor;
     }
 
     @Getter
