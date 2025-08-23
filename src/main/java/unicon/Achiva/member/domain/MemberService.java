@@ -2,12 +2,15 @@ package unicon.Achiva.member.domain;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import unicon.Achiva.global.response.GeneralException;
 import unicon.Achiva.member.infrastructure.MemberRepository;
 import unicon.Achiva.member.interfaces.ConfirmProfileImageUploadRequest;
 import unicon.Achiva.member.interfaces.MemberResponse;
+import unicon.Achiva.member.interfaces.SearchMemberCondition;
 
 @Slf4j
 @Service
@@ -27,6 +30,11 @@ public class MemberService {
         return memberRepository.findByNickName(nickname)
                 .map(MemberResponse::fromEntity)
                 .orElseThrow(() -> new GeneralException(MemberErrorCode.MEMBER_NOT_FOUND));
+    }
+
+    public Page<MemberResponse> getMembers(SearchMemberCondition condition, Pageable pageable) {
+        return memberRepository.findByNickNameContainingIgnoreCase(condition.getKeyword(), pageable)
+                .map(MemberResponse::fromEntity);
     }
 
     @Transactional

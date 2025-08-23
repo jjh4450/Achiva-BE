@@ -3,6 +3,8 @@ package unicon.Achiva.member.interfaces;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import unicon.Achiva.common.S3Service;
@@ -48,6 +50,16 @@ public class MemberController {
     ) {
         MemberResponse memberResponse = memberService.getMemberInfoByNickname(nickname);
         return ResponseEntity.ok(ApiResponseForm.success(memberResponse, "닉네임으로 유저 정보 조회 성공"));
+    }
+
+    @Operation(summary = "닉네임으로 유저 목록 검색")
+    @GetMapping("/api/members")
+    public ResponseEntity<ApiResponseForm<Page<MemberResponse>>> getMembers(
+            SearchMemberCondition condition,
+            Pageable pageable
+    ) {
+        Page<MemberResponse> members = memberService.getMembers(condition, pageable);
+        return ResponseEntity.ok(ApiResponseForm.success(members, "닉네임으로 유저 검색 성공"));
     }
 
     @Operation(summary = "유저 프로필 사진 저장용 presigned URL 발급(이후 회원가입이나 프로필이미지 수정시 쿼리파라미터를 제외한 url을 BE에 보내야함.) - JWT 필요 X")
