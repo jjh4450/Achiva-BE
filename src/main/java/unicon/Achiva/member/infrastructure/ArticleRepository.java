@@ -4,10 +4,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import unicon.Achiva.member.domain.Article;
+import unicon.Achiva.member.domain.Category;
 
 import java.util.Collection;
 import java.util.List;
@@ -37,4 +39,17 @@ public interface ArticleRepository extends JpaRepository<Article, Long>, Article
             @Param("cheererIds") Collection<Long> cheererIds,
             Pageable pageable
     );
+
+    @Modifying(flushAutomatically = true)
+    @Query("""
+      update Article a
+         set a.authorCategorySeq = a.authorCategorySeq - 1
+       where a.member.id = :memberId
+         and a.category   = :category
+         and a.authorCategorySeq > :fromSeq
+    """)
+    int shiftLeft(@Param("memberId") Long memberId,
+                  @Param("category") Category category,
+                  @Param("fromSeq") long fromSeq);
+
 }

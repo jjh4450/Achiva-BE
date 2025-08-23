@@ -18,6 +18,7 @@ public class ArticleResponse {
     private List<ArticleRequest.QuestionDTO> question;
     private Long memberId;
     private String memberNickName;
+    private Long authorCategorySeq;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -35,6 +36,7 @@ public class ArticleResponse {
                 )
                 .memberId(article.getMember().getId())
                 .memberNickName(article.getMember().getNickName())
+                .authorCategorySeq(article.getAuthorCategorySeq())
                 .createdAt(article.getCreatedAt())
                 .updatedAt(article.getUpdatedAt())
                 .build();

@@ -23,6 +23,9 @@ public class Article extends BaseEntity {
 
     private Category category;
 
+    @Column(name = "author_category_seq", nullable = false)
+    private Long authorCategorySeq;
+
     @OneToMany(mappedBy = "article", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Question> questions;
 
@@ -33,7 +36,7 @@ public class Article extends BaseEntity {
     public void update(ArticleRequest request) {
         this.photoUrl = request.getPhotoUrl();
         this.title = request.getTitle();
-        this.category = Category.fromDisplayName(request.getCategory());
+        //this.category = Category.fromDisplayName(request.getCategory());
 
         this.questions.clear();
         for (ArticleRequest.QuestionDTO questionDTO : request.getQuestion()) {
@@ -41,5 +44,10 @@ public class Article extends BaseEntity {
             question.setArticle(this);
             this.questions.add(question);
         }
+    }
+
+    public void changeCategoryAndSeq(Category newCategory, long newSeq) {
+        this.category = newCategory;
+        this.authorCategorySeq = newSeq;
     }
 }
