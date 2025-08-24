@@ -25,8 +25,8 @@ public class FriendshipController {
             @RequestBody FriendshipRequest friendshipRequest
     ) {
         Long memberId = authService.getMemberIdFromToken(request);
-        friendshipService.sendFriendRequest(friendshipRequest, memberId);
-        return ResponseEntity.ok(ApiResponseForm.success(null, "친구 신청 성공"));
+        FriendshipResponse response = friendshipService.sendFriendRequest(friendshipRequest, memberId);
+        return ResponseEntity.ok(ApiResponseForm.success(response, "친구 신청 성공"));
     }
 
     @Operation(summary = "친구 신청 수락")
