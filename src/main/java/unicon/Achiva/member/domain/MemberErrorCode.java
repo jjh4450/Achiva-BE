@@ -11,7 +11,8 @@ public enum MemberErrorCode implements ErrorCode {
     VERIFICATION_EXPIRED(1004, "인증 요청이 만료되었습니다.", HttpStatus.BAD_REQUEST),
     VERIFICATION_CODE_MISMATCH(1005, "인증 코드가 틀렸습니다.", HttpStatus.BAD_REQUEST),
     PASSWORD_MISMATCH(1006, "비밀번호와 비밀번호 확인이 일치하지 않습니다", HttpStatus.BAD_REQUEST),
-    MEMBER_NOT_FOUND(1007, "회원을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),;
+    MEMBER_NOT_FOUND(1007, "회원을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+    INVALID_PASSWORD(1008, "비밀번호가 틀렸습니다.", HttpStatus.UNAUTHORIZED),;
 
     private final Integer code;
     private final String message;

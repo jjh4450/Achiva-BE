@@ -172,4 +172,15 @@ public class AuthService {
         String accessToken = request.getHeader("Authorization").substring(7);
         return jwtTokenProvider.extractUserId(accessToken).orElseThrow(() -> new GeneralException(MemberErrorCode.INVALID_TOKEN));
     }
+
+    public CheckPasswordResponse checkPassword(CheckPasswordRequest request) {
+        Member member = memberRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new GeneralException(MemberErrorCode.MEMBER_NOT_FOUND));
+
+        boolean isMatch = passwordEncoder.matches(request.getPassword(), member.getPassword());
+        if (!isMatch) {
+            throw new GeneralException(MemberErrorCode.INVALID_PASSWORD);
+        }
+        return new CheckPasswordResponse(true);
+    }
 }

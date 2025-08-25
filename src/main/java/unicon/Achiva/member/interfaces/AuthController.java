@@ -74,6 +74,15 @@ public class AuthController {
         return ResponseEntity.ok(ApiResponseForm.success(verifyCodeResponse, "인증 코드 확인 성공"));
     }
 
+    @Operation(summary = "이메일과 비밀번호 입력받아서 비밀번호 맞는지 확인")
+    @PostMapping("api/auth/verify-password")
+    public ResponseEntity<ApiResponseForm<CheckPasswordResponse>> verifyPassword(
+            @RequestBody CheckPasswordRequest request
+    ) {
+        CheckPasswordResponse verifyPasswordResponse = authService.checkPassword(request);
+        return ResponseEntity.ok(ApiResponseForm.success(verifyPasswordResponse, "비밀번호 확인 성공"));
+    }
+
     @Operation(summary = "비밀번호 초기화")
     @PostMapping("api/auth/reset-password")
     public ResponseEntity<ApiResponseForm<ResetPasswordResponse>> resetPassword(@RequestBody ResetPasswordRequest request) {
