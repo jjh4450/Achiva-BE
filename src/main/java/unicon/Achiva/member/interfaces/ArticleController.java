@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -120,5 +121,16 @@ public class ArticleController {
         Long memberId = authService.getMemberIdFromToken(request);
         Page<ArticleResponse> page = articleService.getHomeArticles(memberId, pageable);
         return ResponseEntity.ok(page);
+    }
+
+    @Operation(summary = "멤버 관심 카테고리 기반 최신글 게시글 목록")
+    @GetMapping("/api/members/{memberId}/feed")
+    public ResponseEntity<ApiResponseForm<Page<ArticleResponse>>> getFeed(
+            @PathVariable Long memberId,
+            @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC)
+            Pageable pageable
+    ) {
+        Page<ArticleResponse> response = articleService.getMemberInterestFeed(memberId, pageable);
+        return ResponseEntity.ok(ApiResponseForm.success(response, "멤버 관심 카테고리 기반 최신글 게시글 목록 조회 성공"));
     }
 }

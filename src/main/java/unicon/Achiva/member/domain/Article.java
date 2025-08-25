@@ -21,6 +21,7 @@ public class Article extends BaseEntity {
 
     private String title;
 
+    @Enumerated(EnumType.STRING)
     private Category category;
 
     private String backgroundColor;

@@ -3,7 +3,9 @@ package unicon.Achiva.member.domain;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import unicon.Achiva.global.response.GeneralException;
@@ -216,6 +218,27 @@ public class ArticleService {
 
         // 4) 글 갱신
         a.changeCategoryAndSeq(newCategory, newSeq);
+    }
+
+    public Page<ArticleResponse> getMemberInterestFeed(Long memberId, Pageable pageable) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new GeneralException(MemberErrorCode.MEMBER_NOT_FOUND));
+
+
+        List<Category> cats = Optional.ofNullable(member.getCategories()).orElseGet(Collections::emptyList);
+        if (cats.isEmpty()) {
+            return Page.empty(pageable);
+        }
+
+        // 기본 정렬 보정: createdAt DESC
+        Pageable sorted = pageable;
+        if (pageable.getSort().isUnsorted()) {
+            sorted = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
+                    Sort.by(Sort.Direction.DESC, "createdAt"));
+        }
+
+        Page<Article> page = articleRepository.findByCategoryIn(cats, sorted);
+        return page.map(ArticleResponse::fromEntity);
     }
 
     private MemberCategoryCounter initCounter(MemberCategoryKey key) {

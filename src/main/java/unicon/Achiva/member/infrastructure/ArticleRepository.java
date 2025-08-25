@@ -61,4 +61,7 @@ public interface ArticleRepository extends JpaRepository<Article, Long>, Article
     Page<Article> searchByCondition(SearchArticleCondition condition, Pageable pageable);
 
     Page<Article> findAllByMemberId(Long memberId, Pageable pageable);
+
+    @EntityGraph(attributePaths = "member")
+    Page<Article> findByCategoryIn(List<Category> categories, Pageable pageable);
 }
