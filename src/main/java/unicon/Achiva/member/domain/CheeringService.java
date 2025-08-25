@@ -8,11 +8,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import unicon.Achiva.global.response.GeneralException;
 import unicon.Achiva.member.infrastructure.ArticleRepository;
+import unicon.Achiva.member.interfaces.*;
 import unicon.Achiva.member.infrastructure.CheeringRepository;
 import unicon.Achiva.member.infrastructure.MemberRepository;
-import unicon.Achiva.member.interfaces.CheeringReadRequest;
-import unicon.Achiva.member.interfaces.CheeringResponse;
-import unicon.Achiva.member.interfaces.UnreadCheeringResponse;
 
 import java.util.List;
 
@@ -21,6 +19,8 @@ import java.util.List;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class CheeringService {
+
+    private static final long POINTS_PER_CHEER = 10L;
 
     private final CheeringRepository cheeringRepository;
     private final MemberRepository memberRepository;
@@ -38,7 +38,8 @@ public class CheeringService {
                 .content(request.getContent())
                 .cheeringCategory(request.getCheeringCategory())
                 .article(article)
-                .member(member)
+                .sender(member)
+                .receiver(article.getMember())
                 .build();
 
         cheeringRepository.save(cheering);
@@ -51,7 +52,7 @@ public class CheeringService {
         Cheering cheering = cheeringRepository.findById(cheeringId)
                 .orElseThrow(() -> new GeneralException(CheeringErrorCode.CHEERING_NOT_FOUND));
 
-        if (!cheering.getMember().getId().equals(memberId)) {
+        if (!cheering.getSender().getId().equals(memberId)) {
             throw new GeneralException(CheeringErrorCode.UNAUTHORIZED_MEMBER);
         }
 
@@ -66,7 +67,7 @@ public class CheeringService {
         Cheering cheering = cheeringRepository.findById(cheeringId)
                 .orElseThrow(() -> new GeneralException(CheeringErrorCode.CHEERING_NOT_FOUND));
 
-        if (!cheering.getMember().getId().equals(memberId)) {
+        if (!cheering.getSender().getId().equals(memberId)) {
             throw new GeneralException(CheeringErrorCode.UNAUTHORIZED_MEMBER);
         }
 
@@ -95,9 +96,6 @@ public class CheeringService {
     }
 
     public Page<CheeringResponse> getCheeringsByMemberId(Long memberId, Pageable pageable) {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new GeneralException(MemberErrorCode.MEMBER_NOT_FOUND));
-
         Page<Cheering> cheerings = cheeringRepository.findAllByArticle_Member_Id(memberId, pageable);
 
         return cheerings.map(CheeringResponse::fromEntity);
@@ -113,4 +111,25 @@ public class CheeringService {
                 .map(CheeringResponse::fromEntity)
                 .toList();
     }
+
+    public List<CategoryStatDto> getGivenStats(Long memberId) {
+        return cheeringRepository.givenStatsByCategory(memberId, POINTS_PER_CHEER);
+    }
+
+    public List<CategoryStatDto> getReceivedStats(Long memberId) {
+        return cheeringRepository.receivedStatsByCategory(memberId, POINTS_PER_CHEER);
+    }
+
+    public TotalSendingCheeringScoreResponse getTotalGivenPoints(Long memberId) {
+        return new TotalSendingCheeringScoreResponse(
+                cheeringRepository.totalGivenCount(memberId) * POINTS_PER_CHEER
+        );
+    }
+
+    public TotalReceivedCheeringScoreResponse getTotalReceivedPoints(Long memberId) {
+        return new TotalReceivedCheeringScoreResponse(
+                cheeringRepository.totalReceivedCount(memberId) * POINTS_PER_CHEER
+        );
+    }
+
 }

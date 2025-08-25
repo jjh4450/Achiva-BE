@@ -12,8 +12,10 @@ public class CheeringResponse {
     private Long id;
     private String content;
     private String cheeringCategory;
-    private Long memberId;
-    private String memberName;
+    private Long senderId;
+    private String senderName;
+    private Long receiverId;
+    private String receiverName;
     private Long articleId;
     private Boolean isRead;
     private LocalDateTime createdAt;
@@ -24,8 +26,10 @@ public class CheeringResponse {
                 .id(cheering.getId())
                 .content(cheering.getContent())
                 .cheeringCategory(cheering.getCheeringCategory())
-                .memberId(cheering.getMember().getId())
-                .memberName(cheering.getMember().getNickName())
+                .senderId(cheering.getSender().getId())
+                .senderName(cheering.getSender().getNickName())
+                .receiverId(cheering.getReceiver().getId())
+                .receiverName(cheering.getReceiver().getNickName())
                 .articleId(cheering.getArticle().getId())
                 .isRead(cheering.getIsRead())
                 .createdAt(cheering.getCreatedAt())

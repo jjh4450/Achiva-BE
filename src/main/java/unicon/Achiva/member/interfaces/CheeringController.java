@@ -106,4 +106,39 @@ public class CheeringController {
         return ResponseEntity.ok(ApiResponseForm.success(response, "응원 읽음 처리 성공"));
     }
 
+    @Operation(summary = "특정 유저 보낸 총 응원 점수 조회")
+    @GetMapping("/api/members/{memberId}/cheerings/total-sending-score")
+    public ResponseEntity<ApiResponseForm<TotalSendingCheeringScoreResponse>> getTotalSendingCheeringScore(
+            @PathVariable Long memberId
+    ) {
+        TotalSendingCheeringScoreResponse response = cheeringService.getTotalGivenPoints(memberId);
+        return ResponseEntity.ok(ApiResponseForm.success(response, "특정 유저 보낸 총 응원 점수 조회 성공"));
+    }
+
+    @Operation(summary = "특정 유저 받은 총 응원 점수 조회")
+    @GetMapping("/api/members/{memberId}/cheerings/total-receiving-score")
+    public ResponseEntity<ApiResponseForm<TotalReceivedCheeringScoreResponse>> getTotalReceivingCheeringScore(
+            @PathVariable Long memberId
+    ) {
+        TotalReceivedCheeringScoreResponse response = cheeringService.getTotalReceivedPoints(memberId);
+        return ResponseEntity.ok(ApiResponseForm.success(response, "특정 유저 받은 총 응원 점수 조회 성공"));
+    }
+
+    @Operation(summary = "특정 유저의 보낸 응원의 모든 카테고리별 점수 조회")
+    @GetMapping("/api/members/{memberId}/cheerings/sending-category-stats")
+    public ResponseEntity<ApiResponseForm<List<CategoryStatDto>>> getGivenStats(
+            @PathVariable Long memberId
+    ) {
+        List<CategoryStatDto> response = cheeringService.getGivenStats(memberId);
+        return ResponseEntity.ok(ApiResponseForm.success(response, "특정 유저의 보낸 응원의 모든 카테고리별 점수 조회 성공"));
+    }
+
+    @Operation(summary = "특정 유저의 받은 응원의 모든 카테고리별 점수 조회")
+    @GetMapping("/api/members/{memberId}/cheerings/receiving-category-stats")
+    public ResponseEntity<ApiResponseForm<List<CategoryStatDto>>> getReceivedStats(
+            @PathVariable Long memberId
+    ) {
+        List<CategoryStatDto> response = cheeringService.getReceivedStats(memberId);
+        return ResponseEntity.ok(ApiResponseForm.success(response, "특정 유저의 받은 응원의 모든 카테고리별 점수 조회 성공"));
+    }
 }

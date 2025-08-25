@@ -13,6 +13,10 @@ import unicon.Achiva.common.BaseEntity;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(indexes = {
+        @Index(columnList = "sender_id, category"),
+        @Index(columnList = "receiver_id, category")
+})
 public class Cheering extends BaseEntity {
 
     @Lob
@@ -21,9 +25,11 @@ public class Cheering extends BaseEntity {
     // 응원카테고리 정의되면 enum으로 변경
     private String cheeringCategory;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;
+    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "sender_id", nullable=false)
+    private Member sender;
+
+    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "receiver_id", nullable=false)
+    private Member receiver;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "article_id")
