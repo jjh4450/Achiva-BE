@@ -46,6 +46,10 @@ public class Member extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @Builder.Default
+    @OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Article> articles = new ArrayList<>();
+
     private boolean pushEnabled;
 
     public void updatePassword(String encodedPassword) {
