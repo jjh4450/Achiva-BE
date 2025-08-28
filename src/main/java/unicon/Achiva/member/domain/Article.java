@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import unicon.Achiva.common.BaseEntity;
 import unicon.Achiva.member.interfaces.ArticleRequest;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -35,6 +36,10 @@ public class Article extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
+
+    @Builder.Default
+    @OneToMany(mappedBy = "article", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Cheering> cheerings = new ArrayList<>();
 
     public void update(ArticleRequest request) {
         this.photoUrl = request.getPhotoUrl();
