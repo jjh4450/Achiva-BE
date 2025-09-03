@@ -14,6 +14,7 @@ public class CheeringResponse {
     private String cheeringCategory;
     private Long senderId;
     private String senderName;
+    private String senderProfileImageUrl;
     private Long receiverId;
     private String receiverName;
     private Long articleId;
@@ -28,6 +29,7 @@ public class CheeringResponse {
                 .cheeringCategory(cheering.getCheeringCategory())
                 .senderId(cheering.getSender().getId())
                 .senderName(cheering.getSender().getNickName())
+                .senderProfileImageUrl(cheering.getSender().getProfileImageUrl())
                 .receiverId(cheering.getReceiver().getId())
                 .receiverName(cheering.getReceiver().getNickName())
                 .articleId(cheering.getArticle().getId())
