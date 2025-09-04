@@ -64,4 +64,7 @@ public interface ArticleRepository extends JpaRepository<Article, Long>, Article
 
     @EntityGraph(attributePaths = "member")
     Page<Article> findByCategoryIn(List<Category> categories, Pageable pageable);
+
+    @Query("SELECT a FROM Article a WHERE a.member.id = :memberId AND a.category = :category ORDER BY a.createdAt DESC")
+    Page<Article> findByMemberIdWithCategory(Long memberId, Category category, Pageable pageable);
 }

@@ -101,6 +101,18 @@ public class ArticleController {
         return ResponseEntity.ok(ApiResponseForm.success(response, "특정 유저 게시글 목록 조회 성공"));
     }
 
+    @Operation(summary = "특정 유저 특정 카테고리 게시글 목록 최신순 조회")
+    @GetMapping("/api/members/{memberId}/categories/{category}/articles")
+    public ResponseEntity<ApiResponseForm<Page<ArticleResponse>>> getArticlesByMemberAndCategory(
+            @PathVariable Long memberId,
+            @PathVariable String category,
+            @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC)
+            Pageable pageable
+    ) {
+        Page<ArticleResponse> response = articleService.getArticlesByMemberAndCateogry(memberId, category, pageable);
+        return ResponseEntity.ok(ApiResponseForm.success(response, "특정 유저 특정 카테고리 게시글 목록 최신순 조회 성공"));
+    }
+
     @Operation(summary = "게시글 사진 저장용 presigned URL 발급. 이후 게시글 생성, 수정 등 요청 보낼 때 본 api에서 발급받은 url에서 쿼리스트링 뺀 부분을 photoUrl로 사용해야 함.")
     @GetMapping("/api/articles/presigned-url")
     public ResponseEntity<ApiResponseForm<Map<String, String>>> getPresignedUrl(

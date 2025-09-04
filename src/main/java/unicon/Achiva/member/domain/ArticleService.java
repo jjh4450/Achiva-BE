@@ -261,4 +261,9 @@ public class ArticleService {
         c.setSize(0L);
         return memberCategoryCounterRepository.saveAndFlush(c);
     }
+
+    public Page<ArticleResponse> getArticlesByMemberAndCateogry(Long memberId, String category, Pageable pageable) {
+        return articleRepository.findByMemberIdWithCategory(memberId, Category.fromDisplayName(category), pageable)
+                .map(ArticleResponse::fromEntity);
+    }
 }
