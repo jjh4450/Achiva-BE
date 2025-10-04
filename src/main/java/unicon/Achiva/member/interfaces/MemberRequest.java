@@ -9,7 +9,7 @@ import java.util.List;
 @Builder
 public class MemberRequest {
     private String email;
-    private String password;
+//    private String password;
     private String confirmPassword;
     private String nickName;
     private String profileImageUrl;

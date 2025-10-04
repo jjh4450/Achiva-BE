@@ -10,6 +10,7 @@ import unicon.Achiva.common.BaseEntity;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Getter
 @Entity
@@ -19,10 +20,13 @@ import java.util.List;
 public class Member extends BaseEntity {
 
     @Column(nullable = false, unique = true)
+    private UUID sub;
+
+    @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false)
-    private String password;
+//    @Column(nullable = false)
+//    private String password;
 
     @Column(nullable = false)
     private String nickName;
@@ -52,9 +56,9 @@ public class Member extends BaseEntity {
 
     private boolean pushEnabled;
 
-    public void updatePassword(String encodedPassword) {
-        this.password = encodedPassword;
-    }
+//    public void updatePassword(String encodedPassword) {
+//        this.password = encodedPassword;
+//    }
 
     public void updateProfileImageUrl(String profileImageUrl) {
         this.profileImageUrl = profileImageUrl;

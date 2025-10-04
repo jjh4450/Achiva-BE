@@ -20,12 +20,27 @@ public class AuthController {
 
     private final AuthService authService;
 
-    @Operation(summary = "자체 회원가입. presigned URL 발급 및 업로드가 선행되어야 함. - JWT 필요 X")
+//    @Operation(summary = "자체 회원가입. presigned URL 발급 및 업로드가 선행되어야 함. - JWT 필요 X")
+//    @PostMapping("api/auth/register")
+//    public ResponseEntity<ApiResponseForm<CreateMemberResponse>> signup(@RequestBody MemberRequest requestDto) {
+//        CreateMemberResponse createMemberResponse = authService.signup(requestDto);
+//        return ResponseEntity.ok(ApiResponseForm.created(createMemberResponse, "회원가입 성공"));
+//    }
+
+    @Operation(summary = "회원등록. presigned URL 발급 및 업로드가 선행되어야 함. - JWT 필요")
     @PostMapping("api/auth/register")
     public ResponseEntity<ApiResponseForm<CreateMemberResponse>> signup(@RequestBody MemberRequest requestDto) {
         CreateMemberResponse createMemberResponse = authService.signup(requestDto);
         return ResponseEntity.ok(ApiResponseForm.created(createMemberResponse, "회원가입 성공"));
     }
+
+    // TO-DO auth service에서 sub확인 메서드 등록 필요
+//    @Operation(summary = "해당 JWT 토큰의 등록여부.")
+//    @PostMapping("api/auth/isinit")
+//    public ResponseEntity<ApiResponseForm<Boolean>> isInit(@RequestBody MemberRequest requestDto) {
+//        CreateMemberResponse createMemberResponse = authService.signup(requestDto);
+//        return ResponseEntity.ok(ApiResponseForm.created(createMemberResponse, "회원가입 성공"));
+//    }
 
     @Operation(summary = "회원 정보 수정")
     @PutMapping("api/auth")
@@ -59,51 +74,51 @@ public class AuthController {
         return ResponseEntity.ok(ApiResponseForm.success(checkNicknameResponse, "닉네임 중복 확인 성공"));
     }
 
-    @Operation(summary = "이메일로 인증코드 전송 - JWT 필요 X")
-    @PostMapping("api/auth/send-verification-code")
-    public ResponseEntity<ApiResponseForm<SendVerificationCodeResponse>> sendCode(@RequestParam String email) {
-        SendVerificationCodeResponse sendVerificationCodeResponse = authService.sendVerificationCode(email);
-        return ResponseEntity.ok(ApiResponseForm.success(sendVerificationCodeResponse ,"인증 코드 전송 성공"));
-    }
-
-    @Operation(summary = "받은 이메일 인증코드로 인증 - JWT 필요 X")
-    @PostMapping("api/auth/verify-code")
-    public ResponseEntity<ApiResponseForm<VerifyCodeResponse>> verifyCode(@RequestParam String email,
-                                             @RequestParam String code) {
-        VerifyCodeResponse verifyCodeResponse = authService.verifyCode(email, code);
-        return ResponseEntity.ok(ApiResponseForm.success(verifyCodeResponse, "인증 코드 확인 성공"));
-    }
-
-    @Operation(summary = "이메일과 비밀번호 입력받아서 비밀번호 맞는지 확인")
-    @PostMapping("api/auth/verify-password")
-    public ResponseEntity<ApiResponseForm<CheckPasswordResponse>> verifyPassword(
-            @RequestBody CheckPasswordRequest request
-    ) {
-        CheckPasswordResponse verifyPasswordResponse = authService.checkPassword(request);
-        return ResponseEntity.ok(ApiResponseForm.success(verifyPasswordResponse, "비밀번호 확인 성공"));
-    }
-
-    @Operation(summary = "비밀번호 초기화")
-    @PostMapping("api/auth/reset-password")
-    public ResponseEntity<ApiResponseForm<ResetPasswordResponse>> resetPassword(@RequestBody ResetPasswordRequest request) {
-        ResetPasswordResponse resetPasswordResponse = authService.resetPassword(request);
-        return ResponseEntity.ok(ApiResponseForm.success(resetPasswordResponse, "비밀번호 재설정 성공"));
-    }
-
-    @Operation(summary = "로그인 - JWT 필요 X")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "일반 로그인 성공", content = @Content(mediaType = "application/json", schema = @Schema(example = "{\n  \"status\": \"success\", \"code\": 200, \"message\": \"로그인 성공\", \"data\": {\"id\": 1, \"email\": \"user@example.com\", \"nickname\": \"user\", \"birth\": \"2000-01-01\", \"gender\": \"MALE\", \"categories\": [\"공부\", \"운동\"], \"createdAt\": \"2023-01-01T00:00:00.000000\"}}"))),
-    })
-    @PostMapping("/api/auth/login")
-    public String login(
-            @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    description = "로그인 요청 JSON 데이터",
-                    required = true,
-                    content = @Content(
-                            schema = @Schema(type = "object", example = "{\"email\": \"user@example.com\", \"password\": \"password1234\"}")
-                    )
-            )
-            @RequestBody Map<String, String> loginRequest) {
-        return "로그인 성공"; // 실제 로그인 처리는 Security 필터에서 수행
-    }
+//    @Operation(summary = "이메일로 인증코드 전송 - JWT 필요 X")
+//    @PostMapping("api/auth/send-verification-code")
+//    public ResponseEntity<ApiResponseForm<SendVerificationCodeResponse>> sendCode(@RequestParam String email) {
+//        SendVerificationCodeResponse sendVerificationCodeResponse = authService.sendVerificationCode(email);
+//        return ResponseEntity.ok(ApiResponseForm.success(sendVerificationCodeResponse ,"인증 코드 전송 성공"));
+//    }
+//
+//    @Operation(summary = "받은 이메일 인증코드로 인증 - JWT 필요 X")
+//    @PostMapping("api/auth/verify-code")
+//    public ResponseEntity<ApiResponseForm<VerifyCodeResponse>> verifyCode(@RequestParam String email,
+//                                             @RequestParam String code) {
+//        VerifyCodeResponse verifyCodeResponse = authService.verifyCode(email, code);
+//        return ResponseEntity.ok(ApiResponseForm.success(verifyCodeResponse, "인증 코드 확인 성공"));
+//    }
+//
+//    @Operation(summary = "이메일과 비밀번호 입력받아서 비밀번호 맞는지 확인")
+//    @PostMapping("api/auth/verify-password")
+//    public ResponseEntity<ApiResponseForm<CheckPasswordResponse>> verifyPassword(
+//            @RequestBody CheckPasswordRequest request
+//    ) {
+//        CheckPasswordResponse verifyPasswordResponse = authService.checkPassword(request);
+//        return ResponseEntity.ok(ApiResponseForm.success(verifyPasswordResponse, "비밀번호 확인 성공"));
+//    }
+//
+//    @Operation(summary = "비밀번호 초기화")
+//    @PostMapping("api/auth/reset-password")
+//    public ResponseEntity<ApiResponseForm<ResetPasswordResponse>> resetPassword(@RequestBody ResetPasswordRequest request) {
+//        ResetPasswordResponse resetPasswordResponse = authService.resetPassword(request);
+//        return ResponseEntity.ok(ApiResponseForm.success(resetPasswordResponse, "비밀번호 재설정 성공"));
+//    }
+//
+//    @Operation(summary = "로그인 - JWT 필요 X")
+//    @ApiResponses(value = {
+//            @ApiResponse(responseCode = "200", description = "일반 로그인 성공", content = @Content(mediaType = "application/json", schema = @Schema(example = "{\n  \"status\": \"success\", \"code\": 200, \"message\": \"로그인 성공\", \"data\": {\"id\": 1, \"email\": \"user@example.com\", \"nickname\": \"user\", \"birth\": \"2000-01-01\", \"gender\": \"MALE\", \"categories\": [\"공부\", \"운동\"], \"createdAt\": \"2023-01-01T00:00:00.000000\"}}"))),
+//    })
+//    @PostMapping("/api/auth/login")
+//    public String login(
+//            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+//                    description = "로그인 요청 JSON 데이터",
+//                    required = true,
+//                    content = @Content(
+//                            schema = @Schema(type = "object", example = "{\"email\": \"user@example.com\", \"password\": \"password1234\"}")
+//                    )
+//            )
+//            @RequestBody Map<String, String> loginRequest) {
+//        return "로그인 성공"; // 실제 로그인 처리는 Security 필터에서 수행
+//    }
 }

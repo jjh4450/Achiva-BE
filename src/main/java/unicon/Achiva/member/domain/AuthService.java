@@ -3,7 +3,9 @@ package unicon.Achiva.member.domain;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import unicon.Achiva.global.response.GeneralException;
@@ -15,6 +17,7 @@ import unicon.Achiva.member.interfaces.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Random;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -23,7 +26,6 @@ import java.util.Random;
 public class AuthService {
 
     private final MemberRepository memberRepository;
-    private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
     private final EmailVerificationRepository emailVerificationRepository;
     private final JwtTokenProvider jwtTokenProvider;
@@ -31,14 +33,13 @@ public class AuthService {
     @Transactional
     public CreateMemberResponse signup(MemberRequest requestDto) {
         validateDuplication(requestDto.getNickName(), requestDto.getEmail());
-        if (!requestDto.getPassword().equals(requestDto.getConfirmPassword())) {
-            throw new GeneralException(MemberErrorCode.PASSWORD_MISMATCH);
-        }
+//        if (!requestDto.getPassword().equals(requestDto.getConfirmPassword())) {
+//            throw new GeneralException(MemberErrorCode.PASSWORD_MISMATCH);
+//        }
 
         Member member = Member.builder()
                 .email(requestDto.getEmail())
                 .nickName(requestDto.getNickName())
-                .password(passwordEncoder.encode(requestDto.getPassword()))
                 .profileImageUrl(requestDto.getProfileImageUrl())
                 .birth(LocalDate.parse(requestDto.getBirth()))
                 .gender(requestDto.getGender() != null ? Gender.valueOf(requestDto.getGender().toUpperCase()) : null)
@@ -152,35 +153,52 @@ public class AuthService {
         return new VerifyCodeResponse(email);
     }
 
-    @Transactional
-    public ResetPasswordResponse resetPassword(ResetPasswordRequest request) {
-        Member member = memberRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new GeneralException(MemberErrorCode.VERIFICATION_NOT_FOUND));
+//    @Transactional
+//    public ResetPasswordResponse resetPassword(ResetPasswordRequest request) {
+//        Member member = memberRepository.findByEmail(request.getEmail())
+//                .orElseThrow(() -> new GeneralException(MemberErrorCode.VERIFICATION_NOT_FOUND));
+//
+//        if (!request.getNewPassword().equals(request.getConfirmPassword())) {
+//            throw new GeneralException(MemberErrorCode.PASSWORD_MISMATCH);
+//        }
+//
+//        String newPassword = request.getNewPassword();
+//        member.updatePassword(passwordEncoder.encode(newPassword));
+//        memberRepository.save(member);
+//
+//        return new ResetPasswordResponse(member.getEmail());
+//    }
 
-        if (!request.getNewPassword().equals(request.getConfirmPassword())) {
-            throw new GeneralException(MemberErrorCode.PASSWORD_MISMATCH);
+    /**
+     * Extracts the memberId from the JWT subject ("sub") claim.
+     *
+     * @param request the HttpServletRequest (not used directly, context is taken from SecurityContextHolder)
+     * @return the UUID parsed from the JWT subject claim
+     * @throws GeneralException if authentication is missing, not a JwtAuthenticationToken,
+     *                          or the subject is not a valid UUID
+     */
+    public UUID getMemberIdFromToken(HttpServletRequest request) {
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (!(authentication instanceof JwtAuthenticationToken jwtAuth)) {
+            throw new GeneralException(MemberErrorCode.INVALID_TOKEN);
         }
 
-        String newPassword = request.getNewPassword();
-        member.updatePassword(passwordEncoder.encode(newPassword));
-        memberRepository.save(member);
-
-        return new ResetPasswordResponse(member.getEmail());
-    }
-
-    public Long getMemberIdFromToken(HttpServletRequest request) {
-        String accessToken = request.getHeader("Authorization").substring(7);
-        return jwtTokenProvider.extractUserId(accessToken).orElseThrow(() -> new GeneralException(MemberErrorCode.INVALID_TOKEN));
-    }
-
-    public CheckPasswordResponse checkPassword(CheckPasswordRequest request) {
-        Member member = memberRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new GeneralException(MemberErrorCode.MEMBER_NOT_FOUND));
-
-        boolean isMatch = passwordEncoder.matches(request.getPassword(), member.getPassword());
-        if (!isMatch) {
-            throw new GeneralException(MemberErrorCode.INVALID_PASSWORD);
+        String sub = jwtAuth.getToken().getSubject();
+        try {
+            return UUID.fromString(sub);
+        } catch (IllegalArgumentException e) {
+            throw new GeneralException(MemberErrorCode.INVALID_TOKEN);
         }
-        return new CheckPasswordResponse(true);
     }
+
+//    public CheckPasswordResponse checkPassword(CheckPasswordRequest request) {
+//        Member member = memberRepository.findByEmail(request.getEmail())
+//                .orElseThrow(() -> new GeneralException(MemberErrorCode.MEMBER_NOT_FOUND));
+//
+//        boolean isMatch = passwordEncoder.matches(request.getPassword(), member.getPassword());
+//        if (!isMatch) {
+//            throw new GeneralException(MemberErrorCode.INVALID_PASSWORD);
+//        }
+//        return new CheckPasswordResponse(true);
+//    }
 }

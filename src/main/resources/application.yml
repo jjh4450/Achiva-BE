@@ -5,3 +5,14 @@ spring:
   application:
     name:
       Achiva
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://cognito-idp.ap-northeast-2.amazonaws.com/ap-northeast-2_MmVclnRmP
+
+  app:
+    security:
+      expected-audiences:
+        - a3kaacto97fom3ved1bjivbiu
