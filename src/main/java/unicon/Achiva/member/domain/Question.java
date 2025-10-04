@@ -5,14 +5,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import unicon.Achiva.common.BaseEntity;
+import unicon.Achiva.common.LongBaseEntity;
 
 @Getter
 @Entity
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Question extends BaseEntity {
+public class Question extends LongBaseEntity {
 
     // 질문목록인데 일단 String으로 처리. 객관식인거 확인되면 enum으로 변경해야함.
     private String title;

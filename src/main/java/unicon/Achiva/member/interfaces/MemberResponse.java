@@ -11,11 +11,12 @@ import unicon.Achiva.member.domain.Role;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Getter
 @Builder
 public class MemberResponse {
-    private Long id;
+    private UUID id;
     private String email;
     private String nickName;
     private LocalDate birth;

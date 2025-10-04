@@ -5,7 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import unicon.Achiva.common.BaseEntity;
+import unicon.Achiva.common.LongBaseEntity;
+import unicon.Achiva.common.UuidBaseEntity;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -17,10 +18,7 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Member extends BaseEntity {
-
-    @Column(nullable = false, unique = true)
-    private UUID sub;
+public class Member extends UuidBaseEntity {
 
     @Column(nullable = false, unique = true)
     private String email;

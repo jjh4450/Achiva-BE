@@ -27,7 +27,7 @@ public class UserInitializedAuthorizationManager implements AuthorizationManager
         Authentication auth = authentication.get();
         if (auth instanceof JwtAuthenticationToken token) {
             UUID sub = UUID.fromString(token.getToken().getSubject());
-            boolean exists = memberRepository.existsBySub(sub);
+            boolean exists = memberRepository.existsById(sub);
             return new AuthorizationDecision(exists);
         }
         // 비JWT는 여기서 판단하지 않음(다른 체인에 위임)

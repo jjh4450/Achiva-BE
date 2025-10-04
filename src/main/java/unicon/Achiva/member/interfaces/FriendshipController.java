@@ -10,6 +10,7 @@ import unicon.Achiva.member.domain.AuthService;
 import unicon.Achiva.member.domain.FriendshipService;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,7 +25,7 @@ public class FriendshipController {
             HttpServletRequest request,
             @RequestBody FriendshipRequest friendshipRequest
     ) {
-        Long memberId = authService.getMemberIdFromToken(request);
+        UUID memberId = authService.getMemberIdFromToken(request);
         FriendshipResponse response = friendshipService.sendFriendRequest(friendshipRequest, memberId);
         return ResponseEntity.ok(ApiResponseForm.success(response, "친구 신청 성공"));
     }
@@ -35,7 +36,7 @@ public class FriendshipController {
             HttpServletRequest request,
             @RequestParam Long friendshipId
     ) {
-        Long memberId = authService.getMemberIdFromToken(request);
+        UUID memberId = authService.getMemberIdFromToken(request);
         FriendshipResponse response = friendshipService.acceptFriendRequest(friendshipId, memberId);
         return ResponseEntity.ok(ApiResponseForm.success(response, "친구 신청 수락 성공"));
     }
@@ -46,7 +47,7 @@ public class FriendshipController {
             HttpServletRequest request,
             @RequestParam Long friendshipId
     ) {
-        Long memberId = authService.getMemberIdFromToken(request);
+        UUID memberId = authService.getMemberIdFromToken(request);
         FriendshipResponse response = friendshipService.rejectFriendRequest(friendshipId, memberId);
         return ResponseEntity.ok(ApiResponseForm.success(response, "친구 신청 거절 성공"));
     }
@@ -56,7 +57,7 @@ public class FriendshipController {
     public ResponseEntity<ApiResponseForm<List<FriendshipResponse>>> getFriendList(
             HttpServletRequest request
     ) {
-        Long memberId = authService.getMemberIdFromToken(request);
+        UUID memberId = authService.getMemberIdFromToken(request);
         List<FriendshipResponse> friendList = friendshipService.getFriends(memberId);
         return ResponseEntity.ok(ApiResponseForm.success(friendList, "친구 목록 조회 성공"));
     }
@@ -64,7 +65,7 @@ public class FriendshipController {
     @Operation(summary = "특정 유저 친구 목록 조회")
     @GetMapping("/api/friendships/{memberId}")
     public ResponseEntity<ApiResponseForm<List<FriendshipResponse>>> getFriendListByMemberId(
-            @PathVariable Long memberId
+            @PathVariable UUID memberId
     ) {
         List<FriendshipResponse> friendList = friendshipService.getFriends(memberId);
         return ResponseEntity.ok(ApiResponseForm.success(friendList, "특정 유저 친구 목록 조회 성공"));
@@ -84,7 +85,7 @@ public class FriendshipController {
     public ResponseEntity<ApiResponseForm<List<FriendshipResponse>>> getFriendRequests(
             HttpServletRequest request
     ) {
-        Long memberId = authService.getMemberIdFromToken(request);
+        UUID memberId = authService.getMemberIdFromToken(request);
         List<FriendshipResponse> friendRequests = friendshipService.getFriendRequests(memberId);
         return ResponseEntity.ok(ApiResponseForm.success(friendRequests, "친구 신청 목록 조회 성공"));
     }
@@ -94,7 +95,7 @@ public class FriendshipController {
     public ResponseEntity<ApiResponseForm<List<FriendshipResponse>>> getSentFriendRequests(
             HttpServletRequest request
     ) {
-        Long memberId = authService.getMemberIdFromToken(request);
+        UUID memberId = authService.getMemberIdFromToken(request);
         List<FriendshipResponse> sentRequests = friendshipService.getSentFriendRequests(memberId);
         return ResponseEntity.ok(ApiResponseForm.success(sentRequests, "보낸 친구 신청 목록 조회 성공"));
 

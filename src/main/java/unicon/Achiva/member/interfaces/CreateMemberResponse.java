@@ -8,11 +8,12 @@ import unicon.Achiva.member.domain.Member;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Getter
 @Builder
 public class CreateMemberResponse {
-    private Long id;
+    private UUID id;
     private String email;
     private String nickName;
     private String profileImageUrl;

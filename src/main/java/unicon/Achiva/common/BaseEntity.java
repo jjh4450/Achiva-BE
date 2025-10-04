@@ -12,12 +12,7 @@ import java.time.LocalDateTime;
 @Getter
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-public class BaseEntity extends AbstractAggregateRoot<BaseEntity> {
-
-    @Getter
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public abstract class BaseEntity extends AbstractAggregateRoot<BaseEntity> {
 
     @CreatedDate
     @Column(updatable = false)

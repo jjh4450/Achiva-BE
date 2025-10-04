@@ -12,6 +12,8 @@ import unicon.Achiva.member.interfaces.ConfirmProfileImageUploadRequest;
 import unicon.Achiva.member.interfaces.MemberResponse;
 import unicon.Achiva.member.interfaces.SearchMemberCondition;
 
+import java.util.UUID;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -20,7 +22,7 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
 
-    public MemberResponse getMemberInfo(Long memberId) {
+    public MemberResponse getMemberInfo(UUID memberId) {
         return memberRepository.findById(memberId)
                 .map(MemberResponse::fromEntity)
                 .orElseThrow(() -> new GeneralException(MemberErrorCode.MEMBER_NOT_FOUND));
@@ -38,7 +40,7 @@ public class MemberService {
     }
 
     @Transactional
-    public void updateProfileImageUrl(Long memberId, ConfirmProfileImageUploadRequest confirmProfileImageUploadRequest) {
+    public void updateProfileImageUrl(UUID memberId, ConfirmProfileImageUploadRequest confirmProfileImageUploadRequest) {
         memberRepository.findById(memberId).ifPresentOrElse(
                 member -> {
                     member.updateProfileImageUrl(confirmProfileImageUploadRequest.getUrl());

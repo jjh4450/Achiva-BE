@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import unicon.Achiva.common.BaseEntity;
+import unicon.Achiva.common.LongBaseEntity;
 import unicon.Achiva.member.interfaces.ArticleRequest;
 
 import java.util.ArrayList;
@@ -16,7 +16,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Article extends BaseEntity {
+public class Article extends LongBaseEntity {
 
     private String photoUrl;
 

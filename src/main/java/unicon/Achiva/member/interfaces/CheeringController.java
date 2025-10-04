@@ -13,6 +13,7 @@ import unicon.Achiva.member.domain.CheeringRequest;
 import unicon.Achiva.member.domain.CheeringService;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -28,7 +29,7 @@ public class CheeringController {
             @RequestParam Long articleId,
             HttpServletRequest httpServletRequest
             ) {
-        Long memberId = authService.getMemberIdFromToken(httpServletRequest);
+        UUID memberId = authService.getMemberIdFromToken(httpServletRequest);
         CheeringResponse response = cheeringService.createCheering(request, memberId, articleId);
         return ResponseEntity.ok(ApiResponseForm.success(response, "응원 작성 성공"));
     }
@@ -40,7 +41,7 @@ public class CheeringController {
             @RequestParam Long cheeringId,
             HttpServletRequest httpServletRequest
     ) {
-        Long memberId = authService.getMemberIdFromToken(httpServletRequest);
+        UUID memberId = authService.getMemberIdFromToken(httpServletRequest);
         CheeringResponse response = cheeringService.updateCheering(request, cheeringId, memberId);
         return ResponseEntity.ok(ApiResponseForm.success(response, "응원 수정 성공"));
     }
@@ -51,7 +52,7 @@ public class CheeringController {
             @RequestParam Long cheeringId,
             HttpServletRequest httpServletRequest
     ) {
-        Long memberId = authService.getMemberIdFromToken(httpServletRequest);
+        UUID memberId = authService.getMemberIdFromToken(httpServletRequest);
         cheeringService.deleteCheering(cheeringId, memberId);
         return ResponseEntity.ok(ApiResponseForm.success(null, "응원 삭제 성공"));
     }
@@ -81,7 +82,7 @@ public class CheeringController {
     public ResponseEntity<ApiResponseForm<UnreadCheeringResponse>> getUnreadCheeringCount(
             HttpServletRequest httpServletRequest
     ) {
-        Long memberId = authService.getMemberIdFromToken(httpServletRequest);
+        UUID memberId = authService.getMemberIdFromToken(httpServletRequest);
         UnreadCheeringResponse response = cheeringService.getUnreadCheeringCount(memberId);
         return ResponseEntity.ok(ApiResponseForm.success(response, "내 읽지 않은 응원 개수 조회 성공"));
     }
@@ -92,7 +93,7 @@ public class CheeringController {
             HttpServletRequest httpServletRequest,
             Pageable pageable
     ) {
-        Long memberId = authService.getMemberIdFromToken(httpServletRequest);
+        UUID memberId = authService.getMemberIdFromToken(httpServletRequest);
         Page<CheeringResponse> responses = cheeringService.getCheeringsByMemberId(memberId, pageable);
         return ResponseEntity.ok(ApiResponseForm.success(responses, "내가 받은 응원 목록 조회 성공"));
     }

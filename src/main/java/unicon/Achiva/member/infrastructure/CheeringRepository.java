@@ -10,6 +10,7 @@ import unicon.Achiva.member.domain.Member;
 import unicon.Achiva.member.interfaces.CategoryStatDto;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface CheeringRepository extends JpaRepository<Cheering, Long>, CheeringRepositoryCustom {
     Page<Cheering> findAllByArticleId(Long articleId, Pageable pageable);
@@ -19,11 +20,11 @@ public interface CheeringRepository extends JpaRepository<Cheering, Long>, Cheer
         from Cheering c
         where c.article.member.id = :me
     """)
-    List<Long> findDistinctCheererIdsWhoCheeredMyArticles(@Param("me") Long me);
+    List<Long> findDistinctCheererIdsWhoCheeredMyArticles(@Param("me") UUID me);
 
     Long countByArticle_MemberAndIsReadFalse(Member member);
 
-    Page<Cheering> findAllByArticle_Member_Id(Long memberId, Pageable pageable);
+    Page<Cheering> findAllByArticle_Member_Id(UUID memberId, Pageable pageable);
 
 
     // 내가 "보낸" 응원: 카테고리별 개수/점수

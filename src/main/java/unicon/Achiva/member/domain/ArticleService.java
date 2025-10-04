@@ -31,7 +31,7 @@ public class ArticleService {
 
 
     @Transactional
-    public ArticleResponse createArticle(ArticleRequest request, Long memberId) {
+    public ArticleResponse createArticle(ArticleRequest request, UUID memberId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new GeneralException(MemberErrorCode.MEMBER_NOT_FOUND));
         Category cat = Category.fromDisplayName(request.getCategory());
@@ -60,7 +60,7 @@ public class ArticleService {
     }
 
     @Transactional
-    public ArticleResponse updateArticle(ArticleRequest request, Long articleId, Long memberId) {
+    public ArticleResponse updateArticle(ArticleRequest request, Long articleId, UUID memberId) {
         Article article = articleRepository.findById(articleId)
                 .orElseThrow(() -> new GeneralException(ArticleErrorCode.ARTICLE_NOT_FOUND));
 
@@ -107,7 +107,7 @@ public class ArticleService {
 
     // 하드 딜리트
     @Transactional
-    public void deleteArticle(Long articleId, Long memberId) {
+    public void deleteArticle(Long articleId, UUID memberId) {
         Article article = articleRepository.findById(articleId)
                 .orElseThrow(() -> new GeneralException(ArticleErrorCode.ARTICLE_NOT_FOUND));
 
@@ -139,7 +139,7 @@ public class ArticleService {
                 .map(ArticleResponse::fromEntity);
     }
 
-    public Page<ArticleResponse> getArticlesByMember(Long memberId, Pageable pageable) {
+    public Page<ArticleResponse> getArticlesByMember(UUID memberId, Pageable pageable) {
         return articleRepository.findAllByMemberId(memberId, pageable)
                 .map(ArticleResponse::fromEntity);
     }
@@ -170,7 +170,7 @@ public class ArticleService {
         return CategoryCountResponse.fromObjectList(completeResult);
     }
 
-    public Page<ArticleResponse> getHomeArticles(Long myId, Pageable pageable) {
+    public Page<ArticleResponse> getHomeArticles(UUID myId, Pageable pageable) {
         List<Long> friendIds  = friendshipRepository.findFriendIdsOf(myId);
         List<Long> cheererIds = cheeringRepository.findDistinctCheererIdsWhoCheeredMyArticles(myId);
 
@@ -189,6 +189,7 @@ public class ArticleService {
 
 
     // 게시글 카테고리 순서 관련 메서드 by GPT
+    // by GPT 코드를 눈물을 흘리며 수정하는 사람 남김
     @Transactional
     public void moveCategory(Long articleId, Category newCategory) {
         Article a = articleRepository.findById(articleId).orElseThrow();
@@ -196,7 +197,7 @@ public class ArticleService {
         Category src = a.getCategory();
         if (src == newCategory) return;
 
-        Long memberId = a.getMember().getId();
+        UUID memberId = a.getMember().getId();
         long oldSeq   = a.getAuthorCategorySeq();
 
         // 1) 락 순서 고정 (교착 방지): 키를 문자열로 비교해 작은 쪽 먼저
@@ -220,7 +221,7 @@ public class ArticleService {
         a.changeCategoryAndSeq(newCategory, newSeq);
     }
 
-    public Page<ArticleResponse> getMemberInterestFeed(Long memberId, Pageable pageable) {
+    public Page<ArticleResponse> getMemberInterestFeed(UUID memberId, Pageable pageable) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new GeneralException(MemberErrorCode.MEMBER_NOT_FOUND));
 

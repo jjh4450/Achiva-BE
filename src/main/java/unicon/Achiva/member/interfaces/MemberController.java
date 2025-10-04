@@ -10,12 +10,12 @@ import org.springframework.web.bind.annotation.*;
 import unicon.Achiva.common.S3Service;
 import unicon.Achiva.global.response.ApiResponseForm;
 import unicon.Achiva.member.domain.ArticleService;
-import unicon.Achiva.member.domain.Category;
 import unicon.Achiva.member.domain.MemberService;
 import unicon.Achiva.member.domain.AuthService;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -29,7 +29,7 @@ public class MemberController {
     @Operation(summary = "내 정보 조회")
     @GetMapping("/api/members/me")
     public ResponseEntity<ApiResponseForm<MemberResponse>> getMyInfo(HttpServletRequest request) {
-        Long memberId = authService.getMemberIdFromToken(request);
+        UUID memberId = authService.getMemberIdFromToken(request);
         MemberResponse memberResponse = memberService.getMemberInfo(memberId);
         return ResponseEntity.ok(ApiResponseForm.success(memberResponse, "내 정보 조회 성공"));
     }
@@ -37,7 +37,7 @@ public class MemberController {
     @Operation(summary = "특정 유저 정보 조회")
     @GetMapping("/api/members/{memberId}")
     public ResponseEntity<ApiResponseForm<MemberResponse>> getMemberInfo(
-            @PathVariable Long memberId
+            @PathVariable UUID memberId
     ) {
         MemberResponse memberResponse = memberService.getMemberInfo(memberId);
         return ResponseEntity.ok(ApiResponseForm.success(memberResponse, "유저 정보 조회 성공"));

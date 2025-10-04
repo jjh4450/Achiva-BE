@@ -7,14 +7,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
 import unicon.Achiva.member.domain.Article;
 import unicon.Achiva.member.domain.Category;
 import unicon.Achiva.member.interfaces.SearchArticleCondition;
 
-import java.nio.channels.FileChannel;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 public interface ArticleRepository extends JpaRepository<Article, Long>, ArticleRepositoryCustom {
 
@@ -53,14 +52,14 @@ public interface ArticleRepository extends JpaRepository<Article, Long>, Article
          and a.category   = :category
          and a.authorCategorySeq > :fromSeq
     """)
-    int shiftLeft(@Param("memberId") Long memberId,
+    int shiftLeft(@Param("memberId") UUID memberId,
                   @Param("category") Category category,
                   @Param("fromSeq") long fromSeq);
 
 
     Page<Article> searchByCondition(SearchArticleCondition condition, Pageable pageable);
 
-    Page<Article> findAllByMemberId(Long memberId, Pageable pageable);
+    Page<Article> findAllByMemberId(UUID memberId, Pageable pageable);
 
     @EntityGraph(attributePaths = "member")
     Page<Article> findByCategoryIn(List<Category> categories, Pageable pageable);

@@ -11,6 +11,7 @@ import unicon.Achiva.member.interfaces.FriendshipRequest;
 import unicon.Achiva.member.interfaces.FriendshipResponse;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -23,8 +24,8 @@ public class FriendshipService {
     private final MemberRepository memberRepository;
 
     @Transactional
-    public FriendshipResponse sendFriendRequest(FriendshipRequest friendshipRequest, Long fromMemberId) {
-        Long toMemberId = friendshipRequest.getRecieverId();
+    public FriendshipResponse sendFriendRequest(FriendshipRequest friendshipRequest, UUID fromMemberId) {
+        UUID toMemberId = friendshipRequest.getRecieverId();
 
         if (!memberRepository.existsById(fromMemberId) || !memberRepository.existsById(toMemberId)) {
             throw new GeneralException(MemberErrorCode.MEMBER_NOT_FOUND);
@@ -41,7 +42,7 @@ public class FriendshipService {
     }
 
     @Transactional
-    public FriendshipResponse acceptFriendRequest(Long friendshipId, Long memberId) {
+    public FriendshipResponse acceptFriendRequest(Long friendshipId, UUID memberId) {
         Friendship friendship = friendshipRepository.findById(friendshipId)
                 .orElseThrow(() -> new GeneralException(FriendshipErrorCode.FRIENDSHIP_NOT_FOUND));
 
@@ -49,7 +50,7 @@ public class FriendshipService {
             throw new GeneralException(FriendshipErrorCode.FRIENDSHIP_ALREADY_PROCESSED);
         }
 
-        if (friendship.getReceiverId() != memberId) {
+        if (!friendship.getReceiverId().equals(memberId)) {
             throw new GeneralException(FriendshipErrorCode.FRIENDSHIP_NOT_RECEIVER);
         }
 
@@ -59,7 +60,7 @@ public class FriendshipService {
     }
 
     @Transactional
-    public FriendshipResponse rejectFriendRequest(Long friendshipId, Long memberId) {
+    public FriendshipResponse rejectFriendRequest(Long friendshipId, UUID memberId) {
         Friendship friendship = friendshipRepository.findById(friendshipId)
                 .orElseThrow(() -> new GeneralException(FriendshipErrorCode.FRIENDSHIP_NOT_FOUND));
 
@@ -67,7 +68,7 @@ public class FriendshipService {
             throw new GeneralException(FriendshipErrorCode.FRIENDSHIP_ALREADY_PROCESSED);
         }
 
-        if (friendship.getReceiverId() != memberId) {
+        if (!friendship.getReceiverId().equals(memberId)) {
             throw new GeneralException(FriendshipErrorCode.FRIENDSHIP_NOT_RECEIVER);
         }
 
@@ -76,21 +77,21 @@ public class FriendshipService {
         return FriendshipResponse.fromEntity(friendship);
     }
 
-    public List<FriendshipResponse> getFriendRequests(Long memberId) {
+    public List<FriendshipResponse> getFriendRequests(UUID memberId) {
         return friendshipRepository.findByReceiverIdAndStatus(memberId, FriendshipStatus.PENDING)
                 .stream()
                 .map(FriendshipResponse::fromEntity)
                 .collect(Collectors.toList());
     }
 
-    public List<FriendshipResponse> getSentFriendRequests(Long memberId) {
+    public List<FriendshipResponse> getSentFriendRequests(UUID memberId) {
         return friendshipRepository.findByRequesterIdAndStatus(memberId, FriendshipStatus.PENDING)
                 .stream()
                 .map(FriendshipResponse::fromEntity)
                 .collect(Collectors.toList());
     }
 
-    public List<FriendshipResponse> getFriends(Long memberId) {
+    public List<FriendshipResponse> getFriends(UUID memberId) {
         return friendshipRepository.findByRequesterIdOrReceiverId(memberId, memberId)
                 .stream()
                 .filter(friendship -> friendship.getStatus() == FriendshipStatus.ACCEPTED)
@@ -99,7 +100,7 @@ public class FriendshipService {
     }
 
     public List<FriendshipResponse> getFriendsByNickname(String nickname) {
-        Long memberId = memberRepository.findByNickName(nickname)
+        UUID memberId = memberRepository.findByNickName(nickname)
                 .orElseThrow(() -> new GeneralException(MemberErrorCode.MEMBER_NOT_FOUND))
                 .getId();
 

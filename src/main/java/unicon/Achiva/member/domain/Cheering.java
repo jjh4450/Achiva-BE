@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import unicon.Achiva.common.BaseEntity;
+import unicon.Achiva.common.LongBaseEntity;
 
 @Getter
 @Entity
@@ -17,7 +17,7 @@ import unicon.Achiva.common.BaseEntity;
         @Index(columnList = "sender_id, category"),
         @Index(columnList = "receiver_id, category")
 })
-public class Cheering extends BaseEntity {
+public class Cheering extends LongBaseEntity {
 
     @Lob
     private String content;
@@ -35,6 +35,7 @@ public class Cheering extends BaseEntity {
     @JoinColumn(name = "article_id")
     private Article article;
 
+    @Builder.Default
     private boolean isRead = false;
 
     public void updateContent(String content) {

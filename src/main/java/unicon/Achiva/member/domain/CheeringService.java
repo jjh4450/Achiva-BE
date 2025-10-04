@@ -13,6 +13,7 @@ import unicon.Achiva.member.infrastructure.CheeringRepository;
 import unicon.Achiva.member.infrastructure.MemberRepository;
 
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -27,7 +28,7 @@ public class CheeringService {
     private final ArticleRepository articleRepository;
 
     @Transactional
-    public CheeringResponse createCheering(CheeringRequest request, Long memberId, Long articleId) {
+    public CheeringResponse createCheering(CheeringRequest request, UUID memberId, Long articleId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new GeneralException(MemberErrorCode.MEMBER_NOT_FOUND));
 
@@ -48,7 +49,7 @@ public class CheeringService {
     }
 
     @Transactional
-    public CheeringResponse updateCheering(CheeringRequest request, Long cheeringId, Long memberId) {
+    public CheeringResponse updateCheering(CheeringRequest request, Long cheeringId, UUID memberId) {
         Cheering cheering = cheeringRepository.findById(cheeringId)
                 .orElseThrow(() -> new GeneralException(CheeringErrorCode.CHEERING_NOT_FOUND));
 
@@ -63,7 +64,7 @@ public class CheeringService {
     }
 
     @Transactional
-    public void deleteCheering(Long cheeringId, Long memberId) {
+    public void deleteCheering(Long cheeringId, UUID memberId) {
         Cheering cheering = cheeringRepository.findById(cheeringId)
                 .orElseThrow(() -> new GeneralException(CheeringErrorCode.CHEERING_NOT_FOUND));
 
@@ -85,7 +86,7 @@ public class CheeringService {
                 .map(CheeringResponse::fromEntity);
     }
 
-    public UnreadCheeringResponse getUnreadCheeringCount(Long memberId) {
+    public UnreadCheeringResponse getUnreadCheeringCount(UUID memberId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new GeneralException(MemberErrorCode.MEMBER_NOT_FOUND));
 
@@ -95,7 +96,7 @@ public class CheeringService {
                 .build();
     }
 
-    public Page<CheeringResponse> getCheeringsByMemberId(Long memberId, Pageable pageable) {
+    public Page<CheeringResponse> getCheeringsByMemberId(UUID memberId, Pageable pageable) {
         Page<Cheering> cheerings = cheeringRepository.findAllByArticle_Member_Id(memberId, pageable);
 
         return cheerings.map(CheeringResponse::fromEntity);

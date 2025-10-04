@@ -1,10 +1,6 @@
 package unicon.Achiva.member.interfaces;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import unicon.Achiva.global.response.ApiResponseForm;
 import unicon.Achiva.member.domain.AuthService;
 
-import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -47,7 +43,7 @@ public class AuthController {
     public ResponseEntity<ApiResponseForm<MemberResponse>> updateMemberInfo(
             @RequestBody UpdateMemberRequest requestDto,
             HttpServletRequest request) {
-        Long memberId = authService.getMemberIdFromToken(request);
+        UUID memberId = authService.getMemberIdFromToken(request);
         MemberResponse memberResponse = authService.updateMember(memberId, requestDto);
         return ResponseEntity.ok(ApiResponseForm.success(memberResponse, "회원 정보 수정 성공"));
     }
@@ -55,7 +51,7 @@ public class AuthController {
     @Operation(summary = "회원탈퇴(유저 정보 삭제)")
     @DeleteMapping("api/auth")
     public ResponseEntity<ApiResponseForm<Void>> deleteMember(HttpServletRequest request) {
-        Long memberId = authService.getMemberIdFromToken(request);
+        UUID memberId = authService.getMemberIdFromToken(request);
         authService.deleteMember(memberId);
         return ResponseEntity.ok(ApiResponseForm.success(null, "회원 탈퇴 성공"));
     }

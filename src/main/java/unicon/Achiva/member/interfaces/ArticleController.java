@@ -15,8 +15,8 @@ import unicon.Achiva.member.domain.ArticleService;
 import unicon.Achiva.member.domain.AuthService;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -32,7 +32,7 @@ public class ArticleController {
             @RequestBody ArticleRequest request,
             HttpServletRequest httpServletRequest
     ) {
-        Long memberId = authService.getMemberIdFromToken(httpServletRequest);
+        UUID memberId = authService.getMemberIdFromToken(httpServletRequest);
         ArticleResponse response = articleService.createArticle(request, memberId);
         return ResponseEntity.ok(ApiResponseForm.created(response, "게시글 작성 성공"));
     }
@@ -44,7 +44,7 @@ public class ArticleController {
             @RequestParam Long articleId,
             HttpServletRequest httpServletRequest
     ) {
-        Long memberId = authService.getMemberIdFromToken(httpServletRequest);
+        UUID memberId = authService.getMemberIdFromToken(httpServletRequest);
         ArticleResponse response = articleService.updateArticle(request, articleId, memberId);
         return ResponseEntity.ok(ApiResponseForm.success(response, "게시글 수정 성공"));
     }
@@ -55,7 +55,7 @@ public class ArticleController {
             HttpServletRequest httpServletRequest,
             @RequestParam Long articleId
     ) {
-        Long memberId = authService.getMemberIdFromToken(httpServletRequest);
+        UUID memberId = authService.getMemberIdFromToken(httpServletRequest);
         articleService.deleteArticle(articleId, memberId);
         return ResponseEntity.ok(ApiResponseForm.success(null, "게시글 삭제 성공"));
     }
@@ -86,7 +86,7 @@ public class ArticleController {
             HttpServletRequest httpServletRequest,
             Pageable pageable
     ) {
-        Long memberId = authService.getMemberIdFromToken(httpServletRequest);
+        UUID memberId = authService.getMemberIdFromToken(httpServletRequest);
         Page<ArticleResponse> response = articleService.getArticlesByMember(memberId, pageable);
         return ResponseEntity.ok(ApiResponseForm.success(response, "내 게시글 목록 조회 성공"));
     }
@@ -94,7 +94,7 @@ public class ArticleController {
     @Operation(summary = "특정 유저 게시글 목록 조회")
     @GetMapping("/api/member/{memberId}/articles")
     public ResponseEntity<ApiResponseForm<Page<ArticleResponse>>> getArticlesByMember(
-            @PathVariable Long memberId,
+            @PathVariable UUID memberId,
             Pageable pageable
     ) {
         Page<ArticleResponse> response = articleService.getArticlesByMember(memberId, pageable);
@@ -130,7 +130,7 @@ public class ArticleController {
             @PageableDefault(size = 10) Pageable pageable,
             HttpServletRequest request
     ) {
-        Long memberId = authService.getMemberIdFromToken(request);
+        UUID memberId = authService.getMemberIdFromToken(request);
         Page<ArticleResponse> page = articleService.getHomeArticles(memberId, pageable);
         return ResponseEntity.ok(page);
     }
@@ -138,7 +138,7 @@ public class ArticleController {
     @Operation(summary = "멤버 관심 카테고리 기반 최신글 게시글 목록")
     @GetMapping("/api/members/{memberId}/feed")
     public ResponseEntity<ApiResponseForm<Page<ArticleResponse>>> getFeed(
-            @PathVariable Long memberId,
+            @PathVariable UUID memberId,
             @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC)
             Pageable pageable
     ) {

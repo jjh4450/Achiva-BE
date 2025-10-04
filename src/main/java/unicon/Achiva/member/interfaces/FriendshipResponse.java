@@ -5,12 +5,14 @@ import lombok.Getter;
 import unicon.Achiva.member.domain.Friendship;
 import unicon.Achiva.member.domain.FriendshipStatus;
 
+import java.util.UUID;
+
 @Getter
 @Builder
 public class FriendshipResponse {
     private Long id;
-    private Long requesterId;
-    private Long receiverId;
+    private UUID requesterId;
+    private UUID receiverId;
     private FriendshipStatus status;
 
     public static FriendshipResponse fromEntity(Friendship friendship) {

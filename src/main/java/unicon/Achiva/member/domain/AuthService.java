@@ -4,7 +4,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,7 +58,7 @@ public class AuthService {
     }
 
     @Transactional
-    public MemberResponse updateMember(Long memberId, UpdateMemberRequest requestDto) {
+    public MemberResponse updateMember(UUID memberId, UpdateMemberRequest requestDto) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new GeneralException(MemberErrorCode.MEMBER_NOT_FOUND));
 
@@ -92,7 +91,7 @@ public class AuthService {
     }
 
     @Transactional
-    public void deleteMember(Long memberId) {
+    public void deleteMember(UUID memberId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new GeneralException(MemberErrorCode.MEMBER_NOT_FOUND));
         memberRepository.delete(member);
@@ -179,14 +178,18 @@ public class AuthService {
      */
     public UUID getMemberIdFromToken(HttpServletRequest request) {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
+        log.info("getMemberIdFromToken work");
         if (!(authentication instanceof JwtAuthenticationToken jwtAuth)) {
+            log.info("invalid token");
             throw new GeneralException(MemberErrorCode.INVALID_TOKEN);
         }
 
         String sub = jwtAuth.getToken().getSubject();
         try {
+            log.info(sub);
             return UUID.fromString(sub);
         } catch (IllegalArgumentException e) {
+            log.error(e.getMessage());
             throw new GeneralException(MemberErrorCode.INVALID_TOKEN);
         }
     }

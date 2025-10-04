@@ -6,15 +6,15 @@ import org.springframework.data.repository.query.Param;
 import unicon.Achiva.member.domain.Friendship;
 import unicon.Achiva.member.domain.FriendshipStatus;
 
-import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 public interface FriendshipRepository extends JpaRepository<Friendship, Long> {
-    List<Friendship> findByReceiverIdAndStatus(Long memberId, FriendshipStatus friendshipStatus);
+    List<Friendship> findByReceiverIdAndStatus(UUID memberId, FriendshipStatus friendshipStatus);
 
-    List<Friendship> findByRequesterIdOrReceiverId(Long memberId, Long memberId1);
+    List<Friendship> findByRequesterIdOrReceiverId(UUID memberId, UUID memberId1);
 
-    List<Friendship> findByRequesterIdAndStatus(Long memberId, FriendshipStatus friendshipStatus);
+    List<Friendship> findByRequesterIdAndStatus(UUID memberId, FriendshipStatus friendshipStatus);
 
     @Query("""
         select case when f.requesterId = :me then f.receiverId else f.requesterId end
@@ -22,5 +22,5 @@ public interface FriendshipRepository extends JpaRepository<Friendship, Long> {
         where f.status = unicon.Achiva.member.domain.FriendshipStatus.ACCEPTED
           and (f.requesterId = :me or f.receiverId = :me)
     """)
-    List<Long> findFriendIdsOf(@Param("me") Long me);
+    List<Long> findFriendIdsOf(@Param("me") UUID me);
 }

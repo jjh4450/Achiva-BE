@@ -5,6 +5,7 @@ import lombok.Getter;
 import unicon.Achiva.member.domain.Cheering;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Getter
 @Builder
@@ -12,10 +13,10 @@ public class CheeringResponse {
     private Long id;
     private String content;
     private String cheeringCategory;
-    private Long senderId;
+    private UUID senderId;
     private String senderName;
     private String senderProfileImageUrl;
-    private Long receiverId;
+    private UUID receiverId;
     private String receiverName;
     private Long articleId;
     private Boolean isRead;

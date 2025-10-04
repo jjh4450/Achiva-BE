@@ -7,6 +7,7 @@ import unicon.Achiva.member.domain.Category;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Getter
 @Builder
@@ -16,7 +17,7 @@ public class ArticleResponse {
     private String title;
     private String category;
     private List<ArticleRequest.QuestionDTO> question;
-    private Long memberId;
+    private UUID memberId;
     private String memberNickName;
     private String memberProfileUrl;
     private String backgroundColor;
