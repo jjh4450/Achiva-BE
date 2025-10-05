@@ -4,11 +4,12 @@ import lombok.Getter;
 
 @Getter
 public class ApiResponseForm<T> {
-    // 제네릭 api 응답 객체
-    private String status;
-    private Integer code;
-    private String message;
     private final T data;
+    // 제네릭 api 응답 객체
+    private final String status;
+    private final Integer code;
+    private final String message;
+
     public ApiResponseForm(String status, Integer code, String message, T data) {
         this.status = status; // HttpResponse의 생성자 호출 (부모 클래스의 생성자 또는 메서드를 호출, 자식 클래스는 부모 클래스의 private 필드에 직접 접근 X)
         this.code = code;

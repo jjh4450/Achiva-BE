@@ -20,7 +20,9 @@ public class UserInitializedAuthorizationManager implements AuthorizationManager
         this.memberRepository = memberRepository;
     }
 
-    /** JWT의 sub가 Member에 없으면 접근 거부 결정을 반환합니다. */
+    /**
+     * JWT의 sub가 Member에 없으면 접근 거부 결정을 반환합니다.
+     */
     @Override
     public AuthorizationDecision check(Supplier<Authentication> authentication,
                                        RequestAuthorizationContext context) {

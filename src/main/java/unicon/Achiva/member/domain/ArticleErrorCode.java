@@ -5,7 +5,8 @@ import unicon.Achiva.global.response.ErrorCode;
 
 public enum ArticleErrorCode implements ErrorCode {
     ARTICLE_NOT_FOUND(2000, "해당 게시글을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
-    UNAUTHORIZED_MEMBER(2001, "해당 게시글에 대한 수정/삭제 권한이 없습니다.", HttpStatus.FORBIDDEN),;
+    UNAUTHORIZED_MEMBER(2001, "해당 게시글에 대한 수정/삭제 권한이 없습니다.", HttpStatus.FORBIDDEN),
+    ;
 
     private final Integer code;
     private final String message;

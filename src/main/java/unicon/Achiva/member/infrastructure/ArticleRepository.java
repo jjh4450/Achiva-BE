@@ -23,21 +23,20 @@ public interface ArticleRepository extends JpaRepository<Article, Long>, Article
 
     @EntityGraph(attributePaths = "member")
     @Query(value = """
-    select a
-    from Article a
-    where a.member.id in :friendIds
-       or a.member.id in :cheererIds
-    order by
-       case when a.member.id in :friendIds then 0 else 1 end,
-       a.createdAt desc
-    """,
+            select a
+            from Article a
+            where a.member.id in :friendIds
+               or a.member.id in :cheererIds
+            order by
+               case when a.member.id in :friendIds then 0 else 1 end,
+               a.createdAt desc
+            """,
             countQuery = """
-    select count(a)
-    from Article a
-    where a.member.id in :friendIds
-       or a.member.id in :cheererIds
-    """)
-
+                    select count(a)
+                    from Article a
+                    where a.member.id in :friendIds
+                       or a.member.id in :cheererIds
+                    """)
     Page<Article> findCombinedFeed(
             @Param("friendIds") Collection<Long> friendIds,
             @Param("cheererIds") Collection<Long> cheererIds,
@@ -46,12 +45,12 @@ public interface ArticleRepository extends JpaRepository<Article, Long>, Article
 
     @Modifying(flushAutomatically = true)
     @Query("""
-      update Article a
-         set a.authorCategorySeq = a.authorCategorySeq - 1
-       where a.member.id = :memberId
-         and a.category   = :category
-         and a.authorCategorySeq > :fromSeq
-    """)
+              update Article a
+                 set a.authorCategorySeq = a.authorCategorySeq - 1
+               where a.member.id = :memberId
+                 and a.category   = :category
+                 and a.authorCategorySeq > :fromSeq
+            """)
     int shiftLeft(@Param("memberId") UUID memberId,
                   @Param("category") Category category,
                   @Param("fromSeq") long fromSeq);

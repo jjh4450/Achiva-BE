@@ -1,6 +1,5 @@
 package unicon.Achiva.member.domain;
 
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -8,13 +7,11 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import unicon.Achiva.global.response.GeneralException;
-import unicon.Achiva.global.security.jwt.utils.JwtTokenProvider;
 import unicon.Achiva.member.infrastructure.EmailVerificationRepository;
 import unicon.Achiva.member.infrastructure.MemberRepository;
 import unicon.Achiva.member.interfaces.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Random;
 import java.util.UUID;
 
@@ -81,7 +78,7 @@ public class AuthService {
                     .map(Category::fromDisplayName)
                     .toList());
         }
-        if(requestDto.getDescription() != null) {
+        if (requestDto.getDescription() != null) {
             member.updateDescription(requestDto.getDescription());
         }
         memberRepository.save(member);
@@ -99,6 +96,7 @@ public class AuthService {
         validateDuplicateEmail(email);
         validateDuplicateNickName(nickName);
     }
+
     public CheckEmailResponse validateDuplicateEmail(String email) {
         boolean isExists = memberRepository.existsByEmail(email);
         if (isExists) {
@@ -106,6 +104,7 @@ public class AuthService {
         }
         return new CheckEmailResponse(true);
     }
+
     public CheckNicknameResponse validateDuplicateNickName(String nickName) {
         boolean isExists = memberRepository.existsByNickName(nickName);
         if (isExists) {

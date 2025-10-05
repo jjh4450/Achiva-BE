@@ -5,7 +5,8 @@ import unicon.Achiva.global.response.ErrorCode;
 
 public enum CheeringErrorCode implements ErrorCode {
     CHEERING_NOT_FOUND(4001, "해당 응원을 찾을 수 없습니다", HttpStatus.NOT_FOUND),
-    UNAUTHORIZED_MEMBER(4002, "응원을 작성한 사용자가 아닙니다", HttpStatus.UNAUTHORIZED ),;
+    UNAUTHORIZED_MEMBER(4002, "응원을 작성한 사용자가 아닙니다", HttpStatus.UNAUTHORIZED),
+    ;
 
 
     private final Integer code;

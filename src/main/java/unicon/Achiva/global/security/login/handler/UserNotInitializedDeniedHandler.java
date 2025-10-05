@@ -15,7 +15,9 @@ public class UserNotInitializedDeniedHandler implements AccessDeniedHandler {
 
     private final ObjectMapper om = new ObjectMapper();
 
-    /** 초기화 미완료 차단 시 428과 표준 JSON 바디를 응답합니다. */
+    /**
+     * 초기화 미완료 차단 시 428과 표준 JSON 바디를 응답합니다.
+     */
     @Override
     public void handle(HttpServletRequest request,
                        HttpServletResponse response,

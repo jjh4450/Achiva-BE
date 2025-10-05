@@ -5,7 +5,6 @@ import lombok.Getter;
 import unicon.Achiva.member.domain.Category;
 import unicon.Achiva.member.domain.Member;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -34,8 +33,8 @@ public class CreateMemberResponse {
                 .region(member.getRegion() != null ? member.getRegion() : null)
                 .categories(
                         member.getCategories().stream()
-                        .map(Category::getDescription)
-                        .toList()
+                                .map(Category::getDescription)
+                                .toList()
                 )
                 .createdAt(member.getCreatedAt())
                 .build();

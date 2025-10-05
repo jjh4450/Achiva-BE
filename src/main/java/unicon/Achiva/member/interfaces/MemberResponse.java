@@ -2,7 +2,6 @@ package unicon.Achiva.member.interfaces;
 
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import unicon.Achiva.member.domain.Category;
 import unicon.Achiva.member.domain.Gender;
 import unicon.Achiva.member.domain.Member;

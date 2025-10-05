@@ -17,10 +17,10 @@ public interface FriendshipRepository extends JpaRepository<Friendship, Long> {
     List<Friendship> findByRequesterIdAndStatus(UUID memberId, FriendshipStatus friendshipStatus);
 
     @Query("""
-        select case when f.requesterId = :me then f.receiverId else f.requesterId end
-        from Friendship f
-        where f.status = unicon.Achiva.member.domain.FriendshipStatus.ACCEPTED
-          and (f.requesterId = :me or f.receiverId = :me)
-    """)
+                select case when f.requesterId = :me then f.receiverId else f.requesterId end
+                from Friendship f
+                where f.status = unicon.Achiva.member.domain.FriendshipStatus.ACCEPTED
+                  and (f.requesterId = :me or f.receiverId = :me)
+            """)
     List<Long> findFriendIdsOf(@Param("me") UUID me);
 }

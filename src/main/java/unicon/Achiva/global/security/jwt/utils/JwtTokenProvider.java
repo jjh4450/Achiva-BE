@@ -22,21 +22,17 @@ import java.util.Optional;
 @Transactional
 public class JwtTokenProvider {
 
-    @Value("${jwt.secret.key}")
-    private String secretKey;
-
-    @Value("${jwt.access.expiration}")
-    private Long accessTokenExpirationPeriod;
-
-    @Value("${jwt.access.header}")
-    private String accessHeader;
-
     private static final String ACCESS_TOKEN_SUBJECT = "AccessToken";
     private static final String EMAIL_CLAIM = "email";
     private static final String BEARER = "Bearer ";
     private static final String USER_ID_CLAIM = "userId";
-
     private final MemberRepository memberRepository;
+    @Value("${jwt.secret.key}")
+    private String secretKey;
+    @Value("${jwt.access.expiration}")
+    private Long accessTokenExpirationPeriod;
+    @Value("${jwt.access.header}")
+    private String accessHeader;
 
     // accessToken 생성
     public String createAccessToken(String email, Long userId) {

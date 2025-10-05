@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public class CheckPasswordResponse {
-    private boolean isMatch;
+    private final boolean isMatch;
 
     public CheckPasswordResponse(boolean isMatch) {
         this.isMatch = isMatch;
