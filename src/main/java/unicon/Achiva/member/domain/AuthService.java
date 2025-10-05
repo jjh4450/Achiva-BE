@@ -27,14 +27,10 @@ public class AuthService {
     private final MemberRepository memberRepository;
     private final EmailService emailService;
     private final EmailVerificationRepository emailVerificationRepository;
-    private final JwtTokenProvider jwtTokenProvider;
 
     @Transactional
     public CreateMemberResponse signup(MemberRequest requestDto) {
         validateDuplication(requestDto.getNickName(), requestDto.getEmail());
-//        if (!requestDto.getPassword().equals(requestDto.getConfirmPassword())) {
-//            throw new GeneralException(MemberErrorCode.PASSWORD_MISMATCH);
-//        }
 
         Member member = Member.builder()
                 .email(requestDto.getEmail())
@@ -49,7 +45,7 @@ public class AuthService {
                 .role(Role.USER)
                 .build();
 
-        member.dangerFuctiononlyInitUserId(getMemberIdFromToken(null));
+        member.dangerFuctiononlyInitUserId(getMemberIdFromToken());
 
         Member savedMember = memberRepository.save(member);
 
@@ -136,23 +132,23 @@ public class AuthService {
         return new SendVerificationCodeResponse(email);
     }
 
-    @Transactional
-    public VerifyCodeResponse verifyCode(String email, String code) {
-        EmailVerification verification = emailVerificationRepository.findByEmail(email)
-                .orElseThrow(() -> new GeneralException(MemberErrorCode.VERIFICATION_NOT_FOUND));
-
-        if (verification.getExpiryDate().isBefore(LocalDateTime.now())) {
-            throw new GeneralException(MemberErrorCode.VERIFICATION_EXPIRED);
-        }
-        if (!verification.getCode().equals(code)) {
-            throw new GeneralException(MemberErrorCode.VERIFICATION_CODE_MISMATCH);
-        }
-
-        verification.endVerification();
-        emailVerificationRepository.save(verification);
-
-        return new VerifyCodeResponse(email);
-    }
+//    @Transactional
+//    public VerifyCodeResponse verifyCode(String email, String code) {
+//        EmailVerification verification = emailVerificationRepository.findByEmail(email)
+//                .orElseThrow(() -> new GeneralException(MemberErrorCode.VERIFICATION_NOT_FOUND));
+//
+//        if (verification.getExpiryDate().isBefore(LocalDateTime.now())) {
+//            throw new GeneralException(MemberErrorCode.VERIFICATION_EXPIRED);
+//        }
+//        if (!verification.getCode().equals(code)) {
+//            throw new GeneralException(MemberErrorCode.VERIFICATION_CODE_MISMATCH);
+//        }
+//
+//        verification.endVerification();
+//        emailVerificationRepository.save(verification);
+//
+//        return new VerifyCodeResponse(email);
+//    }
 
 //    @Transactional
 //    public ResetPasswordResponse resetPassword(ResetPasswordRequest request) {
@@ -173,25 +169,20 @@ public class AuthService {
     /**
      * Extracts the memberId from the JWT subject ("sub") claim.
      *
-     * @param request the HttpServletRequest (not used directly, context is taken from SecurityContextHolder)
      * @return the UUID parsed from the JWT subject claim
      * @throws GeneralException if authentication is missing, not a JwtAuthenticationToken,
      *                          or the subject is not a valid UUID
      */
-    public UUID getMemberIdFromToken(HttpServletRequest request) {
+    public UUID getMemberIdFromToken() {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
-        log.info("getMemberIdFromToken work");
         if (!(authentication instanceof JwtAuthenticationToken jwtAuth)) {
-            log.info("invalid token");
             throw new GeneralException(MemberErrorCode.INVALID_TOKEN);
         }
 
         String sub = jwtAuth.getToken().getSubject();
         try {
-            log.info(sub);
             return UUID.fromString(sub);
         } catch (IllegalArgumentException e) {
-            log.error(e.getMessage());
             throw new GeneralException(MemberErrorCode.INVALID_TOKEN);
         }
     }

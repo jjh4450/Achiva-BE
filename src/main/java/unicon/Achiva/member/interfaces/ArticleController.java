@@ -29,10 +29,9 @@ public class ArticleController {
     @Operation(summary = "새 게시글 작성")
     @PostMapping("/api/articles")
     public ResponseEntity<ApiResponseForm<ArticleResponse>> createArticle(
-            @RequestBody ArticleRequest request,
-            HttpServletRequest httpServletRequest
+            @RequestBody ArticleRequest request
     ) {
-        UUID memberId = authService.getMemberIdFromToken(httpServletRequest);
+        UUID memberId = authService.getMemberIdFromToken();
         ArticleResponse response = articleService.createArticle(request, memberId);
         return ResponseEntity.ok(ApiResponseForm.created(response, "게시글 작성 성공"));
     }
@@ -41,10 +40,9 @@ public class ArticleController {
     @PutMapping("/api/articles/{articleId}")
     public ResponseEntity<ApiResponseForm<ArticleResponse>> updateArticle(
             @RequestBody ArticleRequest request,
-            @RequestParam Long articleId,
-            HttpServletRequest httpServletRequest
+            @RequestParam Long articleId
     ) {
-        UUID memberId = authService.getMemberIdFromToken(httpServletRequest);
+        UUID memberId = authService.getMemberIdFromToken();
         ArticleResponse response = articleService.updateArticle(request, articleId, memberId);
         return ResponseEntity.ok(ApiResponseForm.success(response, "게시글 수정 성공"));
     }
@@ -52,10 +50,9 @@ public class ArticleController {
     @Operation(summary = "게시글 삭제")
     @DeleteMapping("/api/articles/{articleId}/delete")
     public ResponseEntity<ApiResponseForm<Void>> deleteArticle(
-            HttpServletRequest httpServletRequest,
             @RequestParam Long articleId
     ) {
-        UUID memberId = authService.getMemberIdFromToken(httpServletRequest);
+        UUID memberId = authService.getMemberIdFromToken();
         articleService.deleteArticle(articleId, memberId);
         return ResponseEntity.ok(ApiResponseForm.success(null, "게시글 삭제 성공"));
     }
@@ -83,10 +80,9 @@ public class ArticleController {
     @Operation(summary = "내 게시글 목록 조회")
     @GetMapping("/api/articles/my-articles")
     public ResponseEntity<ApiResponseForm<Page<ArticleResponse>>> getMyArticles(
-            HttpServletRequest httpServletRequest,
             Pageable pageable
     ) {
-        UUID memberId = authService.getMemberIdFromToken(httpServletRequest);
+        UUID memberId = authService.getMemberIdFromToken();
         Page<ArticleResponse> response = articleService.getArticlesByMember(memberId, pageable);
         return ResponseEntity.ok(ApiResponseForm.success(response, "내 게시글 목록 조회 성공"));
     }
@@ -127,10 +123,9 @@ public class ArticleController {
     @Operation(summary = "홈화면 게시글 목록 조회")
     @GetMapping("/api/articles/home")
     public ResponseEntity<Page<ArticleResponse>> getCombinedFeed(
-            @PageableDefault(size = 10) Pageable pageable,
-            HttpServletRequest request
+            @PageableDefault(size = 10) Pageable pageable
     ) {
-        UUID memberId = authService.getMemberIdFromToken(request);
+        UUID memberId = authService.getMemberIdFromToken();
         Page<ArticleResponse> page = articleService.getHomeArticles(memberId, pageable);
         return ResponseEntity.ok(page);
     }

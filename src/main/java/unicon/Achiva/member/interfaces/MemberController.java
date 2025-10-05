@@ -28,8 +28,8 @@ public class MemberController {
 
     @Operation(summary = "내 정보 조회")
     @GetMapping("/api/members/me")
-    public ResponseEntity<ApiResponseForm<MemberResponse>> getMyInfo(HttpServletRequest request) {
-        UUID memberId = authService.getMemberIdFromToken(request);
+    public ResponseEntity<ApiResponseForm<MemberResponse>> getMyInfo() {
+        UUID memberId = authService.getMemberIdFromToken();
         MemberResponse memberResponse = memberService.getMemberInfo(memberId);
         return ResponseEntity.ok(ApiResponseForm.success(memberResponse, "내 정보 조회 성공"));
     }

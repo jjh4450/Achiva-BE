@@ -41,17 +41,16 @@ public class AuthController {
     @Operation(summary = "회원 정보 수정")
     @PutMapping("api/auth")
     public ResponseEntity<ApiResponseForm<MemberResponse>> updateMemberInfo(
-            @RequestBody UpdateMemberRequest requestDto,
-            HttpServletRequest request) {
-        UUID memberId = authService.getMemberIdFromToken(request);
+            @RequestBody UpdateMemberRequest requestDto) {
+        UUID memberId = authService.getMemberIdFromToken();
         MemberResponse memberResponse = authService.updateMember(memberId, requestDto);
         return ResponseEntity.ok(ApiResponseForm.success(memberResponse, "회원 정보 수정 성공"));
     }
 
     @Operation(summary = "회원탈퇴(유저 정보 삭제)")
     @DeleteMapping("api/auth")
-    public ResponseEntity<ApiResponseForm<Void>> deleteMember(HttpServletRequest request) {
-        UUID memberId = authService.getMemberIdFromToken(request);
+    public ResponseEntity<ApiResponseForm<Void>> deleteMember() {
+        UUID memberId = authService.getMemberIdFromToken();
         authService.deleteMember(memberId);
         return ResponseEntity.ok(ApiResponseForm.success(null, "회원 탈퇴 성공"));
     }

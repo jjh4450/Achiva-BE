@@ -22,10 +22,9 @@ public class FriendshipController {
     @Operation(summary = "친구 신청")
     @PostMapping("/api/friendships")
     public ResponseEntity<ApiResponseForm<FriendshipResponse>> sendFriendRequest(
-            HttpServletRequest request,
             @RequestBody FriendshipRequest friendshipRequest
     ) {
-        UUID memberId = authService.getMemberIdFromToken(request);
+        UUID memberId = authService.getMemberIdFromToken();
         FriendshipResponse response = friendshipService.sendFriendRequest(friendshipRequest, memberId);
         return ResponseEntity.ok(ApiResponseForm.success(response, "친구 신청 성공"));
     }
@@ -33,10 +32,9 @@ public class FriendshipController {
     @Operation(summary = "친구 신청 수락")
     @PatchMapping("/api/friendships/{friendshipId}/accept")
     public ResponseEntity<ApiResponseForm<FriendshipResponse>> acceptFriendRequest(
-            HttpServletRequest request,
             @RequestParam Long friendshipId
     ) {
-        UUID memberId = authService.getMemberIdFromToken(request);
+        UUID memberId = authService.getMemberIdFromToken();
         FriendshipResponse response = friendshipService.acceptFriendRequest(friendshipId, memberId);
         return ResponseEntity.ok(ApiResponseForm.success(response, "친구 신청 수락 성공"));
     }
@@ -44,10 +42,9 @@ public class FriendshipController {
     @Operation(summary = "친구 신청 거절")
     @PatchMapping("/api/friendships/{friendshipId}/reject")
     public ResponseEntity<ApiResponseForm<FriendshipResponse>> rejectFriendRequest(
-            HttpServletRequest request,
             @RequestParam Long friendshipId
     ) {
-        UUID memberId = authService.getMemberIdFromToken(request);
+        UUID memberId = authService.getMemberIdFromToken();
         FriendshipResponse response = friendshipService.rejectFriendRequest(friendshipId, memberId);
         return ResponseEntity.ok(ApiResponseForm.success(response, "친구 신청 거절 성공"));
     }
@@ -55,9 +52,8 @@ public class FriendshipController {
     @Operation(summary = "친구 목록 조회")
     @GetMapping("/api/friendships")
     public ResponseEntity<ApiResponseForm<List<FriendshipResponse>>> getFriendList(
-            HttpServletRequest request
     ) {
-        UUID memberId = authService.getMemberIdFromToken(request);
+        UUID memberId = authService.getMemberIdFromToken();
         List<FriendshipResponse> friendList = friendshipService.getFriends(memberId);
         return ResponseEntity.ok(ApiResponseForm.success(friendList, "친구 목록 조회 성공"));
     }
@@ -83,9 +79,8 @@ public class FriendshipController {
     @Operation(summary = "내게 온 친구 신청 목록 조회")
     @GetMapping("/api/friendships/requests")
     public ResponseEntity<ApiResponseForm<List<FriendshipResponse>>> getFriendRequests(
-            HttpServletRequest request
     ) {
-        UUID memberId = authService.getMemberIdFromToken(request);
+        UUID memberId = authService.getMemberIdFromToken();
         List<FriendshipResponse> friendRequests = friendshipService.getFriendRequests(memberId);
         return ResponseEntity.ok(ApiResponseForm.success(friendRequests, "친구 신청 목록 조회 성공"));
     }
@@ -93,9 +88,8 @@ public class FriendshipController {
     @Operation(summary = "내가 보낸 친구 신청 목록 조회")
     @GetMapping("/api/friendships/sent-requests")
     public ResponseEntity<ApiResponseForm<List<FriendshipResponse>>> getSentFriendRequests(
-            HttpServletRequest request
     ) {
-        UUID memberId = authService.getMemberIdFromToken(request);
+        UUID memberId = authService.getMemberIdFromToken();
         List<FriendshipResponse> sentRequests = friendshipService.getSentFriendRequests(memberId);
         return ResponseEntity.ok(ApiResponseForm.success(sentRequests, "보낸 친구 신청 목록 조회 성공"));
 

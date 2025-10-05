@@ -26,10 +26,9 @@ public class CheeringController {
     @PostMapping("/api/articles/{articleId}/cheerings")
     public ResponseEntity<ApiResponseForm<CheeringResponse>> createCheering(
             @RequestBody CheeringRequest request,
-            @RequestParam Long articleId,
-            HttpServletRequest httpServletRequest
+            @RequestParam Long articleId
             ) {
-        UUID memberId = authService.getMemberIdFromToken(httpServletRequest);
+        UUID memberId = authService.getMemberIdFromToken();
         CheeringResponse response = cheeringService.createCheering(request, memberId, articleId);
         return ResponseEntity.ok(ApiResponseForm.success(response, "응원 작성 성공"));
     }
@@ -38,10 +37,9 @@ public class CheeringController {
     @PutMapping("api/articles/{articleId}/cheerings/{cheeringId}")
     public ResponseEntity<ApiResponseForm<CheeringResponse>> updateCheering(
             @RequestBody CheeringRequest request,
-            @RequestParam Long cheeringId,
-            HttpServletRequest httpServletRequest
+            @RequestParam Long cheeringId
     ) {
-        UUID memberId = authService.getMemberIdFromToken(httpServletRequest);
+        UUID memberId = authService.getMemberIdFromToken();
         CheeringResponse response = cheeringService.updateCheering(request, cheeringId, memberId);
         return ResponseEntity.ok(ApiResponseForm.success(response, "응원 수정 성공"));
     }
@@ -49,10 +47,9 @@ public class CheeringController {
     @Operation(summary = "응원 삭제")
     @DeleteMapping("api/articles/{articleId}/cheerings/{cheeringId}")
     public ResponseEntity<ApiResponseForm<Void>> deleteCheering(
-            @RequestParam Long cheeringId,
-            HttpServletRequest httpServletRequest
+            @RequestParam Long cheeringId
     ) {
-        UUID memberId = authService.getMemberIdFromToken(httpServletRequest);
+        UUID memberId = authService.getMemberIdFromToken();
         cheeringService.deleteCheering(cheeringId, memberId);
         return ResponseEntity.ok(ApiResponseForm.success(null, "응원 삭제 성공"));
     }
@@ -79,10 +76,8 @@ public class CheeringController {
 
     @Operation(summary = "내 읽지 않은 응원 개수 조회")
     @GetMapping("/api/cheerings/unread-count")
-    public ResponseEntity<ApiResponseForm<UnreadCheeringResponse>> getUnreadCheeringCount(
-            HttpServletRequest httpServletRequest
-    ) {
-        UUID memberId = authService.getMemberIdFromToken(httpServletRequest);
+    public ResponseEntity<ApiResponseForm<UnreadCheeringResponse>> getUnreadCheeringCount() {
+        UUID memberId = authService.getMemberIdFromToken();
         UnreadCheeringResponse response = cheeringService.getUnreadCheeringCount(memberId);
         return ResponseEntity.ok(ApiResponseForm.success(response, "내 읽지 않은 응원 개수 조회 성공"));
     }
@@ -90,10 +85,9 @@ public class CheeringController {
     @Operation(summary = "내가 받은 응원 목록 조회 - 응원함 조회용으로 호출했다면 PATCH/api/cheering/read API로 읽음 처리 필요")
     @GetMapping("/api/members/me/cheerings")
     public ResponseEntity<ApiResponseForm<Page<CheeringResponse>>> getMyCheerings(
-            HttpServletRequest httpServletRequest,
             Pageable pageable
     ) {
-        UUID memberId = authService.getMemberIdFromToken(httpServletRequest);
+        UUID memberId = authService.getMemberIdFromToken();
         Page<CheeringResponse> responses = cheeringService.getCheeringsByMemberId(memberId, pageable);
         return ResponseEntity.ok(ApiResponseForm.success(responses, "내가 받은 응원 목록 조회 성공"));
     }
