@@ -3,8 +3,10 @@ package unicon.Achiva.member.interfaces;
 import lombok.Builder;
 import lombok.Getter;
 import unicon.Achiva.member.domain.Category;
+import unicon.Achiva.member.domain.Gender;
 import unicon.Achiva.member.domain.Member;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -16,10 +18,10 @@ public class CreateMemberResponse {
     private String email;
     private String nickName;
     private String profileImageUrl;
-    private String birth;
-    private String gender;
+    private LocalDate birth;
+    private Gender gender;
     private String region;
-    private List<String> categories;
+    private List<Category> categories;
     private LocalDateTime createdAt;
 
     public static CreateMemberResponse fromEntity(Member member) {
@@ -28,14 +30,10 @@ public class CreateMemberResponse {
                 .email(member.getEmail())
                 .nickName(member.getNickName())
                 .profileImageUrl(member.getProfileImageUrl())
-                .birth(member.getBirth().toString())
-                .gender(member.getGender() != null ? member.getGender().name() : null)
+                .birth(member.getBirth())
+                .gender(member.getGender() != null ? member.getGender() : null)
                 .region(member.getRegion() != null ? member.getRegion() : null)
-                .categories(
-                        member.getCategories().stream()
-                                .map(Category::getDescription)
-                                .toList()
-                )
+                .categories(member.getCategories())
                 .createdAt(member.getCreatedAt())
                 .build();
     }

@@ -2,6 +2,7 @@ package unicon.Achiva.member.interfaces;
 
 import lombok.Builder;
 import lombok.Getter;
+import unicon.Achiva.member.domain.Category;
 import unicon.Achiva.member.domain.Question;
 
 import java.util.List;
@@ -10,11 +11,11 @@ import java.util.List;
 public class ArticleRequest {
     private final String photoUrl;
     private final String title;
-    private final String category;
+    private final Category category;
     private final List<QuestionDTO> question;
     private final String backgroundColor;
 
-    public ArticleRequest(String photoUrl, String title, String category, List<QuestionDTO> question, String backgroundColor) {
+    public ArticleRequest(String photoUrl, String title, Category category, List<QuestionDTO> question, String backgroundColor) {
         this.photoUrl = photoUrl;
         this.title = title;
         this.category = category;

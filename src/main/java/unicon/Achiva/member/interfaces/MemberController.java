@@ -64,7 +64,7 @@ public class MemberController {
         return ResponseEntity.ok(ApiResponseForm.success(members, "닉네임으로 유저 검색 성공"));
     }
 
-    @Operation(summary = "유저 프로필 사진 저장용 presigned URL 발급(이후 회원가입이나 프로필이미지 수정시 쿼리파라미터를 제외한 url을 BE에 보내야함.) - JWT 필요 X")
+    @Operation(summary = "유저 프로필 사진 저장용 presigned URL 발급(이후 회원가입이나 프로필이미지 수정시 쿼리파라미터를 제외한 url을 BE에 보내야함.)")
     @GetMapping("/api/members/presigned-url")
     public ResponseEntity<ApiResponseForm<Map<String, String>>> getPresignedUrl(
             @RequestParam(defaultValue = "application/octet-stream") String contentType
