@@ -31,12 +31,10 @@ public class AuthService {
                 .email(getEmailFromToken())
                 .nickName(requestDto.getNickName())
                 .profileImageUrl(requestDto.getProfileImageUrl())
-                .birth(LocalDate.parse(requestDto.getBirth()))
-                .gender(requestDto.getGender() != null ? Gender.valueOf(requestDto.getGender().toUpperCase()) : null)
+                .birth(requestDto.getBirth())
+                .gender(requestDto.getGender() != null ? requestDto.getGender() : null)
                 .region(requestDto.getRegion() != null ? requestDto.getRegion() : null)
-                .categories(requestDto.getCategories().stream()
-                        .map(Category::fromDisplayName)
-                        .toList())
+                .categories(requestDto.getCategories())
                 .role(Role.USER)
                 .build();
 
@@ -52,7 +50,7 @@ public class AuthService {
      * 부분 갱신(PATCH) 형태의 회원 정보 업데이트.
      * null 이 아닌 필드만 엔티티에 반영하며, 닉네임은 변경 시 중복 검증을 수행한다.
      *
-     * @param memberId  업데이트할 회원 식별자
+     * @param memberId   업데이트할 회원 식별자
      * @param requestDto 변경 요청 DTO (null 허용 필드는 선택 적용)
      * @return 갱신된 회원 응답 DTO
      * @throws GeneralException MEMBER_NOT_FOUND: 회원 없음

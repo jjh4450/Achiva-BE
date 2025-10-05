@@ -1,6 +1,5 @@
 package unicon.Achiva.member.interfaces;
 
-import lombok.Builder;
 import lombok.Getter;
 
 import java.util.List;
