@@ -14,5 +14,5 @@ spring:
 
   app:
     security:
-      expected-audiences:
+      client-id:
         - a3kaacto97fom3ved1bjivbiu

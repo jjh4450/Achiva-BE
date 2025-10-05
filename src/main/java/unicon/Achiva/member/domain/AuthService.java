@@ -49,6 +49,8 @@ public class AuthService {
                 .role(Role.USER)
                 .build();
 
+        member.dangerFuctiononlyInitUserId(getMemberIdFromToken(null));
+
         Member savedMember = memberRepository.save(member);
 
         emailVerificationRepository.findByEmail(requestDto.getEmail())

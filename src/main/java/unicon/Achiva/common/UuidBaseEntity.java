@@ -14,7 +14,6 @@ public class UuidBaseEntity extends BaseEntity {
 
     @Getter
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private UUID id;
+    protected UUID id;
 
 }

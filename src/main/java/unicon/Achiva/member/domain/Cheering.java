@@ -14,8 +14,8 @@ import unicon.Achiva.common.LongBaseEntity;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(indexes = {
-        @Index(columnList = "sender_id, category"),
-        @Index(columnList = "receiver_id, category")
+        @Index(columnList = "sender_id, cheering_category"),
+        @Index(columnList = "receiver_id, cheering_category")
 })
 public class Cheering extends LongBaseEntity {
 

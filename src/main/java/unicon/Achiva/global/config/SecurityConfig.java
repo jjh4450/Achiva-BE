@@ -22,6 +22,7 @@ import unicon.Achiva.global.security.login.filter.UserInitializedAuthorizationMa
 import unicon.Achiva.global.security.login.handler.UserNotInitializedDeniedHandler;
 
 import java.util.HashSet;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -88,19 +89,19 @@ public class SecurityConfig {
      */
     @Bean
     public JwtDecoder jwtDecoder(@Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri}") String issuer,
-                                 @Value("${app.security.expected-audience:}") String expectedAudience) {
+                                 @Value("${app.security.expected-client-id:}") String expectedClientId) {
         NimbusJwtDecoder decoder = JwtDecoders.fromIssuerLocation(issuer);
         OAuth2TokenValidator<Jwt> withIssuer = JwtValidators.createDefaultWithIssuer(issuer);
 
-        if (expectedAudience == null || expectedAudience.isBlank()) {
+        if (expectedClientId == null || expectedClientId.isBlank()) {
             decoder.setJwtValidator(withIssuer);
         } else {
-            OAuth2TokenValidator<Jwt> withAudience = new JwtClaimValidator<>("aud", aud -> {
-                if (aud instanceof String a) return a.equals(expectedAudience);
-                if (aud instanceof java.util.Collection<?> c) return c.contains(expectedAudience);
+            OAuth2TokenValidator<Jwt> withClientId = new JwtClaimValidator<>("client_id", clientId -> {
+                if (clientId instanceof String c) return c.equals(expectedClientId);
+                if (clientId instanceof java.util.Collection<?> c) return c.contains(expectedClientId);
                 return false;
             });
-            decoder.setJwtValidator(new DelegatingOAuth2TokenValidator<>(withIssuer, withAudience));
+            decoder.setJwtValidator(new DelegatingOAuth2TokenValidator<>(withIssuer, withClientId));
         }
         return decoder;
     }
@@ -147,14 +148,19 @@ public class SecurityConfig {
      */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOriginPattern("*");
-        configuration.addAllowedMethod("*"); // 모든 HTTP 메서드 허용
-        configuration.addAllowedHeader("*"); // 모든 헤더 허용
-        configuration.setAllowCredentials(true); // 쿠키 포함 허용
-        configuration.addExposedHeader("Authorization");
+        CorsConfiguration config = new CorsConfiguration();
+        // 운영 환경에 맞게 구체적으로 나열
+        config.setAllowedOrigins(List.of(
+                "https://www.achiva.kr/",
+                "http://localhost:8080" // 개발용
+        ));
+        config.setAllowedMethods(List.of("GET","POST","PUT","PATCH","DELETE","OPTIONS"));
+        config.setAllowedHeaders(List.of("*"));
+        config.setExposedHeaders(List.of("Authorization"));
+        config.setAllowCredentials(true);
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
+        source.registerCorsConfiguration("/**", config);
         return source;
     }
 }

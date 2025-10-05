@@ -58,6 +58,10 @@ public class Member extends UuidBaseEntity {
 //        this.password = encodedPassword;
 //    }
 
+    public void dangerFuctiononlyInitUserId(UUID id) {
+        this.id = id;
+    }
+
     public void updateProfileImageUrl(String profileImageUrl) {
         this.profileImageUrl = profileImageUrl;
     }
