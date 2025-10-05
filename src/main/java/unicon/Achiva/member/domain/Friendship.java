@@ -2,7 +2,10 @@ package unicon.Achiva.member.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import unicon.Achiva.common.LongBaseEntity;
 
 import java.util.UUID;

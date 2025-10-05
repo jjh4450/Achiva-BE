@@ -10,7 +10,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import unicon.Achiva.global.response.GeneralException;
 import unicon.Achiva.member.infrastructure.*;
-import unicon.Achiva.member.interfaces.*;
+import unicon.Achiva.member.interfaces.ArticleRequest;
+import unicon.Achiva.member.interfaces.ArticleResponse;
+import unicon.Achiva.member.interfaces.CategoryCountResponse;
+import unicon.Achiva.member.interfaces.SearchArticleCondition;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -80,7 +83,7 @@ public class ArticleService {
 
         // 1) 두 그룹 락을 항상 같은 순서로 획득 (교착 방지)
         List<MemberCategoryKey> order = counterHelper.orderedKeys(memberId, oldCat, newCat);
-        MemberCategoryCounter first  = memberCategoryCounterRepository.lockById(order.get(0))
+        MemberCategoryCounter first = memberCategoryCounterRepository.lockById(order.get(0))
                 .orElseGet(() -> init(order.get(0)));
         MemberCategoryCounter second = memberCategoryCounterRepository.lockById(order.get(1))
                 .orElseGet(() -> init(order.get(1)));
@@ -171,7 +174,7 @@ public class ArticleService {
     }
 
     public Page<ArticleResponse> getHomeArticles(UUID myId, Pageable pageable) {
-        List<Long> friendIds  = friendshipRepository.findFriendIdsOf(myId);
+        List<Long> friendIds = friendshipRepository.findFriendIdsOf(myId);
         List<Long> cheererIds = cheeringRepository.findDistinctCheererIdsWhoCheeredMyArticles(myId);
 
         if ((friendIds == null || friendIds.isEmpty()) && (cheererIds == null || cheererIds.isEmpty())) {
@@ -198,19 +201,19 @@ public class ArticleService {
         if (src == newCategory) return;
 
         UUID memberId = a.getMember().getId();
-        long oldSeq   = a.getAuthorCategorySeq();
+        long oldSeq = a.getAuthorCategorySeq();
 
         // 1) 락 순서 고정 (교착 방지): 키를 문자열로 비교해 작은 쪽 먼저
         MemberCategoryKey k1 = new MemberCategoryKey(memberId, min(src, newCategory));
         MemberCategoryKey k2 = new MemberCategoryKey(memberId, max(src, newCategory));
 
-        MemberCategoryCounter first  = memberCategoryCounterRepository.lockById(k1).orElseGet(() -> initCounter(k1));
+        MemberCategoryCounter first = memberCategoryCounterRepository.lockById(k1).orElseGet(() -> initCounter(k1));
         MemberCategoryCounter second = memberCategoryCounterRepository.lockById(k2).orElseGet(() -> initCounter(k2));
 
         // 2) 출발 그룹 densify: oldSeq 뒤 모두 -1, size--
         articleRepository.shiftLeft(memberId, src, oldSeq);
         if (src.equals(k1.getCategory())) first.setSize(first.getSize() - 1);
-        else                               second.setSize(second.getSize() - 1);
+        else second.setSize(second.getSize() - 1);
 
         // 3) 도착 그룹 새 번호 = size + 1, size++
         MemberCategoryCounter dstCounter = newCategory.equals(k1.getCategory()) ? first : second;
@@ -252,6 +255,7 @@ public class ArticleService {
     private Category min(Category a, Category b) {
         return a.name().compareTo(b.name()) <= 0 ? a : b;
     }
+
     private Category max(Category a, Category b) {
         return a.name().compareTo(b.name()) >= 0 ? a : b;
     }

@@ -14,8 +14,7 @@ public enum Category {
     HOBBY("취미"),
     INVESTMENT("투자"),
     ROUTINE("루틴"),
-    MINDSET("마인드셋")
-    ;
+    MINDSET("마인드셋");
 
     private final String description;
 

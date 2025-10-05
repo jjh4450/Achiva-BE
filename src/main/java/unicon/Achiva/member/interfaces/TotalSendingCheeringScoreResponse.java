@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public class TotalSendingCheeringScoreResponse {
-    private Long totalSendingCheeringScore;
+    private final Long totalSendingCheeringScore;
 
     public TotalSendingCheeringScoreResponse(Long totalSendingCheeringScore) {
         this.totalSendingCheeringScore = totalSendingCheeringScore;

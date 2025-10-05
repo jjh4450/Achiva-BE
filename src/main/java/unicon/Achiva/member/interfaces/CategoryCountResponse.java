@@ -1,14 +1,13 @@
 package unicon.Achiva.member.interfaces;
 
 import lombok.Getter;
-import unicon.Achiva.member.domain.Category;
 
 import java.util.List;
 
 @Getter
 public class CategoryCountResponse {
 
-    private List<CategoryCount> categoryCounts;
+    private final List<CategoryCount> categoryCounts;
 
     public CategoryCountResponse(List<CategoryCount> categoryCounts) {
         this.categoryCounts = categoryCounts;
@@ -22,11 +21,10 @@ public class CategoryCountResponse {
     }
 
 
-
     @Getter
     public static class CategoryCount {
-        private String category;
-        private Long count;
+        private final String category;
+        private final Long count;
 
         public CategoryCount(String category, Long count) {
             this.category = category;

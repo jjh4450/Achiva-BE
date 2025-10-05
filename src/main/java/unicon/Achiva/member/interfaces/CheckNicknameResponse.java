@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public class CheckNicknameResponse {
-    private boolean available;
+    private final boolean available;
 
     public CheckNicknameResponse(boolean available) {
         this.available = available;

@@ -2,7 +2,6 @@ package unicon.Achiva.global.security.login.handler;
 
 import lombok.Builder;
 import lombok.Getter;
-import unicon.Achiva.member.domain.Category;
 
 import java.util.List;
 

@@ -8,11 +8,11 @@ import java.util.List;
 
 @Getter
 public class ArticleRequest {
-    private String photoUrl;
-    private String title;
-    private String category;
-    private List<QuestionDTO> question;
-    private String backgroundColor;
+    private final String photoUrl;
+    private final String title;
+    private final String category;
+    private final List<QuestionDTO> question;
+    private final String backgroundColor;
 
     public ArticleRequest(String photoUrl, String title, String category, List<QuestionDTO> question, String backgroundColor) {
         this.photoUrl = photoUrl;

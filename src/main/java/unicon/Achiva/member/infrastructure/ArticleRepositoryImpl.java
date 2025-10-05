@@ -23,6 +23,33 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
 
     private final EntityManager em;
 
+    private static String trimToNull(String s) {
+        if (s == null) return null;
+        String t = s.trim();
+        return t.isEmpty() ? null : t;
+    }
+
+    private static List<Order> toOrders(Sort sort, Root<Article> a, CriteriaBuilder cb) {
+        List<Order> list = new ArrayList<>();
+        if (sort == null || sort.isUnsorted()) return list;
+
+        for (Sort.Order o : sort) {
+            Path<?> path;
+            switch (o.getProperty()) {
+                case "createdAt" -> path = a.get("createdAt");
+                case "id" -> path = a.get("id");
+                case "title" -> path = a.get("title");
+                case "authorCategorySeq" -> path = a.get("authorCategorySeq");
+                case "category" -> path = a.get("category");
+                default -> {
+                    continue;
+                }
+            }
+            list.add(o.isAscending() ? cb.asc(path) : cb.desc(path));
+        }
+        return list;
+    }
+
     @Override
     public Page<Article> searchByCondition(SearchArticleCondition condition, Pageable pageable) {
         String kw = trimToNull(condition.getKeyword());
@@ -44,7 +71,7 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
         // 키워드 필터: Article.title OR Question.title OR Question.content
         if (kw != null) {
             String likeLower = "%" + kw.toLowerCase() + "%";
-            String likeRaw   = "%" + kw + "%";
+            String likeRaw = "%" + kw + "%";
 
             preds.add(cb.or(
                     cb.like(cb.lower(a.get("title")), likeLower),
@@ -82,7 +109,7 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
         }
         if (kw != null) {
             String likeLower = "%" + kw.toLowerCase() + "%";
-            String likeRaw   = "%" + kw + "%";
+            String likeRaw = "%" + kw + "%";
 
             countPreds.add(cb.or(
                     cb.like(cb.lower(ca.get("title")), likeLower),
@@ -98,30 +125,5 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
         long total = em.createQuery(countCq).getSingleResult();
 
         return new PageImpl<>(content, pageable, total);
-    }
-
-    private static String trimToNull(String s) {
-        if (s == null) return null;
-        String t = s.trim();
-        return t.isEmpty() ? null : t;
-    }
-
-    private static List<Order> toOrders(Sort sort, Root<Article> a, CriteriaBuilder cb) {
-        List<Order> list = new ArrayList<>();
-        if (sort == null || sort.isUnsorted()) return list;
-
-        for (Sort.Order o : sort) {
-            Path<?> path;
-            switch (o.getProperty()) {
-                case "createdAt" -> path = a.get("createdAt");
-                case "id" -> path = a.get("id");
-                case "title" -> path = a.get("title");
-                case "authorCategorySeq" -> path = a.get("authorCategorySeq");
-                case "category" -> path = a.get("category");
-                default -> { continue; }
-            }
-            list.add(o.isAscending() ? cb.asc(path) : cb.desc(path));
-        }
-        return list;
     }
 }

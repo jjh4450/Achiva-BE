@@ -4,8 +4,8 @@ import lombok.Getter;
 
 @Getter
 public class SendVerificationCodeResponse {
-    private String email;
-    private boolean sended;
+    private final String email;
+    private final boolean sended;
 
     public SendVerificationCodeResponse(String email) {
         this.email = email;

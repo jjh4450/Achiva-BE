@@ -27,7 +27,7 @@ public class CheeringController {
     public ResponseEntity<ApiResponseForm<CheeringResponse>> createCheering(
             @RequestBody CheeringRequest request,
             @RequestParam Long articleId
-            ) {
+    ) {
         UUID memberId = authService.getMemberIdFromToken();
         CheeringResponse response = cheeringService.createCheering(request, memberId, articleId);
         return ResponseEntity.ok(ApiResponseForm.success(response, "응원 작성 성공"));

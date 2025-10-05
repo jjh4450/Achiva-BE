@@ -25,10 +25,12 @@ public class Cheering extends LongBaseEntity {
     // 응원카테고리 정의되면 enum으로 변경
     private String cheeringCategory;
 
-    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "sender_id", nullable=false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sender_id", nullable = false)
     private Member sender;
 
-    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "receiver_id", nullable=false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "receiver_id", nullable = false)
     private Member receiver;
 
     @ManyToOne(fetch = FetchType.LAZY)
