@@ -2,19 +2,19 @@ package unicon.Achiva.member.interfaces;
 
 import lombok.Builder;
 import lombok.Getter;
+import unicon.Achiva.member.domain.Category;
+import unicon.Achiva.member.domain.Gender;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Getter
 @Builder
 public class MemberRequest {
-    private String email;
-    //    private String password;
-    private String confirmPassword;
     private String nickName;
     private String profileImageUrl;
-    private String birth;
-    private String gender;
+    private LocalDate birth;
+    private Gender gender;
     private String region;
-    private List<String> categories;
+    private List<Category> categories;
 }

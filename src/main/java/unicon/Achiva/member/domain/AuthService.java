@@ -7,12 +7,12 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import unicon.Achiva.global.response.GeneralException;
-import unicon.Achiva.member.infrastructure.EmailVerificationRepository;
 import unicon.Achiva.member.infrastructure.MemberRepository;
 import unicon.Achiva.member.interfaces.*;
 
 import java.time.LocalDate;
-import java.util.Random;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
@@ -22,66 +22,75 @@ import java.util.UUID;
 public class AuthService {
 
     private final MemberRepository memberRepository;
-    private final EmailService emailService;
-    private final EmailVerificationRepository emailVerificationRepository;
 
     @Transactional
     public CreateMemberResponse signup(MemberRequest requestDto) {
-        validateDuplication(requestDto.getNickName(), requestDto.getEmail());
+        validateDuplication(requestDto.getNickName(), getEmailFromToken());
 
         Member member = Member.builder()
-                .email(requestDto.getEmail())
+                .email(getEmailFromToken())
                 .nickName(requestDto.getNickName())
                 .profileImageUrl(requestDto.getProfileImageUrl())
-                .birth(LocalDate.parse(requestDto.getBirth()))
-                .gender(requestDto.getGender() != null ? Gender.valueOf(requestDto.getGender().toUpperCase()) : null)
+                .birth(requestDto.getBirth())
+                .gender(requestDto.getGender() != null ? requestDto.getGender() : null)
                 .region(requestDto.getRegion() != null ? requestDto.getRegion() : null)
-                .categories(requestDto.getCategories().stream()
-                        .map(Category::fromDisplayName)
-                        .toList())
+                .categories(requestDto.getCategories())
                 .role(Role.USER)
                 .build();
 
-        member.dangerFuctiononlyInitUserId(getMemberIdFromToken());
+        member.dangerFunctionOnlyInitUserId(getMemberIdFromToken());
 
         Member savedMember = memberRepository.save(member);
 
-        emailVerificationRepository.findByEmail(requestDto.getEmail())
-                .ifPresent(emailVerificationRepository::delete);
 
         return CreateMemberResponse.fromEntity(savedMember);
     }
 
+    /**
+     * 부분 갱신(PATCH) 형태의 회원 정보 업데이트.
+     * null 이 아닌 필드만 엔티티에 반영하며, 닉네임은 변경 시 중복 검증을 수행한다.
+     *
+     * @param memberId   업데이트할 회원 식별자
+     * @param requestDto 변경 요청 DTO (null 허용 필드는 선택 적용)
+     * @return 갱신된 회원 응답 DTO
+     * @throws GeneralException MEMBER_NOT_FOUND: 회원 없음
+     */
     @Transactional
     public MemberResponse updateMember(UUID memberId, UpdateMemberRequest requestDto) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new GeneralException(MemberErrorCode.MEMBER_NOT_FOUND));
 
-        if (requestDto.getNickName() != null && !member.getNickName().equals(requestDto.getNickName())) {
-            validateDuplicateNickName(requestDto.getNickName());
-            member.updateNickName(requestDto.getNickName());
-        }
-        if (requestDto.getProfileImageUrl() != null) {
-            member.updateProfileImageUrl(requestDto.getProfileImageUrl());
-        }
-        if (requestDto.getBirth() != null) {
-            member.updateBirth(LocalDate.parse(requestDto.getBirth()));
-        }
-        if (requestDto.getGender() != null) {
-            member.updateGender(Gender.valueOf(requestDto.getGender()));
-        }
-        if (requestDto.getRegion() != null) {
-            member.updateRegion(requestDto.getRegion());
-        }
-        if (requestDto.getCategories() != null) {
-            member.updateCategories(requestDto.getCategories().stream()
-                    .map(Category::fromDisplayName)
-                    .toList());
-        }
-        if (requestDto.getDescription() != null) {
-            member.updateDescription(requestDto.getDescription());
-        }
-        memberRepository.save(member);
+        Optional.ofNullable(requestDto.getNickName())
+                .filter(n -> !Objects.equals(n, member.getNickName()))
+                .ifPresent(n -> {
+                    validateDuplicateNickName(n);
+                    member.updateNickName(n);
+                });
+
+        Optional.ofNullable(requestDto.getProfileImageUrl())
+                .ifPresent(member::updateProfileImageUrl);
+
+        Optional.ofNullable(requestDto.getBirth())
+                .map(LocalDate::parse)
+                .ifPresent(member::updateBirth);
+
+        Optional.ofNullable(requestDto.getGender())
+                .map(Gender::valueOf)
+                .ifPresent(member::updateGender);
+
+        Optional.ofNullable(requestDto.getRegion())
+                .ifPresent(member::updateRegion);
+
+        Optional.ofNullable(requestDto.getCategories())
+                .map(list -> list.stream()
+                        .map(Category::fromDisplayName)
+                        .toList())
+                .ifPresent(member::updateCategories);
+
+        Optional.ofNullable(requestDto.getDescription())
+                .ifPresent(member::updateDescription);
+
+        // JPA 영속성 컨텍스트 내 변경 감지로 flush 되므로 save 호출 불필요
         return MemberResponse.fromEntity(member);
     }
 
@@ -113,23 +122,23 @@ public class AuthService {
         return new CheckNicknameResponse(true);
     }
 
-    @Transactional
-    public SendVerificationCodeResponse sendVerificationCode(String email) {
-        validateDuplicateEmail(email);
-
-        String code = String.format("%04d", new Random().nextInt(9999));
-
-        EmailVerification verification = emailVerificationRepository.findByEmail(email)
-                .orElse(new EmailVerification());
-
-        verification.startVerification(email, code);
-
-        emailVerificationRepository.save(verification);
-
-        emailService.sendCode(email, code);
-
-        return new SendVerificationCodeResponse(email);
-    }
+//    @Transactional
+//    public SendVerificationCodeResponse sendVerificationCode(String email) {
+//        validateDuplicateEmail(email);
+//
+//        String code = String.format("%04d", new Random().nextInt(9999));
+//
+//        EmailVerification verification = emailVerificationRepository.findByEmail(email)
+//                .orElse(new EmailVerification());
+//
+//        verification.startVerification(email, code);
+//
+//        emailVerificationRepository.save(verification);
+//
+//        emailService.sendCode(email, code);
+//
+//        return new SendVerificationCodeResponse(email);
+//    }
 
 //    @Transactional
 //    public VerifyCodeResponse verifyCode(String email, String code) {
@@ -184,6 +193,19 @@ public class AuthService {
         } catch (IllegalArgumentException e) {
             throw new GeneralException(MemberErrorCode.INVALID_TOKEN);
         }
+    }
+
+    public String getEmailFromToken() {
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (!(authentication instanceof JwtAuthenticationToken jwtAuth)) {
+            throw new GeneralException(MemberErrorCode.INVALID_TOKEN);
+        }
+
+        String email = jwtAuth.getToken().getClaimAsString("email");
+        if (email == null || email.isBlank()) {
+            throw new GeneralException(MemberErrorCode.INVALID_TOKEN);
+        }
+        return email;
     }
 
 //    public CheckPasswordResponse checkPassword(CheckPasswordRequest request) {

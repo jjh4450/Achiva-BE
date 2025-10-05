@@ -37,7 +37,7 @@ public class ArticleService {
     public ArticleResponse createArticle(ArticleRequest request, UUID memberId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new GeneralException(MemberErrorCode.MEMBER_NOT_FOUND));
-        Category cat = Category.fromDisplayName(request.getCategory());
+        Category cat = request.getCategory();
 
         MemberCategoryCounter dst = counterHelper.lockOrInit(memberId, cat);
         long newSeq = dst.getSize() + 1;
@@ -46,7 +46,7 @@ public class ArticleService {
         Article article = Article.builder()
                 .photoUrl(request.getPhotoUrl())
                 .title(request.getTitle())
-                .category(Category.fromDisplayName(request.getCategory()))
+                .category(request.getCategory())
                 .questions(request.getQuestion().stream()
                         .map(ArticleRequest.QuestionDTO::toEntity)
                         .toList())
@@ -73,7 +73,7 @@ public class ArticleService {
 
         Category oldCat = article.getCategory();
         long oldSeq = article.getAuthorCategorySeq();
-        Category newCat = Category.fromDisplayName(request.getCategory());
+        Category newCat = request.getCategory();
 
         if (oldCat.equals(newCat)) {
             // 카테고리 동일 → 내용만 갱신 (densify 불필요)
