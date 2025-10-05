@@ -8,9 +8,6 @@ import java.util.List;
 @Getter
 @Builder
 public class MemberRequest {
-    private String email;
-    //    private String password;
-    private String confirmPassword;
     private String nickName;
     private String profileImageUrl;
     private String birth;
