@@ -1,5 +1,6 @@
 package unicon.Achiva.global.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,6 +25,7 @@ import unicon.Achiva.global.security.login.handler.UserNotInitializedDeniedHandl
 import java.util.HashSet;
 import java.util.List;
 
+@Slf4j
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -90,19 +92,26 @@ public class SecurityConfig {
     @Bean
     public JwtDecoder jwtDecoder(@Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri}") String issuer,
                                  @Value("${app.security.expected-client-id:}") String expectedClientId) {
+        log.info("JWT Decoder 초기화 시작 - issuer: {}", issuer);
+
         NimbusJwtDecoder decoder = JwtDecoders.fromIssuerLocation(issuer);
         OAuth2TokenValidator<Jwt> withIssuer = JwtValidators.createDefaultWithIssuer(issuer);
 
         if (expectedClientId == null || expectedClientId.isBlank()) {
+            log.info("[JWT] expectedClientId가 비어 있음: audience 검증은 수행하지 않음");
             decoder.setJwtValidator(withIssuer);
         } else {
+            log.info("[JWT] expectedClientId 설정됨: audience 검증 추가 - {}", expectedClientId);
             OAuth2TokenValidator<Jwt> withClientId = new JwtClaimValidator<>("client_id", clientId -> {
                 if (clientId instanceof String c) return c.equals(expectedClientId);
                 if (clientId instanceof java.util.Collection<?> c) return c.contains(expectedClientId);
+                log.info("[JWT] JWT client_id 형식이 예기치 않음: {}", clientId);
                 return false;
             });
             decoder.setJwtValidator(new DelegatingOAuth2TokenValidator<>(withIssuer, withClientId));
         }
+
+        log.info("[JWT] JWT Decoder 초기화 완료");
         return decoder;
     }
 

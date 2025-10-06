@@ -201,11 +201,14 @@ public class AuthService {
             throw new GeneralException(MemberErrorCode.INVALID_TOKEN);
         }
 
-        String email = jwtAuth.getToken().getClaimAsString("email");
-        if (email == null || email.isBlank()) {
-            throw new GeneralException(MemberErrorCode.INVALID_TOKEN);
-        }
-        return email;
+        return getMemberIdFromToken() + "@email.com"; // 임시 이메일 생성
+
+//        String email = jwtAuth.getToken().getClaimAsString("email");
+//        if (email == null || email.isBlank()) {
+//            throw new GeneralException(MemberErrorCode.INVALID_TOKEN);
+//        }
+
+//        return email;
     }
 
 //    public CheckPasswordResponse checkPassword(CheckPasswordRequest request) {
