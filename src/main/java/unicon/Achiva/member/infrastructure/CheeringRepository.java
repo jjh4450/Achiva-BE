@@ -35,7 +35,7 @@ public interface CheeringRepository extends JpaRepository<Cheering, Long>, Cheer
         where c.sender.id = :memberId
         group by c.cheeringCategory
     """)
-    List<CategoryStatDto> givenStatsByCategory(@Param("memberId") Long memberId,
+    List<CategoryStatDto> givenStatsByCategory(@Param("memberId") UUID memberId,
                                                @Param("pt") long pointsPerCheer);
 
     // 내가 "받은" 응원: 카테고리별 개수/점수
@@ -45,14 +45,14 @@ public interface CheeringRepository extends JpaRepository<Cheering, Long>, Cheer
         where c.receiver.id = :memberId
         group by c.cheeringCategory
     """)
-    List<CategoryStatDto> receivedStatsByCategory(@Param("memberId") Long memberId,
+    List<CategoryStatDto> receivedStatsByCategory(@Param("memberId") UUID memberId,
                                                   @Param("pt") long pointsPerCheer);
 
     // 멤버의 총 준 응원 개수
     @Query("select count(c) from Cheering c where c.sender.id = :memberId")
-    long totalGivenCount(@Param("memberId") Long memberId);
+    long totalGivenCount(@Param("memberId") UUID memberId);
 
     // 멤버의 총 받은 응원 개수
     @Query("select count(c) from Cheering c where c.receiver.id = :memberId")
-    long totalReceivedCount(@Param("memberId") Long memberId);
+    long totalReceivedCount(@Param("memberId") UUID memberId);
 }

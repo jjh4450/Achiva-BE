@@ -19,7 +19,7 @@ public interface ArticleRepository extends JpaRepository<Article, Long>, Article
 
 
     @Query("SELECT a.category, COUNT(a) FROM Article a WHERE a.member.id = :memberId GROUP BY a.category")
-    List<Object[]> countArticlesByCategoryForMember(@Param("memberId") Long memberId);
+    List<Object[]> countArticlesByCategoryForMember(@Param("memberId") UUID memberId);
 
     @EntityGraph(attributePaths = "member")
     @Query(value = """
@@ -64,5 +64,5 @@ public interface ArticleRepository extends JpaRepository<Article, Long>, Article
     Page<Article> findByCategoryIn(List<Category> categories, Pageable pageable);
 
     @Query("SELECT a FROM Article a WHERE a.member.id = :memberId AND a.category = :category ORDER BY a.createdAt DESC")
-    Page<Article> findByMemberIdWithCategory(Long memberId, Category category, Pageable pageable);
+    Page<Article> findByMemberIdWithCategory(UUID memberId, Category category, Pageable pageable);
 }

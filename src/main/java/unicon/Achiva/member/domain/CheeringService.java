@@ -113,21 +113,21 @@ public class CheeringService {
                 .toList();
     }
 
-    public List<CategoryStatDto> getGivenStats(Long memberId) {
+    public List<CategoryStatDto> getGivenStats(UUID memberId) {
         return cheeringRepository.givenStatsByCategory(memberId, POINTS_PER_CHEER);
     }
 
-    public List<CategoryStatDto> getReceivedStats(Long memberId) {
+    public List<CategoryStatDto> getReceivedStats(UUID memberId) {
         return cheeringRepository.receivedStatsByCategory(memberId, POINTS_PER_CHEER);
     }
 
-    public TotalSendingCheeringScoreResponse getTotalGivenPoints(Long memberId) {
+    public TotalSendingCheeringScoreResponse getTotalGivenPoints(UUID memberId) {
         return new TotalSendingCheeringScoreResponse(
                 cheeringRepository.totalGivenCount(memberId) * POINTS_PER_CHEER
         );
     }
 
-    public TotalReceivedCheeringScoreResponse getTotalReceivedPoints(Long memberId) {
+    public TotalReceivedCheeringScoreResponse getTotalReceivedPoints(UUID memberId) {
         return new TotalReceivedCheeringScoreResponse(
                 cheeringRepository.totalReceivedCount(memberId) * POINTS_PER_CHEER
         );

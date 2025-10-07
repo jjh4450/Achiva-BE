@@ -77,7 +77,7 @@ public class MemberController {
 
     @GetMapping("/api/members/{memberId}/count-by-category")
     public ResponseEntity<ApiResponseForm<CategoryCountResponse>> getArticleCountByCategory(
-            @RequestParam Long memberId
+            @RequestParam UUID memberId
     ) {
         CategoryCountResponse result = articleService.getArticleCountByCategory(memberId);
         return ResponseEntity.ok(ApiResponseForm.success(result, "카테고리별 작성 수 조회 성공"));
@@ -89,7 +89,7 @@ public class MemberController {
 //            @RequestBody ConfirmProfileImageUploadRequest confirmProfileImageUploadRequest,
 //            HttpServletRequest request
 //    ) {
-//        Long memberId = authService.getMemberIdFromToken(request);
+//        UUID memberId = authService.getMemberIdFromToken(request);
 //        memberService.updateProfileImageUrl(memberId, confirmProfileImageUploadRequest);
 //        Map<String, Boolean> response = new HashMap<>();
 //        response.put("updated", true);

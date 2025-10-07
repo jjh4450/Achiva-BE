@@ -100,7 +100,7 @@ public class ArticleController {
     @Operation(summary = "특정 유저 특정 카테고리 게시글 목록 최신순 조회")
     @GetMapping("/api/members/{memberId}/categories/{category}/articles")
     public ResponseEntity<ApiResponseForm<Page<ArticleResponse>>> getArticlesByMemberAndCategory(
-            @PathVariable Long memberId,
+            @PathVariable UUID memberId,
             @PathVariable String category,
             @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC)
             Pageable pageable

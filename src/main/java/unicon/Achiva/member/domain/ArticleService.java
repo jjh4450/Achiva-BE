@@ -147,7 +147,7 @@ public class ArticleService {
                 .map(ArticleResponse::fromEntity);
     }
 
-    public CategoryCountResponse getArticleCountByCategory(Long memberId) {
+    public CategoryCountResponse getArticleCountByCategory(UUID memberId) {
         List<Object[]> result = articleRepository.countArticlesByCategoryForMember(memberId);
 
         // 결과를 Map으로 변환 (key: Category, value: Long)
@@ -267,7 +267,7 @@ public class ArticleService {
         return memberCategoryCounterRepository.saveAndFlush(c);
     }
 
-    public Page<ArticleResponse> getArticlesByMemberAndCateogry(Long memberId, String category, Pageable pageable) {
+    public Page<ArticleResponse> getArticlesByMemberAndCateogry(UUID memberId, String category, Pageable pageable) {
         return articleRepository.findByMemberIdWithCategory(memberId, Category.fromDisplayName(category), pageable)
                 .map(ArticleResponse::fromEntity);
     }
