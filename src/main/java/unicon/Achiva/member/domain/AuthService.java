@@ -11,7 +11,7 @@ import unicon.Achiva.member.infrastructure.MemberRepository;
 import unicon.Achiva.member.interfaces.*;
 
 import java.time.LocalDate;
-import java.util.Objects;
+//import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -22,14 +22,18 @@ import java.util.UUID;
 public class AuthService {
 
     private final MemberRepository memberRepository;
+    private final OIDCUserInfoService oidcUserInfoService;
 
     @Transactional
     public CreateMemberResponse signup(MemberRequest requestDto) {
-        validateDuplication(requestDto.getNickName(), getEmailFromToken());
+        String email = getEmailFromToken().orElse(oidcUserInfoService.getEmailFromUserInfo().orElseThrow(() -> new GeneralException(MemberErrorCode.INVALID_TOKEN)));
+        String nickName = getNickNameFromToken().orElseThrow(()-> new GeneralException(MemberErrorCode.INVALID_TOKEN));
+
+        validateDuplication(nickName, email);
 
         Member member = Member.builder()
-                .email(getEmailFromToken())
-                .nickName(requestDto.getNickName())
+                .email(email)
+                .nickName(nickName)
                 .profileImageUrl(requestDto.getProfileImageUrl())
                 .birth(requestDto.getBirth())
                 .gender(requestDto.getGender() != null ? requestDto.getGender() : null)
@@ -60,12 +64,12 @@ public class AuthService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new GeneralException(MemberErrorCode.MEMBER_NOT_FOUND));
 
-        Optional.ofNullable(requestDto.getNickName())
-                .filter(n -> !Objects.equals(n, member.getNickName()))
-                .ifPresent(n -> {
-                    validateDuplicateNickName(n);
-                    member.updateNickName(n);
-                });
+//        Optional.ofNullable(requestDto.getNickName())
+//                .filter(n -> !Objects.equals(n, member.getNickName()))
+//                .ifPresent(n -> {
+//                    validateDuplicateNickName(n);
+//                    member.updateNickName(n);
+//                });
 
         Optional.ofNullable(requestDto.getProfileImageUrl())
                 .ifPresent(member::updateProfileImageUrl);
@@ -195,20 +199,28 @@ public class AuthService {
         }
     }
 
-    public String getEmailFromToken() {
+    public Optional<String> getNickNameFromToken() {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
+
         if (!(authentication instanceof JwtAuthenticationToken jwtAuth)) {
             throw new GeneralException(MemberErrorCode.INVALID_TOKEN);
         }
 
-        return getMemberIdFromToken() + "@email.com"; // 임시 이메일 생성
+        String nickname = jwtAuth.getToken().getClaimAsString("username");
 
-//        String email = jwtAuth.getToken().getClaimAsString("email");
-//        if (email == null || email.isBlank()) {
-//            throw new GeneralException(MemberErrorCode.INVALID_TOKEN);
-//        }
+        return Optional.ofNullable(nickname);
+    }
 
-//        return email;
+    public Optional<String> getEmailFromToken() {
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (!(authentication instanceof JwtAuthenticationToken jwtAuth)) {
+            throw new GeneralException(MemberErrorCode.INVALID_TOKEN);
+        }
+
+        String email = jwtAuth.getToken().getClaimAsString("email");
+
+        return Optional.ofNullable(email);
     }
 
 //    public CheckPasswordResponse checkPassword(CheckPasswordRequest request) {

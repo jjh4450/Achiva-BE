@@ -6,7 +6,7 @@ import java.util.List;
 
 @Getter
 public class UpdateMemberRequest {
-    private String nickName;
+    private String nickNameButDidntWork;
     private String profileImageUrl;
     private String birth;
     private String gender;

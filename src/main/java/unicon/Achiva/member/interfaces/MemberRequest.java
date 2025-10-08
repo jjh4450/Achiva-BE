@@ -11,7 +11,6 @@ import java.util.List;
 @Getter
 @Builder
 public class MemberRequest {
-    private String nickName;
     private String profileImageUrl;
     private LocalDate birth;
     private Gender gender;
