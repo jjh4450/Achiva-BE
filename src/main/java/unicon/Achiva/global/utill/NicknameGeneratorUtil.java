@@ -72,11 +72,11 @@ public final class NicknameGeneratorUtil {
     /**
      * Generates a batch of nicknames with custom settings.
      *
-     * @param count       The number of nicknames to generate.
-     * @param minLen      Minimum length of the nicknames.
-     * @param maxLen      Maximum length of the nicknames.
-     * @param pascalCase  True to enable PascalCase.
-     * @param allowHyphen True to allow hyphens.
+     * @param count        The number of nicknames to generate.
+     * @param minLen       Minimum length of the nicknames.
+     * @param maxLen       Maximum length of the nicknames.
+     * @param pascalCase   True to enable PascalCase.
+     * @param allowHyphen  True to allow hyphens.
      * @param ensureUnique True to ensure all nicknames in the batch are unique.
      * @return A list of generated nicknames.
      */
@@ -181,24 +181,6 @@ public final class NicknameGeneratorUtil {
         private static final String[] CLUSTERS_ONSET = {"bl", "br", "ch", "cl", "cr", "dr", "fl", "fr", "gl", "gr", "pl", "pr", "qu", "sc", "sh", "sk", "sl", "sm", "sn", "sp", "st", "sw", "th", "tr", "wh"};
         private static final String[] CLUSTERS_CODA = {"ch", "ck", "ft", "ld", "lf", "lk", "lm", "lp", "lt", "mp", "nd", "ng", "nk", "nt", "pt", "rd", "rk", "rl", "rm", "rn", "rp", "rt", "sh", "sk", "sp", "st", "th"};
 
-        @Override
-        public String generate(Random rnd) {
-            int syllables = weighted(rnd, new int[]{1, 2, 3}, new int[]{3, 5, 2});
-            StringBuilder sb = new StringBuilder();
-            String prevCoda = "";
-            for (int i = 0; i < syllables; i++) {
-                String onset = pickOnset(rnd, prevCoda);
-                String nucleus = pickNucleus(rnd);
-                String coda = pickCoda(rnd);
-                if (i == syllables - 1 && rnd.nextInt(5) == 0) coda = "";
-                sb.append(onset).append(nucleus).append(coda);
-                prevCoda = coda;
-            }
-            String s = sb.toString();
-            s = s.replaceAll("([a-z])\\1{2,}", "$1$1"); // remove triple letters
-            return s;
-        }
-
         private static String pickOnset(Random rnd, String prevCoda) {
             if (!prevCoda.isEmpty() && rnd.nextInt(4) == 0) return "";
             int r = rnd.nextInt(10);
@@ -232,6 +214,24 @@ public final class NicknameGeneratorUtil {
                 if (r < acc) return values[i];
             }
             return values[0];
+        }
+
+        @Override
+        public String generate(Random rnd) {
+            int syllables = weighted(rnd, new int[]{1, 2, 3}, new int[]{3, 5, 2});
+            StringBuilder sb = new StringBuilder();
+            String prevCoda = "";
+            for (int i = 0; i < syllables; i++) {
+                String onset = pickOnset(rnd, prevCoda);
+                String nucleus = pickNucleus(rnd);
+                String coda = pickCoda(rnd);
+                if (i == syllables - 1 && rnd.nextInt(5) == 0) coda = "";
+                sb.append(onset).append(nucleus).append(coda);
+                prevCoda = coda;
+            }
+            String s = sb.toString();
+            s = s.replaceAll("([a-z])\\1{2,}", "$1$1"); // remove triple letters
+            return s;
         }
     }
 

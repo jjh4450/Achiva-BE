@@ -12,8 +12,8 @@ import unicon.Achiva.member.infrastructure.MemberRepository;
 import unicon.Achiva.member.interfaces.*;
 
 import java.time.LocalDate;
-import java.util.Objects;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -34,6 +34,7 @@ public class AuthService {
         validateDuplication(nickName, email);
 
         Member member = Member.builder()
+                .id(getMemberIdFromToken())
                 .email(email)
                 .nickName(nickName)
                 .profileImageUrl(requestDto.getProfileImageUrl())
@@ -43,8 +44,6 @@ public class AuthService {
                 .categories(requestDto.getCategories())
                 .role(Role.USER)
                 .build();
-
-        member.dangerFunctionOnlyInitUserId(getMemberIdFromToken());
 
         Member savedMember = memberRepository.save(member);
 
@@ -246,9 +245,9 @@ public class AuthService {
 
         String nickname = jwtAuth.getToken().getClaimAsString("username");
 
-        if(isAppleUser() || isGoogleUser()){
+        if (isAppleUser() || isGoogleUser()) {
             return Optional.empty();
-        }else{
+        } else {
             return Optional.ofNullable(nickname);
         }
     }
@@ -276,7 +275,7 @@ public class AuthService {
         ArrayList<String> cognitoGroups = jwtAuth.getToken().getClaim("cognito:groups");
         var isSocialProviderGroup = cognitoGroups != null && cognitoGroups.size() > 0 && cognitoGroups.stream()
                 .map(String::toLowerCase)
-                .anyMatch(group -> group.contains("signinwith"+_socialProvider));
+                .anyMatch(group -> group.contains("signinwith" + _socialProvider));
         return isSocialProviderGroup;
     }
 

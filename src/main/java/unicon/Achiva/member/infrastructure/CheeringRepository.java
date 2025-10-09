@@ -16,10 +16,10 @@ public interface CheeringRepository extends JpaRepository<Cheering, Long>, Cheer
     Page<Cheering> findAllByArticleId(Long articleId, Pageable pageable);
 
     @Query("""
-        select distinct c.sender.id
-        from Cheering c
-        where c.article.member.id = :me
-    """)
+                select distinct c.sender.id
+                from Cheering c
+                where c.article.member.id = :me
+            """)
     List<Long> findDistinctCheererIdsWhoCheeredMyArticles(@Param("me") UUID me);
 
     Long countByArticle_MemberAndIsReadFalse(Member member);
@@ -30,21 +30,21 @@ public interface CheeringRepository extends JpaRepository<Cheering, Long>, Cheer
     // 내가 "보낸" 응원: 카테고리별 개수/점수
     // CategoryStatDto 하드코딩해서 안좋은 설계방식이긴함..
     @Query("""
-        select new unicon.Achiva.member.interfaces.CategoryStatDto(c.cheeringCategory, count(c), count(c) * :pt)
-        from Cheering c
-        where c.sender.id = :memberId
-        group by c.cheeringCategory
-    """)
+                select new unicon.Achiva.member.interfaces.CategoryStatDto(c.cheeringCategory, count(c), count(c) * :pt)
+                from Cheering c
+                where c.sender.id = :memberId
+                group by c.cheeringCategory
+            """)
     List<CategoryStatDto> givenStatsByCategory(@Param("memberId") UUID memberId,
                                                @Param("pt") long pointsPerCheer);
 
     // 내가 "받은" 응원: 카테고리별 개수/점수
     @Query("""
-        select new unicon.Achiva.member.interfaces.CategoryStatDto(c.cheeringCategory, count(c), count(c) * :pt)
-        from Cheering c
-        where c.receiver.id = :memberId
-        group by c.cheeringCategory
-    """)
+                select new unicon.Achiva.member.interfaces.CategoryStatDto(c.cheeringCategory, count(c), count(c) * :pt)
+                from Cheering c
+                where c.receiver.id = :memberId
+                group by c.cheeringCategory
+            """)
     List<CategoryStatDto> receivedStatsByCategory(@Param("memberId") UUID memberId,
                                                   @Param("pt") long pointsPerCheer);
 

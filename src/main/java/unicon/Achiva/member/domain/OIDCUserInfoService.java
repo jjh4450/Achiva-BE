@@ -1,32 +1,27 @@
 package unicon.Achiva.member.domain;
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.Optional;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Collections;
+import java.util.Map;
+import java.util.Optional;
+
 @Slf4j
 @Service
 public class OIDCUserInfoService {
 
+    private final RestTemplate restTemplate = new RestTemplate();
     @Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri}")
     private String issuerUri;
-
     private String userInfoEndpoint;
-
-    private final RestTemplate restTemplate = new RestTemplate();
 
     @PostConstruct
     public void init() {
