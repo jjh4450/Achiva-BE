@@ -7,11 +7,13 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import unicon.Achiva.global.response.GeneralException;
+import unicon.Achiva.global.utill.NicknameGeneratorUtil;
 import unicon.Achiva.member.infrastructure.MemberRepository;
 import unicon.Achiva.member.interfaces.*;
 
 import java.time.LocalDate;
-//import java.util.Objects;
+import java.util.Objects;
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -27,7 +29,7 @@ public class AuthService {
     @Transactional
     public CreateMemberResponse signup(MemberRequest requestDto) {
         String email = getEmailFromToken().orElse(oidcUserInfoService.getEmailFromUserInfo().orElseThrow(() -> new GeneralException(MemberErrorCode.INVALID_TOKEN)));
-        String nickName = getNickNameFromToken().orElseThrow(()-> new GeneralException(MemberErrorCode.INVALID_TOKEN));
+        String nickName = determineNickname(email);
 
         validateDuplication(nickName, email);
 
@@ -51,6 +53,34 @@ public class AuthService {
     }
 
     /**
+     * Determines the nickname based on the following priority:
+     * 1. If a nickname is present in the JWT token, use it.
+     * 2. If the email is an Apple private relay address, generate a random nickname.
+     * 3. Otherwise, use the part of the email before the "@" symbol.
+     * 4. If all else fails, generate a random nickname.
+     *
+     * @param email the user's email address
+     * @return the determined nickname
+     */
+    private String determineNickname(String email) {
+        Optional<String> nicknameFromToken = getNickNameFromToken();
+        if (nicknameFromToken.isPresent()) {
+            return nicknameFromToken.get();
+        }
+
+        if (email.toLowerCase().endsWith("privaterelay.appleid.com".toLowerCase())) {
+            return NicknameGeneratorUtil.generate();
+        }
+
+        int atIndex = email.indexOf('@');
+        if (atIndex > 0) {
+            return email.substring(0, atIndex);
+        }
+
+        return NicknameGeneratorUtil.generate();
+    }
+
+    /**
      * 부분 갱신(PATCH) 형태의 회원 정보 업데이트.
      * null 이 아닌 필드만 엔티티에 반영하며, 닉네임은 변경 시 중복 검증을 수행한다.
      *
@@ -64,12 +94,12 @@ public class AuthService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new GeneralException(MemberErrorCode.MEMBER_NOT_FOUND));
 
-//        Optional.ofNullable(requestDto.getNickName())
-//                .filter(n -> !Objects.equals(n, member.getNickName()))
-//                .ifPresent(n -> {
-//                    validateDuplicateNickName(n);
-//                    member.updateNickName(n);
-//                });
+        Optional.ofNullable(requestDto.getNickName())
+                .filter(n -> !Objects.equals(n, member.getNickName()))
+                .ifPresent(n -> {
+                    validateDuplicateNickName(n);
+                    member.updateNickName(n);
+                });
 
         Optional.ofNullable(requestDto.getProfileImageUrl())
                 .ifPresent(member::updateProfileImageUrl);
@@ -199,6 +229,14 @@ public class AuthService {
         }
     }
 
+    /**
+     * Extracts the nickname from the JWT "username" claim.
+     * If the user is authenticated via Apple or Google, returns Optional.empty().
+     * Because social logins have "...signinwith{socialProvider}" usernames.
+     *
+     * @return an Optional containing the nickname if present and not a social login; otherwise, Optional.empty()
+     * @throws GeneralException if authentication is missing or not a JwtAuthenticationToken
+     */
     public Optional<String> getNickNameFromToken() {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -208,7 +246,11 @@ public class AuthService {
 
         String nickname = jwtAuth.getToken().getClaimAsString("username");
 
-        return Optional.ofNullable(nickname);
+        if(isAppleUser() || isGoogleUser()){
+            return Optional.empty();
+        }else{
+            return Optional.ofNullable(nickname);
+        }
     }
 
     public Optional<String> getEmailFromToken() {
@@ -221,6 +263,29 @@ public class AuthService {
         String email = jwtAuth.getToken().getClaimAsString("email");
 
         return Optional.ofNullable(email);
+    }
+
+    private Boolean isSocialeUser(String socialProvider) {
+        String _socialProvider = socialProvider.toLowerCase();
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (!(authentication instanceof JwtAuthenticationToken jwtAuth)) {
+            throw new GeneralException(MemberErrorCode.INVALID_TOKEN);
+        }
+
+        ArrayList<String> cognitoGroups = jwtAuth.getToken().getClaim("cognito:groups");
+        var isSocialProviderGroup = cognitoGroups != null && cognitoGroups.size() > 0 && cognitoGroups.stream()
+                .map(String::toLowerCase)
+                .anyMatch(group -> group.contains("signinwith"+_socialProvider));
+        return isSocialProviderGroup;
+    }
+
+    private Boolean isAppleUser() {
+        return isSocialeUser("apple");
+    }
+
+    private Boolean isGoogleUser() {
+        return isSocialeUser("google");
     }
 
 //    public CheckPasswordResponse checkPassword(CheckPasswordRequest request) {

@@ -43,7 +43,7 @@ RUN gradle build -x test --no-daemon
 # the smallest image possible. This often means using a different and smaller
 # image than the one used for building the application, but for illustrative
 # purposes the "base" image is used here.
-FROM eclipse-temurin:21-jre-alpine AS runtime
+FROM eclipse-temurin:21-jre-noble AS runtime
 
 # Create a non-privileged user that the app will run under.
 # See https://docs.docker.com/go/dockerfile-user-best-practices/
