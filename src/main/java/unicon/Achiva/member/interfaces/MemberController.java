@@ -1,14 +1,12 @@
 package unicon.Achiva.member.interfaces;
 
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import unicon.Achiva.common.S3Service;
 import unicon.Achiva.global.response.ApiResponseForm;
 import unicon.Achiva.member.domain.ArticleService;
@@ -83,16 +81,25 @@ public class MemberController {
         return ResponseEntity.ok(ApiResponseForm.success(result, "카테고리별 작성 수 조회 성공"));
     }
 
-//    @Operation(summary = "프로필 이미지 수정 API. presigned URL 발급 및 업로드가 선행되어야 함.")
-//    @PutMapping("/api/members/confirm-upload")
-//    public ResponseEntity<ApiResponseForm<Map<String, Boolean>>> confirmProfileImageUpload(
-//            @RequestBody ConfirmProfileImageUploadRequest confirmProfileImageUploadRequest,
-//            HttpServletRequest request
-//    ) {
-//        UUID memberId = authService.getMemberIdFromToken(request);
-//        memberService.updateProfileImageUrl(memberId, confirmProfileImageUploadRequest);
-//        Map<String, Boolean> response = new HashMap<>();
-//        response.put("updated", true);
-//        return ResponseEntity.ok(ApiResponseForm.success(response, "프로필 사진 업데이트 성공"));
-//    }
+    @Operation(summary = "내 프로필 이미지 조회 API")
+    @GetMapping("/api/members/me/image")
+    public ResponseEntity<ApiResponseForm<String>> getMyProfileImageUrl() {
+        UUID memberId = authService.getMemberIdFromToken();
+        String profileImageUrl = memberService.getMemberInfo(memberId).getProfileImageUrl();
+        return ResponseEntity.ok(ApiResponseForm.success(
+                profileImageUrl,
+                "내 프로필 이미지 조회 성공"));
+    }
+
+    @Operation(summary = "내 프로필 이미지 수정 API. presigned URL 발급 및 업로드가 선행되어야 함.")
+    @PutMapping("/api/members/me/image")
+    public ResponseEntity<ApiResponseForm<Boolean> confirmProfileImageUpload(
+            @RequestBody ConfirmProfileImageUploadRequest confirmProfileImageUploadRequest
+    ) {
+        UUID memberId = authService.getMemberIdFromToken();
+        memberService.updateProfileImageUrl(memberId, confirmProfileImageUploadRequest);
+        return ResponseEntity.ok(ApiResponseForm.success(
+                ,
+                "프로필 사진 업데이트 성공"));
+    }
 }

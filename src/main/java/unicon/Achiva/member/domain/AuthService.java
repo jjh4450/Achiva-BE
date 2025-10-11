@@ -30,8 +30,21 @@ public class AuthService {
     public CreateMemberResponse signup(MemberRequest requestDto) {
         String email = getEmailFromToken().orElse(oidcUserInfoService.getEmailFromUserInfo().orElseThrow(() -> new GeneralException(MemberErrorCode.INVALID_TOKEN)));
         String nickName = determineNickname(email);
+        boolean emailExists = memberRepository.existsByEmail(email);
+        boolean nickNameExists = memberRepository.existsByNickName(nickName);
 
-        validateDuplication(nickName, email);
+        if (emailExists) {
+            throw new GeneralException(MemberErrorCode.DUPLICATE_EMAIL);
+        }
+        if (nickNameExists) {
+            if (isAppleUser() || isGoogleUser()) {
+                do {
+                    nickName = NicknameGeneratorUtil.generate();
+                } while (memberRepository.existsByNickName(nickName));
+            } else {
+                throw new GeneralException(MemberErrorCode.DUPLICATE_NICKNAME);
+            }
+        }
 
         Member member = Member.builder()
                 .id(getMemberIdFromToken())
@@ -123,7 +136,6 @@ public class AuthService {
         Optional.ofNullable(requestDto.getDescription())
                 .ifPresent(member::updateDescription);
 
-        // JPA 영속성 컨텍스트 내 변경 감지로 flush 되므로 save 호출 불필요
         return MemberResponse.fromEntity(member);
     }
 
@@ -132,11 +144,6 @@ public class AuthService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new GeneralException(MemberErrorCode.MEMBER_NOT_FOUND));
         memberRepository.delete(member);
-    }
-
-    public void validateDuplication(String email, String nickName) {
-        validateDuplicateEmail(email);
-        validateDuplicateNickName(nickName);
     }
 
     public CheckEmailResponse validateDuplicateEmail(String email) {
@@ -154,58 +161,6 @@ public class AuthService {
         }
         return new CheckNicknameResponse(true);
     }
-
-//    @Transactional
-//    public SendVerificationCodeResponse sendVerificationCode(String email) {
-//        validateDuplicateEmail(email);
-//
-//        String code = String.format("%04d", new Random().nextInt(9999));
-//
-//        EmailVerification verification = emailVerificationRepository.findByEmail(email)
-//                .orElse(new EmailVerification());
-//
-//        verification.startVerification(email, code);
-//
-//        emailVerificationRepository.save(verification);
-//
-//        emailService.sendCode(email, code);
-//
-//        return new SendVerificationCodeResponse(email);
-//    }
-
-//    @Transactional
-//    public VerifyCodeResponse verifyCode(String email, String code) {
-//        EmailVerification verification = emailVerificationRepository.findByEmail(email)
-//                .orElseThrow(() -> new GeneralException(MemberErrorCode.VERIFICATION_NOT_FOUND));
-//
-//        if (verification.getExpiryDate().isBefore(LocalDateTime.now())) {
-//            throw new GeneralException(MemberErrorCode.VERIFICATION_EXPIRED);
-//        }
-//        if (!verification.getCode().equals(code)) {
-//            throw new GeneralException(MemberErrorCode.VERIFICATION_CODE_MISMATCH);
-//        }
-//
-//        verification.endVerification();
-//        emailVerificationRepository.save(verification);
-//
-//        return new VerifyCodeResponse(email);
-//    }
-
-//    @Transactional
-//    public ResetPasswordResponse resetPassword(ResetPasswordRequest request) {
-//        Member member = memberRepository.findByEmail(request.getEmail())
-//                .orElseThrow(() -> new GeneralException(MemberErrorCode.VERIFICATION_NOT_FOUND));
-//
-//        if (!request.getNewPassword().equals(request.getConfirmPassword())) {
-//            throw new GeneralException(MemberErrorCode.PASSWORD_MISMATCH);
-//        }
-//
-//        String newPassword = request.getNewPassword();
-//        member.updatePassword(passwordEncoder.encode(newPassword));
-//        memberRepository.save(member);
-//
-//        return new ResetPasswordResponse(member.getEmail());
-//    }
 
     /**
      * Extracts the memberId from the JWT subject ("sub") claim.
@@ -286,15 +241,4 @@ public class AuthService {
     private Boolean isGoogleUser() {
         return isSocialeUser("google");
     }
-
-//    public CheckPasswordResponse checkPassword(CheckPasswordRequest request) {
-//        Member member = memberRepository.findByEmail(request.getEmail())
-//                .orElseThrow(() -> new GeneralException(MemberErrorCode.MEMBER_NOT_FOUND));
-//
-//        boolean isMatch = passwordEncoder.matches(request.getPassword(), member.getPassword());
-//        if (!isMatch) {
-//            throw new GeneralException(MemberErrorCode.INVALID_PASSWORD);
-//        }
-//        return new CheckPasswordResponse(true);
-//    }
 }
