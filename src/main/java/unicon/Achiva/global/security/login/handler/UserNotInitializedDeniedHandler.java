@@ -6,9 +6,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
+import unicon.Achiva.global.response.ApiResponseForm;
 
 import java.io.IOException;
-import java.util.Map;
 
 @Component
 public class UserNotInitializedDeniedHandler implements AccessDeniedHandler {
@@ -22,12 +22,14 @@ public class UserNotInitializedDeniedHandler implements AccessDeniedHandler {
     public void handle(HttpServletRequest request,
                        HttpServletResponse response,
                        AccessDeniedException accessDeniedException) throws IOException {
-        response.setStatus(428);
+        var status = 428;
+        response.setStatus(status);
+        response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json");
-        Map<String, Object> body = Map.of(
-                "code", "USER_NOT_INITIALIZED",
-                "message", "Initialization required"
+        ApiResponseForm<?> failResponse = ApiResponseForm.error(
+                status,
+                "USER_NOT_INITIALIZED plz request user singing endpoint"
         );
-        om.writeValue(response.getWriter(), body);
+        om.writeValue(response.getWriter(), failResponse);
     }
 }

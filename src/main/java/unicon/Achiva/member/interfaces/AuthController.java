@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import unicon.Achiva.global.response.ApiResponseForm;
 import unicon.Achiva.member.domain.AuthService;
+import unicon.Achiva.member.domain.MemberService;
 
 import java.util.UUID;
 
@@ -14,6 +15,7 @@ import java.util.UUID;
 public class AuthController {
 
     private final AuthService authService;
+    private final MemberService memberService;
 
 //    @Operation(summary = "자체 회원가입. presigned URL 발급 및 업로드가 선행되어야 함. - JWT 필요 X")
 //    @PostMapping("api/auth/register")
@@ -29,13 +31,13 @@ public class AuthController {
         return ResponseEntity.ok(ApiResponseForm.created(createMemberResponse, "회원가입 성공"));
     }
 
-    // TO-DO auth service에서 sub확인 메서드 등록 필요
-//    @Operation(summary = "해당 JWT 토큰의 등록여부.")
-//    @PostMapping("api/auth/isinit")
-//    public ResponseEntity<ApiResponseForm<Boolean>> isInit(@RequestBody MemberRequest requestDto) {
-//        CreateMemberResponse createMemberResponse = authService.signup(requestDto);
-//        return ResponseEntity.ok(ApiResponseForm.created(createMemberResponse, "회원가입 성공"));
-//    }
+    @Operation(summary = "해당 JWT 토큰의 유저정보 등록여부. - JWT 필요")
+    @PostMapping("api/auth/isinit")
+    public ResponseEntity<ApiResponseForm<Boolean>> isInit() {
+        UUID memberId = authService.getMemberIdFromToken();
+        Boolean isInit = memberService.existsById(memberId);
+        return ResponseEntity.ok(ApiResponseForm.success(isInit, "회원 등록 확인 결과:" + isInit.toString()));
+    }
 
     @Operation(summary = "회원 정보 수정")
     @PutMapping("api/auth")

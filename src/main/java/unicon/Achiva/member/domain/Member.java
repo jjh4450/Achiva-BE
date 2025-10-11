@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import unicon.Achiva.common.UuidBaseEntity;
+import unicon.Achiva.common.BaseEntity;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -17,13 +17,13 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Member extends UuidBaseEntity {
+public class Member extends BaseEntity {
+
+    @Id
+    UUID id;
 
     @Column(nullable = false, unique = true)
     private String email;
-
-//    @Column(nullable = false)
-//    private String password;
 
     @Column(nullable = false)
     private String nickName;
@@ -52,14 +52,6 @@ public class Member extends UuidBaseEntity {
     private List<Article> articles = new ArrayList<>();
 
     private boolean pushEnabled;
-
-//    public void updatePassword(String encodedPassword) {
-//        this.password = encodedPassword;
-//    }
-
-    public void dangerFunctionOnlyInitUserId(UUID id) {
-        this.id = id;
-    }
 
     public void updateProfileImageUrl(String profileImageUrl) {
         this.profileImageUrl = profileImageUrl;

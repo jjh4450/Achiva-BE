@@ -50,27 +50,27 @@ public class SecurityConfig {
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .headers(h -> h.frameOptions(f -> f.disable()))
                 .authorizeHttpRequests(auth -> auth
-                                // 정적/유틸
-                                .requestMatchers("/", "/css/**", "/images/**", "/js/**", "/favicon.ico").permitAll()
-                                .requestMatchers("/h2-console/**").permitAll()
-                                .requestMatchers("/error").permitAll()
-                                // 문서
-                                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                                // 공개 인증 API (명시적 나열)
-                                .requestMatchers(
-                                        "/api/auth/register",
-                                        "/api/auth/login",
-                                        "/api/auth/check-email",
-                                        "/api/auth/check-nickname",
-                                        "/api/auth/send-verification-code",
-                                        "/api/auth/verify-code"
-                                ).permitAll()
-                                // 공개 파일 업로드용 사전서명 URL - 제거
-//                        .requestMatchers("/api/members/presigned-url").permitAll()
-                                // CORS preflight 안정성
-                                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                                // 그 외 보호
-                                .anyRequest().access(initManager)
+                        // 정적/유틸
+                        .requestMatchers("/", "/css/**", "/images/**", "/js/**", "/favicon.ico").permitAll()
+                        .requestMatchers("/h2-console/**").permitAll()
+                        .requestMatchers("/error").permitAll()
+                        // 문서
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        // 공개 인증 API (명시적 나열)
+                        .requestMatchers(
+                                "/api/auth/register",
+                                "/api/auth/login",
+                                "/api/auth/check-email",
+                                "/api/auth/check-nickname",
+                                "/api/auth/send-verification-code",
+                                "/api/auth/verify-code"
+                        ).permitAll()
+                        // 유저 초기화 확인용
+                        .requestMatchers("/api/auth/isinit").authenticated()
+                        // CORS preflight 안정성
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        // 그 외 보호
+                        .anyRequest().access(initManager)
                 )
                 .oauth2ResourceServer(oauth -> oauth
                         .jwt(jwt -> jwt

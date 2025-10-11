@@ -7,11 +7,13 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import unicon.Achiva.global.response.GeneralException;
+import unicon.Achiva.global.utill.NicknameGeneratorUtil;
 import unicon.Achiva.member.infrastructure.MemberRepository;
 import unicon.Achiva.member.interfaces.*;
 
 import java.time.LocalDate;
-//import java.util.Objects;
+import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -27,11 +29,25 @@ public class AuthService {
     @Transactional
     public CreateMemberResponse signup(MemberRequest requestDto) {
         String email = getEmailFromToken().orElse(oidcUserInfoService.getEmailFromUserInfo().orElseThrow(() -> new GeneralException(MemberErrorCode.INVALID_TOKEN)));
-        String nickName = getNickNameFromToken().orElseThrow(()-> new GeneralException(MemberErrorCode.INVALID_TOKEN));
+        String nickName = determineNickname(email);
+        boolean emailExists = memberRepository.existsByEmail(email);
+        boolean nickNameExists = memberRepository.existsByNickName(nickName);
 
-        validateDuplication(nickName, email);
+        if (emailExists) {
+            throw new GeneralException(MemberErrorCode.DUPLICATE_EMAIL);
+        }
+        if (nickNameExists) {
+            if (isAppleUser() || isGoogleUser()) {
+                do {
+                    nickName = NicknameGeneratorUtil.generate();
+                } while (memberRepository.existsByNickName(nickName));
+            } else {
+                throw new GeneralException(MemberErrorCode.DUPLICATE_NICKNAME);
+            }
+        }
 
         Member member = Member.builder()
+                .id(getMemberIdFromToken())
                 .email(email)
                 .nickName(nickName)
                 .profileImageUrl(requestDto.getProfileImageUrl())
@@ -42,12 +58,38 @@ public class AuthService {
                 .role(Role.USER)
                 .build();
 
-        member.dangerFunctionOnlyInitUserId(getMemberIdFromToken());
-
         Member savedMember = memberRepository.save(member);
 
 
         return CreateMemberResponse.fromEntity(savedMember);
+    }
+
+    /**
+     * Determines the nickname based on the following priority:
+     * 1. If a nickname is present in the JWT token, use it.
+     * 2. If the email is an Apple private relay address, generate a random nickname.
+     * 3. Otherwise, use the part of the email before the "@" symbol.
+     * 4. If all else fails, generate a random nickname.
+     *
+     * @param email the user's email address
+     * @return the determined nickname
+     */
+    private String determineNickname(String email) {
+        Optional<String> nicknameFromToken = getNickNameFromToken();
+        if (nicknameFromToken.isPresent()) {
+            return nicknameFromToken.get();
+        }
+
+        if (email.toLowerCase().endsWith("privaterelay.appleid.com".toLowerCase())) {
+            return NicknameGeneratorUtil.generate();
+        }
+
+        int atIndex = email.indexOf('@');
+        if (atIndex > 0) {
+            return email.substring(0, atIndex);
+        }
+
+        return NicknameGeneratorUtil.generate();
     }
 
     /**
@@ -64,12 +106,12 @@ public class AuthService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new GeneralException(MemberErrorCode.MEMBER_NOT_FOUND));
 
-//        Optional.ofNullable(requestDto.getNickName())
-//                .filter(n -> !Objects.equals(n, member.getNickName()))
-//                .ifPresent(n -> {
-//                    validateDuplicateNickName(n);
-//                    member.updateNickName(n);
-//                });
+        Optional.ofNullable(requestDto.getNickName())
+                .filter(n -> !Objects.equals(n, member.getNickName()))
+                .ifPresent(n -> {
+                    validateDuplicateNickName(n);
+                    member.updateNickName(n);
+                });
 
         Optional.ofNullable(requestDto.getProfileImageUrl())
                 .ifPresent(member::updateProfileImageUrl);
@@ -94,7 +136,6 @@ public class AuthService {
         Optional.ofNullable(requestDto.getDescription())
                 .ifPresent(member::updateDescription);
 
-        // JPA 영속성 컨텍스트 내 변경 감지로 flush 되므로 save 호출 불필요
         return MemberResponse.fromEntity(member);
     }
 
@@ -103,11 +144,6 @@ public class AuthService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new GeneralException(MemberErrorCode.MEMBER_NOT_FOUND));
         memberRepository.delete(member);
-    }
-
-    public void validateDuplication(String email, String nickName) {
-        validateDuplicateEmail(email);
-        validateDuplicateNickName(nickName);
     }
 
     public CheckEmailResponse validateDuplicateEmail(String email) {
@@ -125,58 +161,6 @@ public class AuthService {
         }
         return new CheckNicknameResponse(true);
     }
-
-//    @Transactional
-//    public SendVerificationCodeResponse sendVerificationCode(String email) {
-//        validateDuplicateEmail(email);
-//
-//        String code = String.format("%04d", new Random().nextInt(9999));
-//
-//        EmailVerification verification = emailVerificationRepository.findByEmail(email)
-//                .orElse(new EmailVerification());
-//
-//        verification.startVerification(email, code);
-//
-//        emailVerificationRepository.save(verification);
-//
-//        emailService.sendCode(email, code);
-//
-//        return new SendVerificationCodeResponse(email);
-//    }
-
-//    @Transactional
-//    public VerifyCodeResponse verifyCode(String email, String code) {
-//        EmailVerification verification = emailVerificationRepository.findByEmail(email)
-//                .orElseThrow(() -> new GeneralException(MemberErrorCode.VERIFICATION_NOT_FOUND));
-//
-//        if (verification.getExpiryDate().isBefore(LocalDateTime.now())) {
-//            throw new GeneralException(MemberErrorCode.VERIFICATION_EXPIRED);
-//        }
-//        if (!verification.getCode().equals(code)) {
-//            throw new GeneralException(MemberErrorCode.VERIFICATION_CODE_MISMATCH);
-//        }
-//
-//        verification.endVerification();
-//        emailVerificationRepository.save(verification);
-//
-//        return new VerifyCodeResponse(email);
-//    }
-
-//    @Transactional
-//    public ResetPasswordResponse resetPassword(ResetPasswordRequest request) {
-//        Member member = memberRepository.findByEmail(request.getEmail())
-//                .orElseThrow(() -> new GeneralException(MemberErrorCode.VERIFICATION_NOT_FOUND));
-//
-//        if (!request.getNewPassword().equals(request.getConfirmPassword())) {
-//            throw new GeneralException(MemberErrorCode.PASSWORD_MISMATCH);
-//        }
-//
-//        String newPassword = request.getNewPassword();
-//        member.updatePassword(passwordEncoder.encode(newPassword));
-//        memberRepository.save(member);
-//
-//        return new ResetPasswordResponse(member.getEmail());
-//    }
 
     /**
      * Extracts the memberId from the JWT subject ("sub") claim.
@@ -199,6 +183,14 @@ public class AuthService {
         }
     }
 
+    /**
+     * Extracts the nickname from the JWT "username" claim.
+     * If the user is authenticated via Apple or Google, returns Optional.empty().
+     * Because social logins have "...signinwith{socialProvider}" usernames.
+     *
+     * @return an Optional containing the nickname if present and not a social login; otherwise, Optional.empty()
+     * @throws GeneralException if authentication is missing or not a JwtAuthenticationToken
+     */
     public Optional<String> getNickNameFromToken() {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -208,7 +200,11 @@ public class AuthService {
 
         String nickname = jwtAuth.getToken().getClaimAsString("username");
 
-        return Optional.ofNullable(nickname);
+        if (isAppleUser() || isGoogleUser()) {
+            return Optional.empty();
+        } else {
+            return Optional.ofNullable(nickname);
+        }
     }
 
     public Optional<String> getEmailFromToken() {
@@ -223,14 +219,26 @@ public class AuthService {
         return Optional.ofNullable(email);
     }
 
-//    public CheckPasswordResponse checkPassword(CheckPasswordRequest request) {
-//        Member member = memberRepository.findByEmail(request.getEmail())
-//                .orElseThrow(() -> new GeneralException(MemberErrorCode.MEMBER_NOT_FOUND));
-//
-//        boolean isMatch = passwordEncoder.matches(request.getPassword(), member.getPassword());
-//        if (!isMatch) {
-//            throw new GeneralException(MemberErrorCode.INVALID_PASSWORD);
-//        }
-//        return new CheckPasswordResponse(true);
-//    }
+    private Boolean isSocialeUser(String socialProvider) {
+        String _socialProvider = socialProvider.toLowerCase();
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (!(authentication instanceof JwtAuthenticationToken jwtAuth)) {
+            throw new GeneralException(MemberErrorCode.INVALID_TOKEN);
+        }
+
+        ArrayList<String> cognitoGroups = jwtAuth.getToken().getClaim("cognito:groups");
+        var isSocialProviderGroup = cognitoGroups != null && cognitoGroups.size() > 0 && cognitoGroups.stream()
+                .map(String::toLowerCase)
+                .anyMatch(group -> group.contains("signinwith" + _socialProvider));
+        return isSocialProviderGroup;
+    }
+
+    private Boolean isAppleUser() {
+        return isSocialeUser("apple");
+    }
+
+    private Boolean isGoogleUser() {
+        return isSocialeUser("google");
+    }
 }
