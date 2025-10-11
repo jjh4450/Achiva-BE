@@ -93,13 +93,13 @@ public class MemberController {
 
     @Operation(summary = "내 프로필 이미지 수정 API. presigned URL 발급 및 업로드가 선행되어야 함.")
     @PutMapping("/api/members/me/image")
-    public ResponseEntity<ApiResponseForm<Boolean> confirmProfileImageUpload(
+    public ResponseEntity<ApiResponseForm<Boolean>> confirmProfileImageUpload(
             @RequestBody ConfirmProfileImageUploadRequest confirmProfileImageUploadRequest
     ) {
         UUID memberId = authService.getMemberIdFromToken();
         memberService.updateProfileImageUrl(memberId, confirmProfileImageUploadRequest);
         return ResponseEntity.ok(ApiResponseForm.success(
-                ,
+                true,
                 "프로필 사진 업데이트 성공"));
     }
 }
