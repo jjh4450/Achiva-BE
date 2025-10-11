@@ -22,6 +22,10 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
 
+    public Boolean existsById(UUID memberId) {
+        return memberRepository.existsById(memberId);
+    }
+
     public MemberResponse getMemberInfo(UUID memberId) {
         return memberRepository.findById(memberId)
                 .map(MemberResponse::fromEntity)
@@ -39,16 +43,18 @@ public class MemberService {
                 .map(MemberResponse::fromEntity);
     }
 
+    /**
+     * 주어진 회원의 프로필 이미지 URL을 갱신한다.
+     *
+     * @param memberId 회원 식별자
+     * @param request  업로드 확인 요청(이미지 URL 포함)
+     * @throws GeneralException 회원이 존재하지 않는 경우
+     */
     @Transactional
-    public void updateProfileImageUrl(UUID memberId, ConfirmProfileImageUploadRequest confirmProfileImageUploadRequest) {
-        memberRepository.findById(memberId).ifPresentOrElse(
-                member -> {
-                    member.updateProfileImageUrl(confirmProfileImageUploadRequest.getUrl());
-                    memberRepository.save(member);
-                },
-                () -> {
-                    throw new GeneralException(MemberErrorCode.MEMBER_NOT_FOUND);
-                }
-        );
+    public void updateProfileImageUrl(UUID memberId, ConfirmProfileImageUploadRequest request) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new GeneralException(MemberErrorCode.MEMBER_NOT_FOUND));
+
+        member.updateProfileImageUrl(request.getUrl());
     }
 }

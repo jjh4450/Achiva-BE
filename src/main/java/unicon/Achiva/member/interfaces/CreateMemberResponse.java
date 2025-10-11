@@ -1,7 +1,10 @@
 package unicon.Achiva.member.interfaces;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Getter;
+import org.hibernate.validator.constraints.URL;
 import unicon.Achiva.member.domain.Category;
 import unicon.Achiva.member.domain.Gender;
 import unicon.Achiva.member.domain.Member;
@@ -14,12 +17,17 @@ import java.util.UUID;
 @Getter
 @Builder
 public class CreateMemberResponse {
+    @org.hibernate.validator.constraints.UUID
     private UUID id;
+    @Email
     private String email;
+    @Size(min = 2, max = 20)
     private String nickName;
+    @URL(protocol = "https")
     private String profileImageUrl;
     private LocalDate birth;
     private Gender gender;
+    @Size(min = 2, max = 100)
     private String region;
     private List<Category> categories;
     private LocalDateTime createdAt;
