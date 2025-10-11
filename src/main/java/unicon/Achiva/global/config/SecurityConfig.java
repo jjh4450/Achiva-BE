@@ -65,8 +65,8 @@ public class SecurityConfig {
                                         "/api/auth/send-verification-code",
                                         "/api/auth/verify-code"
                                 ).permitAll()
-                                // 공개 파일 업로드용 사전서명 URL - 제거
-//                        .requestMatchers("/api/members/presigned-url").permitAll()
+                                // 유저 초기화 확인용
+                                .requestMatchers("/api/auth/isinit").authenticated()
                                 // CORS preflight 안정성
                                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                                 // 그 외 보호

@@ -1,18 +1,29 @@
 package unicon.Achiva.member.interfaces;
 
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Getter;
+import unicon.Achiva.global.validation.ValidHexColor;
 import unicon.Achiva.member.domain.Category;
 import unicon.Achiva.member.domain.Question;
+import org.hibernate.validator.constraints.URL;
 
 import java.util.List;
 
 @Getter
 public class ArticleRequest {
+
+    @URL(protocol = "https")
     private final String photoUrl;
+
+    @NotNull
+    @Size(min = 1, max = 50)
     private final String title;
     private final Category category;
     private final List<QuestionDTO> question;
+
+    @ValidHexColor
     private final String backgroundColor;
 
     public ArticleRequest(String photoUrl, String title, Category category, List<QuestionDTO> question, String backgroundColor) {
