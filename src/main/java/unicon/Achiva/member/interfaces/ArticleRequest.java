@@ -4,10 +4,10 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Getter;
+import org.hibernate.validator.constraints.URL;
 import unicon.Achiva.global.validation.ValidHexColor;
 import unicon.Achiva.member.domain.Category;
 import unicon.Achiva.member.domain.Question;
-import org.hibernate.validator.constraints.URL;
 
 import java.util.List;
 

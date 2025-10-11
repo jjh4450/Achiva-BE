@@ -1,4 +1,5 @@
 package unicon.Achiva.member.interfaces;
+
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import org.hibernate.validator.constraints.URL;

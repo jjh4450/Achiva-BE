@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import unicon.Achiva.common.BaseEntity;
-import unicon.Achiva.common.UuidBaseEntity;
 
 import java.time.LocalDate;
 import java.util.ArrayList;

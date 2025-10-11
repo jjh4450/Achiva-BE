@@ -36,7 +36,7 @@ public class AuthController {
     public ResponseEntity<ApiResponseForm<Boolean>> isInit() {
         UUID memberId = authService.getMemberIdFromToken();
         Boolean isInit = memberService.existsById(memberId);
-        return ResponseEntity.ok(ApiResponseForm.success(isInit, "회원 등록 확인 결과:"+ isInit.toString()));
+        return ResponseEntity.ok(ApiResponseForm.success(isInit, "회원 등록 확인 결과:" + isInit.toString()));
     }
 
     @Operation(summary = "회원 정보 수정")
