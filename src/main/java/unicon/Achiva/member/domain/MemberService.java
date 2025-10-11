@@ -22,6 +22,10 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
 
+    public Boolean existsById(UUID memberId) {
+        return memberRepository.existsById(memberId);
+    }
+
     public MemberResponse getMemberInfo(UUID memberId) {
         return memberRepository.findById(memberId)
                 .map(MemberResponse::fromEntity)
