@@ -38,8 +38,8 @@ public interface ArticleRepository extends JpaRepository<Article, Long>, Article
                        or a.member.id in :cheererIds
                     """)
     Page<Article> findCombinedFeed(
-            @Param("friendIds") Collection<Long> friendIds,
-            @Param("cheererIds") Collection<Long> cheererIds,
+            @Param("friendIds") Collection<UUID> friendIds,
+            @Param("cheererIds") Collection<UUID> cheererIds,
             Pageable pageable
     );
 

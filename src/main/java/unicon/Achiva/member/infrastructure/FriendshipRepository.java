@@ -22,5 +22,5 @@ public interface FriendshipRepository extends JpaRepository<Friendship, Long> {
                 where f.status = unicon.Achiva.member.domain.FriendshipStatus.ACCEPTED
                   and (f.requesterId = :me or f.receiverId = :me)
             """)
-    List<Long> findFriendIdsOf(@Param("me") UUID me);
+    List<UUID> findFriendIdsOf(@Param("me") UUID me);
 }

@@ -20,7 +20,7 @@ public interface CheeringRepository extends JpaRepository<Cheering, Long>, Cheer
                 from Cheering c
                 where c.article.member.id = :me
             """)
-    List<Long> findDistinctCheererIdsWhoCheeredMyArticles(@Param("me") UUID me);
+    List<UUID> findDistinctCheererIdsWhoCheeredMyArticles(@Param("me") UUID me);
 
     Long countByArticle_MemberAndIsReadFalse(Member member);
 

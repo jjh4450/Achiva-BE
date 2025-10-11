@@ -174,15 +174,15 @@ public class ArticleService {
     }
 
     public Page<ArticleResponse> getHomeArticles(UUID myId, Pageable pageable) {
-        List<Long> friendIds = friendshipRepository.findFriendIdsOf(myId);
-        List<Long> cheererIds = cheeringRepository.findDistinctCheererIdsWhoCheeredMyArticles(myId);
+        List<UUID> friendIds = friendshipRepository.findFriendIdsOf(myId);
+        List<UUID> cheererIds = cheeringRepository.findDistinctCheererIdsWhoCheeredMyArticles(myId);
 
         if ((friendIds == null || friendIds.isEmpty()) && (cheererIds == null || cheererIds.isEmpty())) {
             return Page.empty(pageable);
         }
 
-        Set<Long> friendSet = new HashSet<>(friendIds);
-        List<Long> cheererOnly = cheererIds.stream()
+        Set<UUID> friendSet = new HashSet<>(friendIds);
+        List<UUID> cheererOnly = cheererIds.stream()
                 .filter(id -> !friendSet.contains(id))
                 .toList();
 
