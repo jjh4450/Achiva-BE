@@ -13,7 +13,7 @@ import unicon.Achiva.domain.article.dto.ArticleResponse;
 import unicon.Achiva.domain.article.dto.SearchArticleCondition;
 import unicon.Achiva.domain.article.entity.Article;
 import unicon.Achiva.domain.article.infrastructure.ArticleRepository;
-import unicon.Achiva.domain.article.infrastructure.CounterHelper;
+import unicon.Achiva.domain.member.infrastructure.CounterHelper;
 import unicon.Achiva.domain.category.Category;
 import unicon.Achiva.domain.category.CategoryCountResponse;
 import unicon.Achiva.domain.cheering.infrastructure.CheeringRepository;

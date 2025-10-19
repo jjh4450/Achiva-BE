@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import unicon.Achiva.domain.article.entity.Article;
 import unicon.Achiva.domain.auth.Role;
 import unicon.Achiva.domain.category.Category;
@@ -46,6 +48,7 @@ public class Member extends BaseEntity {
 
     @ElementCollection(targetClass = Category.class)
     @Enumerated(EnumType.STRING)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private List<Category> categories;
 
     @Enumerated(EnumType.STRING)
