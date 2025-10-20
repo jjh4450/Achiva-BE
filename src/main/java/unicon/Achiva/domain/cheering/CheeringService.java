@@ -34,7 +34,7 @@ public class CheeringService {
     private final ArticleRepository articleRepository;
 
     @Transactional
-    public CheeringResponse createCheering(CheeringRequest request, UUID memberId, Long articleId) {
+    public CheeringResponse createCheering(CheeringRequest request, UUID memberId, UUID articleId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new GeneralException(MemberErrorCode.MEMBER_NOT_FOUND));
 
@@ -87,7 +87,7 @@ public class CheeringService {
         return CheeringResponse.fromEntity(cheering);
     }
 
-    public Page<CheeringResponse> getCheeringsByArticleId(Long articleId, Pageable pageable) {
+    public Page<CheeringResponse> getCheeringsByArticleId(UUID articleId, Pageable pageable) {
         return cheeringRepository.findAllByArticleId(articleId, pageable)
                 .map(CheeringResponse::fromEntity);
     }

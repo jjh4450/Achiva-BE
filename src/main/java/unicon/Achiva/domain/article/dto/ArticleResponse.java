@@ -12,7 +12,7 @@ import java.util.UUID;
 @Getter
 @Builder
 public class ArticleResponse {
-    private Long id;
+    private UUID id;
     private String photoUrl;
     private String title;
     private Category category;

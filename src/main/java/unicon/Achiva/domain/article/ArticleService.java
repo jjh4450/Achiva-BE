@@ -75,7 +75,7 @@ public class ArticleService {
     }
 
     @Transactional
-    public ArticleResponse updateArticle(ArticleRequest request, Long articleId, UUID memberId) {
+    public ArticleResponse updateArticle(ArticleRequest request, UUID articleId, UUID memberId) {
         Article article = articleRepository.findById(articleId)
                 .orElseThrow(() -> new GeneralException(ArticleErrorCode.ARTICLE_NOT_FOUND));
 
@@ -122,7 +122,7 @@ public class ArticleService {
 
     // 하드 딜리트
     @Transactional
-    public void deleteArticle(Long articleId, UUID memberId) {
+    public void deleteArticle(UUID articleId, UUID memberId) {
         Article article = articleRepository.findById(articleId)
                 .orElseThrow(() -> new GeneralException(ArticleErrorCode.ARTICLE_NOT_FOUND));
 
@@ -143,7 +143,7 @@ public class ArticleService {
         articleRepository.delete(article);
     }
 
-    public ArticleResponse getArticle(Long articleId) {
+    public ArticleResponse getArticle(UUID articleId) {
         Article article = articleRepository.findById(articleId)
                 .orElseThrow(() -> new GeneralException(ArticleErrorCode.ARTICLE_NOT_FOUND));
         return ArticleResponse.fromEntity(article);
@@ -206,7 +206,7 @@ public class ArticleService {
     // 게시글 카테고리 순서 관련 메서드 by GPT
     // by GPT 코드를 눈물을 흘리며 수정하는 사람 남김
     @Transactional
-    public void moveCategory(Long articleId, Category newCategory) {
+    public void moveCategory(UUID articleId, Category newCategory) {
         Article a = articleRepository.findById(articleId).orElseThrow();
 
         Category src = a.getCategory();

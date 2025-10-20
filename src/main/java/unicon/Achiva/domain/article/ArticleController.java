@@ -42,7 +42,7 @@ public class ArticleController {
     @PutMapping("/api/articles/{articleId}")
     public ResponseEntity<ApiResponseForm<ArticleResponse>> updateArticle(
             @RequestBody ArticleRequest request,
-            @RequestParam Long articleId
+            @RequestParam UUID articleId
     ) {
         UUID memberId = authService.getMemberIdFromToken();
         ArticleResponse response = articleService.updateArticle(request, articleId, memberId);
@@ -52,7 +52,7 @@ public class ArticleController {
     @Operation(summary = "게시글 삭제")
     @DeleteMapping("/api/articles/{articleId}/delete")
     public ResponseEntity<ApiResponseForm<Void>> deleteArticle(
-            @RequestParam Long articleId
+            @RequestParam UUID articleId
     ) {
         UUID memberId = authService.getMemberIdFromToken();
         articleService.deleteArticle(articleId, memberId);
@@ -73,7 +73,7 @@ public class ArticleController {
     @GetMapping("/api/articles/{articleId}")
     public ResponseEntity<ApiResponseForm<ArticleResponse>> getArticle(
             HttpServletRequest httpServletRequest,
-            @PathVariable Long articleId
+            @PathVariable UUID articleId
     ) {
         ArticleResponse response = articleService.getArticle(articleId);
         return ResponseEntity.ok(ApiResponseForm.success(response, "게시글 상세 조회 성공"));

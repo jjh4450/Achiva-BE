@@ -25,7 +25,7 @@ public class CheeringController {
     @PostMapping("/api/articles/{articleId}/cheerings")
     public ResponseEntity<ApiResponseForm<CheeringResponse>> createCheering(
             @RequestBody CheeringRequest request,
-            @RequestParam Long articleId
+            @RequestParam UUID articleId
     ) {
         UUID memberId = authService.getMemberIdFromToken();
         CheeringResponse response = cheeringService.createCheering(request, memberId, articleId);
@@ -66,7 +66,7 @@ public class CheeringController {
     @Operation(summary = "특정 게시글의 응원 목록 조회")
     @GetMapping("api/articles/{articleId}/cheerings")
     public ResponseEntity<ApiResponseForm<Page<CheeringResponse>>> getCheeringsByArticleId(
-            @PathVariable Long articleId,
+            @PathVariable UUID articleId,
             Pageable pageable
     ) {
         Page<CheeringResponse> responses = cheeringService.getCheeringsByArticleId(articleId, pageable);

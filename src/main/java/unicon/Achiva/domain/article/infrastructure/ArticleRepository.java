@@ -15,7 +15,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
-public interface ArticleRepository extends JpaRepository<Article, Long>, ArticleRepositoryCustom {
+public interface ArticleRepository extends JpaRepository<Article, UUID>, ArticleRepositoryCustom {
 
 
     @Query("SELECT a.category, COUNT(a) FROM Article a WHERE a.member.id = :memberId GROUP BY a.category")

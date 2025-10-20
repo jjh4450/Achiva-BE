@@ -18,7 +18,7 @@ public class CheeringResponse {
     private String senderProfileImageUrl;
     private UUID receiverId;
     private String receiverName;
-    private Long articleId;
+    private UUID articleId;
     private Boolean isRead;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
