@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.validator.constraints.URL;
 import unicon.Achiva.domain.article.entity.Article;
 import unicon.Achiva.domain.auth.Role;
 import unicon.Achiva.domain.category.Category;
@@ -34,7 +35,9 @@ public class Member extends BaseEntity {
     @Column(nullable = false)
     private String nickName;
 
-    private String profileImageUrl;
+    @URL(protocol = "https")
+    @Builder.Default
+    private String profileImageUrl = "https://achiva-bucket.s3.ap-northeast-2.amazonaws.com/default-profile-image.png";
 
     private LocalDate birth;
 
