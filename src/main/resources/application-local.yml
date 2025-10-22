@@ -36,9 +36,9 @@ jwt:
     expiration: 3600000
     header: Authorization
 
-aws:
-  s3:
-    access-key: ${AWS_ACCESS_KEY}
-    secret-key: ${AWS_SECRET_KEY}
-    region: ${AWS_REGION}
-    bucket: ${AWS_BUCKET}
+#aws:
+#  s3:
+#    access-key: ${AWS_ACCESS_KEY}
+#    secret-key: ${AWS_SECRET_KEY}
+#    region: ${AWS_REGION}
+#    bucket: ${AWS_BUCKET}

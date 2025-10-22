@@ -7,6 +7,7 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
+import unicon.Achiva.global.config.AwsProperties;
 
 import java.net.URL;
 import java.time.Duration;
@@ -17,11 +18,11 @@ import java.util.UUID;
 public class S3Service {
 
     private final S3Presigner s3Presigner;
-
-    @Value("${aws.s3.bucket}")
-    private String bucketName;
+    private final AwsProperties aws;
 
     public String generatePresignedUrl(String contentType) {
+        String bucketName = aws.getS3().getBucketName();
+
         PutObjectRequest objectRequest = PutObjectRequest.builder()
                 .bucket(bucketName)
                 .key(UUID.randomUUID().toString())
