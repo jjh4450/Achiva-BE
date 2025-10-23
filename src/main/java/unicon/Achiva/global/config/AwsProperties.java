@@ -12,9 +12,9 @@ import org.springframework.context.annotation.Configuration;
 @Data
 public class AwsProperties {
 
-    private String region;
     private final S3 s3 = new S3();
     private final Cognito cognito = new Cognito();
+    private String region;
 
     @Data
     public static class S3 {
