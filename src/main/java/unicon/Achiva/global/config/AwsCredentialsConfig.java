@@ -44,19 +44,19 @@ public class AwsCredentialsConfig {
                 .build();
     }
 
-//    @Bean
-//    public CognitoIdentityProviderClient cognitoClient() {
-//        var cognito = aws.getCognito();
-//        return CognitoIdentityProviderClient.builder()
-//                .region(Region.of(aws.getRegion()))
-//                .credentialsProvider(
-//                        StaticCredentialsProvider.create(
-//                                AwsBasicCredentials.create(
-//                                        cognito.getAccessKeyId(),
-//                                        cognito.getSecretAccessKey()
-//                                )
-//                        )
-//                )
-//                .build();
-//    }
+    @Bean
+    public CognitoIdentityProviderClient cognitoClient() {
+        var cognito = aws.getCognito();
+        return CognitoIdentityProviderClient.builder()
+                .region(Region.of(aws.getRegion()))
+                .credentialsProvider(
+                        StaticCredentialsProvider.create(
+                                AwsBasicCredentials.create(
+                                        cognito.getAccessKeyId(),
+                                        cognito.getSecretAccessKey()
+                                )
+                        )
+                )
+                .build();
+    }
 }

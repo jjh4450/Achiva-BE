@@ -7,6 +7,7 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import unicon.Achiva.domain.auth.dto.*;
+import unicon.Achiva.domain.auth.infrastructure.CognitoService;
 import unicon.Achiva.domain.auth.infrastructure.OIDCUserInfoService;
 import unicon.Achiva.domain.category.Category;
 import unicon.Achiva.domain.member.Gender;
@@ -31,6 +32,7 @@ public class AuthService {
 
     private final MemberRepository memberRepository;
     private final OIDCUserInfoService oidcUserInfoService;
+    private final CognitoService cognitoService;
 
     @Transactional
     public CreateMemberResponse signup(MemberRequest requestDto) {
@@ -81,18 +83,28 @@ public class AuthService {
      * @return the determined nickname
      */
     private String determineNickname(String email) {
-        Optional<String> nicknameFromToken = getNickNameFromToken();
-        if (nicknameFromToken.isPresent()) {
-            return nicknameFromToken.get();
-        }
-
-        if (email.toLowerCase().endsWith("privaterelay.appleid.com".toLowerCase())) {
-            return NicknameGeneratorUtil.generate();
-        }
-
         int atIndex = email.indexOf('@');
-        if (atIndex > 0) {
-            return email.substring(0, atIndex);
+        boolean hasLocalPart = atIndex > 0;
+        String lowerEmail = email.toLowerCase();
+
+        if (isGoogleUser()) {
+            return hasLocalPart
+                    ? email.substring(0, atIndex)
+                    : NicknameGeneratorUtil.generate();
+        }
+
+        if (isAppleUser()) {
+            boolean isPrivateRelay = lowerEmail.endsWith("privaterelay.appleid.com");
+            if (isPrivateRelay) {
+                return NicknameGeneratorUtil.generate();
+            }
+            return hasLocalPart
+                    ? email.substring(0, atIndex)
+                    : NicknameGeneratorUtil.generate();
+        }
+
+        if (hasLocalPart) {
+            return getUserNameFromToken().orElse(email.substring(0, atIndex));
         }
 
         return NicknameGeneratorUtil.generate();
@@ -149,6 +161,11 @@ public class AuthService {
     public void deleteMember(UUID memberId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new GeneralException(MemberErrorCode.MEMBER_NOT_FOUND));
+        var userName = getUserNameFromToken().orElseThrow(() -> new GeneralException(MemberErrorCode.INVALID_TOKEN));
+
+        cognitoService.globalSignOut(userName);
+        cognitoService.disableUser(userName);
+        cognitoService.deleteUser(userName);
         memberRepository.delete(member);
     }
 
@@ -197,7 +214,7 @@ public class AuthService {
      * @return an Optional containing the nickname if present and not a social login; otherwise, Optional.empty()
      * @throws GeneralException if authentication is missing or not a JwtAuthenticationToken
      */
-    public Optional<String> getNickNameFromToken() {
+    public Optional<String> getUserNameFromToken() {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (!(authentication instanceof JwtAuthenticationToken jwtAuth)) {
@@ -206,11 +223,7 @@ public class AuthService {
 
         String nickname = jwtAuth.getToken().getClaimAsString("username");
 
-        if (isAppleUser() || isGoogleUser()) {
-            return Optional.empty();
-        } else {
-            return Optional.ofNullable(nickname);
-        }
+        return Optional.ofNullable(nickname);
     }
 
     public Optional<String> getEmailFromToken() {
