@@ -7,7 +7,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 import org.springframework.stereotype.Component;
-import unicon.Achiva.member.domain.MemberService;
+import unicon.Achiva.domain.member.MemberService;
 
 import java.util.UUID;
 import java.util.function.Supplier;
