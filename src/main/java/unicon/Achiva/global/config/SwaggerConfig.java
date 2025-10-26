@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
 @OpenAPIDefinition(
         servers = {
                 @Server(url = "https://container-service-1.wffkggdq3jc9m.ap-northeast-2.cs.amazonlightsail.com", description = "Production Server"),
-                @Server(url = "https://api.achiva.kr", description = "old Production Server"),
+//                @Server(url = "https://api.achiva.kr", description = "old Production Server"),
                 @Server(url = "http://localhost:8080", description = "Local Serever")
         }
 )
@@ -37,7 +37,7 @@ public class SwaggerConfig {
     private Info apiInfo() {
         return new Info()
                 .title("Achiva")
-                .description("Achiva API 명세서")
+                .description("Achiva API 명세서, 명세서 페이지 로그아웃은 {baseurl}/logout 입력(테스트 환경과 별도임)")
                 .version("1.0.0");
     }
 }
