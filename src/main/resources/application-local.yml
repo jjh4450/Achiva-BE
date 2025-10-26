@@ -16,15 +16,3 @@ spring:
         format_sql: true
         default_batch_fetch_size: 100
     database-platform: org.hibernate.dialect.MySQL8Dialect
-
-  mail:
-    host: smtp.gmail.com
-    port: 587
-    username: ku2soon@korea.ac.kr
-    password: "fmqe bpqp jckb jqwh"
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
