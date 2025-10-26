@@ -64,7 +64,7 @@ public class SwaggerSecurityConfig {
         return (request, response, authentication) -> {
             var principal = (OidcUser) authentication.getPrincipal();
             System.out.println("✅ Swagger 로그인 성공");
-            System.out.println("Access Token: " + principal.getIdToken().getTokenValue());
+//            System.out.println("Access Token: " + principal.getIdToken().getTokenValue());
             System.out.println("Email: " + principal.getEmail());
             response.sendRedirect("/swagger-ui/index.html");
         };
