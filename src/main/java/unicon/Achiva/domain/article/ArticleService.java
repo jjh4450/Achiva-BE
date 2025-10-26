@@ -13,7 +13,6 @@ import unicon.Achiva.domain.article.dto.ArticleResponse;
 import unicon.Achiva.domain.article.dto.SearchArticleCondition;
 import unicon.Achiva.domain.article.entity.Article;
 import unicon.Achiva.domain.article.infrastructure.ArticleRepository;
-import unicon.Achiva.domain.member.infrastructure.CounterHelper;
 import unicon.Achiva.domain.category.Category;
 import unicon.Achiva.domain.category.CategoryCountResponse;
 import unicon.Achiva.domain.cheering.infrastructure.CheeringRepository;
@@ -23,6 +22,7 @@ import unicon.Achiva.domain.member.MemberErrorCode;
 import unicon.Achiva.domain.member.entity.Member;
 import unicon.Achiva.domain.member.entity.MemberCategoryCounter;
 import unicon.Achiva.domain.member.entity.MemberCategoryKey;
+import unicon.Achiva.domain.member.infrastructure.CounterHelper;
 import unicon.Achiva.domain.member.infrastructure.MemberCategoryCounterRepository;
 import unicon.Achiva.domain.member.infrastructure.MemberRepository;
 import unicon.Achiva.global.response.GeneralException;
@@ -96,7 +96,7 @@ public class ArticleService {
         // 1) 두 그룹 락을 항상 같은 순서로 획득 (교착 방지)
         List<MemberCategoryKey> order = counterHelper.orderedKeys(memberId, oldCat, newCat);
         MemberCategoryCounter first = memberCategoryCounterRepository.lockById(order.get(0))
-                .orElseGet(() -> init(order.get(0)));
+                .orElseGet(() -> init(order.getFirst()));
         MemberCategoryCounter second = memberCategoryCounterRepository.lockById(order.get(1))
                 .orElseGet(() -> init(order.get(1)));
 

@@ -14,29 +14,3 @@ spring:
         format_sql: true
         default_batch_fetch_size: 100
     database-platform: org.hibernate.dialect.MySQL8Dialect
-
-  mail:
-    host: smtp.gmail.com
-    port: 587
-    username: ku2soon@korea.ac.kr
-    password: "fmqe bpqp jckb jqwh"
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
-
-jwt:
-  secret:
-    key: ${JWT_SECRET_KEY}
-  access:
-    expiration: 3600000
-    header: Authorization
-
-aws:
-  s3:
-    access-key: ${AWS_ACCESS_KEY}
-    secret-key: ${AWS_SECRET_KEY}
-    region: ${AWS_REGION}
-    bucket: ${AWS_BUCKET}

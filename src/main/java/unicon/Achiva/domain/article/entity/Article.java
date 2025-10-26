@@ -9,7 +9,6 @@ import unicon.Achiva.domain.article.dto.ArticleRequest;
 import unicon.Achiva.domain.category.Category;
 import unicon.Achiva.domain.cheering.entity.Cheering;
 import unicon.Achiva.domain.member.entity.Member;
-import unicon.Achiva.global.common.LongBaseEntity;
 import unicon.Achiva.global.common.UuidBaseEntity;
 
 import java.util.ArrayList;
