@@ -8,7 +8,7 @@ import java.util.Arrays;
 
 @Getter
 public enum CheeringCategory {
-    PRAISE("최고에요"),
+    PRAISE("최고예요"),
     APPRECIATION("수고했어요"),
     ENCOURAGEMENT("응원해요"),
     MOTIVATION("동기부여");
