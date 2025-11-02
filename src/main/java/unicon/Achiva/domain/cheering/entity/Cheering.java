@@ -25,7 +25,7 @@ public class Cheering extends LongBaseEntity {
     @Lob
     private String content;
 
-    // 응원카테고리 정의되면 enum으로 변경
+    @Enumerated(EnumType.STRING)
     private CheeringCategory cheeringCategory;
 
     @ManyToOne(fetch = FetchType.LAZY)
