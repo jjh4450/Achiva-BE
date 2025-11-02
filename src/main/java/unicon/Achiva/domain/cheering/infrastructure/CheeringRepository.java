@@ -36,14 +36,14 @@ public interface CheeringRepository extends JpaRepository<Cheering, Long>, Cheer
      * @return 카테고리별 통계 프로젝션 목록
      */
     @Query("""
-            select
-                c.cheeringCategory     as category,
-                count(c)       as count,
-                count(c) * :pt as points
-            from Cheering c
-            where c.sender.id = :memberId
-            group by c.cheeringCategory
-            """)
+        select
+            c.cheeringCategory as cheeringCategory,
+            count(c) as count,
+            count(c) * :pt as points
+        from Cheering c
+        where c.sender.id = :memberId
+        group by c.cheeringCategory
+    """)
     List<CategoryStatProjection> givenStatsByCategory(@Param("memberId") UUID memberId,
                                                       @Param("pt") long pointsPerCheer);
 
@@ -56,7 +56,7 @@ public interface CheeringRepository extends JpaRepository<Cheering, Long>, Cheer
      */
     @Query("""
             select
-                c.cheeringCategory     as category,
+                c.cheeringCategory     as cheeringCategory,
                 count(c)       as count,
                 count(c) * :pt as points
             from Cheering c
