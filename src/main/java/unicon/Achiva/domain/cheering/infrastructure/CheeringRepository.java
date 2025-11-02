@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.UUID;
 
 public interface CheeringRepository extends JpaRepository<Cheering, Long>, CheeringRepositoryCustom {
+
+    List<Cheering> findAllByIdInAndReceiver_Id(List<Long> ids, UUID receiverId);
     Page<Cheering> findAllByArticleId(UUID articleId, Pageable pageable);
 
     @Query("""

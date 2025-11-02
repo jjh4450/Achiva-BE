@@ -1,5 +1,6 @@
 package unicon.Achiva.domain.article.infrastructure;
 
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -40,7 +41,7 @@ public interface ArticleRepository extends JpaRepository<Article, UUID>, Article
     Page<Article> findCombinedFeed(
             @Param("friendIds") Collection<UUID> friendIds,
             @Param("cheererIds") Collection<UUID> cheererIds,
-            Pageable pageable
+            @ParameterObject Pageable pageable
     );
 
     @Modifying(flushAutomatically = true)

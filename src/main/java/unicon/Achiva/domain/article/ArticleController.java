@@ -1,8 +1,8 @@
 package unicon.Achiva.domain.article;
 
 import io.swagger.v3.oas.annotations.Operation;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -63,7 +63,7 @@ public class ArticleController {
     @GetMapping("/api/articles")
     public ResponseEntity<ApiResponseForm<Page<ArticleResponse>>> searchArticles(
             SearchArticleCondition condition,
-            Pageable pageable
+            @ParameterObject Pageable pageable
     ) {
         Page<ArticleResponse> response = articleService.getArticles(condition, pageable);
         return ResponseEntity.ok(ApiResponseForm.success(response, "게시글 검색 성공"));
@@ -72,7 +72,6 @@ public class ArticleController {
     @Operation(summary = "게시글 상세 조회")
     @GetMapping("/api/articles/{articleId}")
     public ResponseEntity<ApiResponseForm<ArticleResponse>> getArticle(
-            HttpServletRequest httpServletRequest,
             @PathVariable UUID articleId
     ) {
         ArticleResponse response = articleService.getArticle(articleId);
@@ -82,7 +81,7 @@ public class ArticleController {
     @Operation(summary = "내 게시글 목록 조회")
     @GetMapping("/api/articles/my-articles")
     public ResponseEntity<ApiResponseForm<Page<ArticleResponse>>> getMyArticles(
-            Pageable pageable
+            @ParameterObject Pageable pageable
     ) {
         UUID memberId = authService.getMemberIdFromToken();
         Page<ArticleResponse> response = articleService.getArticlesByMember(memberId, pageable);
@@ -93,7 +92,7 @@ public class ArticleController {
     @GetMapping("/api/member/{memberId}/articles")
     public ResponseEntity<ApiResponseForm<Page<ArticleResponse>>> getArticlesByMember(
             @PathVariable UUID memberId,
-            Pageable pageable
+            @ParameterObject Pageable pageable
     ) {
         Page<ArticleResponse> response = articleService.getArticlesByMember(memberId, pageable);
         return ResponseEntity.ok(ApiResponseForm.success(response, "특정 유저 게시글 목록 조회 성공"));
@@ -105,7 +104,7 @@ public class ArticleController {
             @PathVariable UUID memberId,
             @PathVariable String category,
             @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC)
-            Pageable pageable
+            @ParameterObject Pageable pageable
     ) {
         Page<ArticleResponse> response = articleService.getArticlesByMemberAndCateogry(memberId, category, pageable);
         return ResponseEntity.ok(ApiResponseForm.success(response, "특정 유저 특정 카테고리 게시글 목록 최신순 조회 성공"));
@@ -137,7 +136,7 @@ public class ArticleController {
     public ResponseEntity<ApiResponseForm<Page<ArticleResponse>>> getFeed(
             @PathVariable UUID memberId,
             @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC)
-            Pageable pageable
+            @ParameterObject Pageable pageable
     ) {
         Page<ArticleResponse> response = articleService.getMemberInterestFeed(memberId, pageable);
         return ResponseEntity.ok(ApiResponseForm.success(response, "멤버 관심 카테고리 기반 최신글 게시글 목록 조회 성공"));
