@@ -17,6 +17,8 @@ public class ArticleRequest {
     @URL(protocol = "https")
     private final String photoUrl;
 
+    private boolean isBookTitle = false;
+
     @NotNull
     @Size(min = 1, max = 50)
     private final String title;
@@ -32,6 +34,10 @@ public class ArticleRequest {
         this.category = category;
         this.question = question;
         this.backgroundColor = backgroundColor;
+    }
+
+    public boolean getIsBookTitle() {
+        return isBookTitle;
     }
 
     @Getter

@@ -46,7 +46,7 @@ public class ArticleService {
 
 
     @Transactional
-    public ArticleResponse createArticle(ArticleRequest request, UUID memberId) {
+    public Article createArticleEntity(ArticleRequest request, UUID memberId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new GeneralException(MemberErrorCode.MEMBER_NOT_FOUND));
         Category cat = request.getCategory();
@@ -61,18 +61,27 @@ public class ArticleService {
                 .category(request.getCategory())
                 .questions(request.getQuestion().stream()
                         .map(ArticleRequest.QuestionDTO::toEntity)
-                        .toList())
+                        .collect(Collectors.toList()))
                 .member(member)
                 .authorCategorySeq(newSeq)
                 .backgroundColor(request.getBackgroundColor())
+                .isBookTitle(request.getIsBookTitle())
                 .build();
 
         article.getQuestions().forEach(q -> q.setArticle(article));
 
         articleRepository.save(article);
 
+        return article;
+    }
+
+    @Transactional
+    public ArticleResponse createArticle(ArticleRequest request, UUID memberId) {
+        Article article = createArticleEntity(request, memberId);
         return ArticleResponse.fromEntity(article);
     }
+
+
 
     @Transactional
     public ArticleResponse updateArticle(ArticleRequest request, UUID articleId, UUID memberId) {
@@ -198,7 +207,7 @@ public class ArticleService {
                 .filter(id -> !friendSet.contains(id))
                 .toList();
 
-        Page<Article> page = articleRepository.findCombinedFeed(friendIds, cheererOnly, pageable);
+        Page<Article> page = articleRepository.findCombinedFeedWithoutBookTitle(friendIds, cheererOnly, pageable);
         return page.map(ArticleResponse::fromEntity);
     }
 

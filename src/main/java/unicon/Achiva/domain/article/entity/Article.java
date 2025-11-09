@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import unicon.Achiva.domain.article.dto.ArticleRequest;
+import unicon.Achiva.domain.book.entity.Book;
 import unicon.Achiva.domain.category.Category;
 import unicon.Achiva.domain.cheering.entity.Cheering;
 import unicon.Achiva.domain.member.entity.Member;
@@ -19,11 +20,22 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(
+        name = "article",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "uk_book_page_index",
+                        columnNames = {"book_id", "page_index"}
+                )
+        }
+)
 public class Article extends UuidBaseEntity {
 
     private String photoUrl;
 
     private String title;
+
+    private Boolean isBookTitle;
 
     @Enumerated(EnumType.STRING)
     private Category category;
@@ -43,6 +55,23 @@ public class Article extends UuidBaseEntity {
     @Builder.Default
     @OneToMany(mappedBy = "article", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Cheering> cheerings = new ArrayList<>();
+
+    /** 📘 Book 연결 **/
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "book_id")
+    private Book book;
+
+    /** 인덱스 페이지 순서를 위한 필드 **/
+    private Integer pageIndex;
+
+    // ---- 로직 ----
+    public void updateBook(Book book) {
+        this.book = book;
+    }
+
+    public void updatePageIndex(Integer index) {
+        this.pageIndex = index;
+    }
 
     public void update(ArticleRequest request) {
         this.photoUrl = request.getPhotoUrl();

@@ -44,6 +44,30 @@ public interface ArticleRepository extends JpaRepository<Article, UUID>, Article
             @ParameterObject Pageable pageable
     );
 
+    @EntityGraph(attributePaths = "member")
+    @Query(value = """
+        SELECT a
+          FROM Article a
+         WHERE (a.member.id IN :friendIds
+             OR a.member.id IN :cheererIds)
+           AND (a.isBookTitle = false OR a.isBookTitle IS NULL)
+         ORDER BY
+             CASE WHEN a.member.id IN :friendIds THEN 0 ELSE 1 END,
+             a.createdAt DESC
+        """,
+            countQuery = """
+        SELECT COUNT(a)
+          FROM Article a
+         WHERE (a.member.id IN :friendIds
+             OR a.member.id IN :cheererIds)
+           AND (a.isBookTitle = false OR a.isBookTitle IS NULL)
+        """)
+    Page<Article> findCombinedFeedWithoutBookTitle(
+            @Param("friendIds") Collection<UUID> friendIds,
+            @Param("cheererIds") Collection<UUID> cheererIds,
+            @ParameterObject Pageable pageable
+    );
+
     @Modifying(flushAutomatically = true)
     @Query("""
               update Article a

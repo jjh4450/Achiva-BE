@@ -11,14 +11,17 @@ public enum Category {
     STUDY("공부"),
     WORKOUT("운동"),
     CAREER("커리어"),
-    READING("문화/취미"),
-    MINDSET("챌린지/다짐"),
+    READING("독서"),
+    MINDSET("루틴/다짐"),
     HOBBY("패션"),
     INVESTMENT("투자/머니로그"),
     TRAVEL("여행"),
     DIET("식단"),
     FAMILY("가족/친구"),
-    JOURNAL("생각/일기");
+    JOURNAL("생각/일기"),
+    CULTURE("문화/취미"),
+    PET("반려동물")
+    ;
 
     private final String description;
 
