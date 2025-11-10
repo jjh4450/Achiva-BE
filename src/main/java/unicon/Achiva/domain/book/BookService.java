@@ -43,9 +43,7 @@ public class BookService {
 
         Member member = getCurrentMember(memberId);
 
-        if (!request.getMain().getIsBookTitle()) {
-            throw new GeneralException(BookErrorCode.INVALID_MAIN_ARTICLE);
-        }
+        Article mainArticle = articleService.createArticleEntity(request.getMain(), memberId, true);
 
         Book book = Book.builder()
                 .member(member)
@@ -53,20 +51,17 @@ public class BookService {
                 .description(request.getDescription())
                 .build();
 
-        Book savedBook = bookRepository.save(book);
-
-        Article mainArticle = articleService.createArticleEntity(request.getMain(), memberId);
-        savedBook.setMainArticle(mainArticle);
-
         if (request.getArticleIds() != null && !request.getArticleIds().isEmpty()) {
             List<Article> articles = articleRepository.findAllById(request.getArticleIds());
             int idx = 0;
             for (Article article : articles) {
-                savedBook.addArticle(article, idx++);
+                book.addArticle(article, idx++);
             }
         }
 
-        bookRepository.save(savedBook);
+        Book savedBook = bookRepository.save(book);
+        savedBook.setMainArticle(mainArticle);
+
         return BookResponse.fromEntity(savedBook);
     }
     /** 책 단건 조회 */
@@ -112,7 +107,7 @@ public class BookService {
         Article article = articleRepository.findById(articleId)
                 .orElseThrow(() -> new GeneralException(ArticleErrorCode.ARTICLE_NOT_FOUND));
 
-        int index = book.getArticles().size();
+        int index = book.getBookArticles().size();
         book.addArticle(article, index);
         return BookResponse.fromEntity(book);
     }

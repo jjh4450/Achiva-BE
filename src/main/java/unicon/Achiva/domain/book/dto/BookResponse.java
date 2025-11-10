@@ -30,8 +30,8 @@ public class BookResponse {
                 .mainArticle(book.getMainArticle() != null
                         ? ArticleResponse.fromEntity(book.getMainArticle())
                         : null)
-                .articles(book.getArticles().stream()
-                        .map(ArticleResponse::fromEntity)
+                .articles(book.getBookArticles().stream()
+                        .map(bookArticle -> ArticleResponse.fromEntity(bookArticle.getArticle()))
                         .collect(Collectors.toList()))
                 .build();
     }

@@ -1,5 +1,6 @@
 package unicon.Achiva.domain.book.dto;
 
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,5 +18,6 @@ public class BookRequest {
     private String title;
     private String description;
     private ArticleRequest main;
+    @Size(min = 1)
     private List<UUID> articleIds;
 }
