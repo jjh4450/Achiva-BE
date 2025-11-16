@@ -24,7 +24,7 @@ public class ArticleResponse {
     private Long authorCategorySeq;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private boolean isBookTitle;
+//    private boolean isBookTitle;
 
     public static ArticleResponse fromEntity(Article article) {
         return ArticleResponse.builder()
@@ -45,7 +45,7 @@ public class ArticleResponse {
                 .backgroundColor(article.getBackgroundColor())
                 .createdAt(article.getCreatedAt())
                 .updatedAt(article.getUpdatedAt())
-                .isBookTitle(article.getIsBookTitle())
+//                .isBookTitle(article.getIsBookTitle())
                 .build();
     }
 }

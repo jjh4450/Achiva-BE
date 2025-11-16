@@ -27,7 +27,7 @@ public class Article extends UuidBaseEntity {
 
     private String title;
 
-    private Boolean isBookTitle;
+//    private Boolean isBookTitle;
 
     @Enumerated(EnumType.STRING)
     private Category category;

@@ -46,7 +46,7 @@ public class ArticleService {
 
 
     @Transactional
-    public Article createArticleEntity(ArticleRequest request, UUID memberId, boolean isBookTitle) {
+    public Article createArticleEntity(ArticleRequest request, UUID memberId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new GeneralException(MemberErrorCode.MEMBER_NOT_FOUND));
         Category cat = request.getCategory();
@@ -65,7 +65,6 @@ public class ArticleService {
                 .member(member)
                 .authorCategorySeq(newSeq)
                 .backgroundColor(request.getBackgroundColor())
-                .isBookTitle(isBookTitle)
                 .build();
 
         article.getQuestions().forEach(q -> q.setArticle(article));
@@ -73,11 +72,6 @@ public class ArticleService {
         articleRepository.save(article);
 
         return article;
-    }
-
-    @Transactional
-    public Article createArticleEntity(ArticleRequest request, UUID memberId) {
-        return createArticleEntity(request, memberId, false);
     }
 
     @Transactional

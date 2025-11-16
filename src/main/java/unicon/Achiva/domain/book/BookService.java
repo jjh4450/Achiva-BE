@@ -43,7 +43,7 @@ public class BookService {
 
         Member member = getCurrentMember(memberId);
 
-        Article mainArticle = articleService.createArticleEntity(request.getMain(), memberId, true);
+        Article mainArticle = articleService.createArticleEntity(request.getMain(), memberId);
 
         Book book = Book.builder()
                 .member(member)
