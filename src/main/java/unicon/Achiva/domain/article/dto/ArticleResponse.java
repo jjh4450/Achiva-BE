@@ -2,7 +2,10 @@ package unicon.Achiva.domain.article.dto;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.experimental.SuperBuilder;
 import unicon.Achiva.domain.article.entity.Article;
+import unicon.Achiva.domain.book.dto.BookResponse;
+import unicon.Achiva.domain.book.entity.BookArticle;
 import unicon.Achiva.domain.category.Category;
 
 import java.time.LocalDateTime;
@@ -10,7 +13,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Getter
-@Builder
+@SuperBuilder
 public class ArticleResponse {
     private UUID id;
     private String photoUrl;
@@ -26,8 +29,8 @@ public class ArticleResponse {
     private LocalDateTime updatedAt;
 //    private boolean isBookTitle;
 
-    public static ArticleResponse fromEntity(Article article) {
-        return ArticleResponse.builder()
+    protected static <B extends ArticleResponseBuilder<?, ?>> B initBuilder(B builder, Article article) {
+        return (B) builder
                 .id(article.getId())
                 .photoUrl(article.getPhotoUrl())
                 .title(article.getTitle())
@@ -44,8 +47,11 @@ public class ArticleResponse {
                 .authorCategorySeq(article.getAuthorCategorySeq())
                 .backgroundColor(article.getBackgroundColor())
                 .createdAt(article.getCreatedAt())
-                .updatedAt(article.getUpdatedAt())
-//                .isBookTitle(article.getIsBookTitle())
-                .build();
+                .updatedAt(article.getUpdatedAt());
+    }
+
+    public static ArticleResponse fromEntity(Article article) {
+        // 내부적으로 initBuilder를 쓰고 바로 build()
+        return initBuilder(ArticleResponse.builder(), article).build();
     }
 }

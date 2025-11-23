@@ -52,9 +52,11 @@ public class Member extends BaseEntity {
     @ElementCollection(targetClass = Category.class)
     @Enumerated(EnumType.STRING)
     @OnDelete(action = OnDeleteAction.CASCADE)
+    @Column(columnDefinition = "varchar(20)")
     private List<Category> categories;
 
     @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "varchar(20)")
     private Role role;
 
     @Builder.Default

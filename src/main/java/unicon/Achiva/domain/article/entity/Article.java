@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import unicon.Achiva.domain.article.dto.ArticleRequest;
 import unicon.Achiva.domain.book.entity.BookArticle;
 import unicon.Achiva.domain.category.Category;
@@ -30,6 +32,7 @@ public class Article extends UuidBaseEntity {
 //    private Boolean isBookTitle;
 
     @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "varchar(20)")
     private Category category;
 
     private String backgroundColor;
@@ -42,6 +45,7 @@ public class Article extends UuidBaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Member member;
 
     @Builder.Default

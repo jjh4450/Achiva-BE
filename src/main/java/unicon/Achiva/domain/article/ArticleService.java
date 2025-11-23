@@ -10,9 +10,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import unicon.Achiva.domain.article.dto.ArticleRequest;
 import unicon.Achiva.domain.article.dto.ArticleResponse;
+import unicon.Achiva.domain.article.dto.ArticleWithBookResponse;
 import unicon.Achiva.domain.article.dto.SearchArticleCondition;
 import unicon.Achiva.domain.article.entity.Article;
 import unicon.Achiva.domain.article.infrastructure.ArticleRepository;
+import unicon.Achiva.domain.book.entity.BookArticle;
+import unicon.Achiva.domain.book.infrastructure.BookArticleRepository;
+import unicon.Achiva.domain.book.infrastructure.BookRepository;
 import unicon.Achiva.domain.category.Category;
 import unicon.Achiva.domain.category.CategoryCountResponse;
 import unicon.Achiva.domain.cheering.infrastructure.CheeringRepository;
@@ -43,7 +47,13 @@ public class ArticleService {
     private final FriendshipRepository friendshipRepository;
     private final CheeringRepository cheeringRepository;
     private final MemberCategoryCounterRepository memberCategoryCounterRepository;
+    private final BookArticleRepository bookArticleRepository;
 
+
+    @Transactional(readOnly = true)
+    public List<BookArticle> getBookArticleList(UUID articleId){
+        return bookArticleRepository.findBookInfosByArticleId(articleId).orElse(new ArrayList<>());
+    }
 
     @Transactional
     public Article createArticleEntity(ArticleRequest request, UUID memberId) {
@@ -75,9 +85,9 @@ public class ArticleService {
     }
 
     @Transactional
-    public ArticleResponse createArticle(ArticleRequest request, UUID memberId) {
+    public ArticleWithBookResponse createArticle(ArticleRequest request, UUID memberId) {
         Article article = createArticleEntity(request, memberId);
-        return ArticleResponse.fromEntity(article);
+        return ArticleWithBookResponse.fromEntity(article, getBookArticleList(article.getId()));
     }
 
     @Transactional
@@ -152,17 +162,18 @@ public class ArticleService {
     public ArticleResponse getArticle(UUID articleId) {
         Article article = articleRepository.findById(articleId)
                 .orElseThrow(() -> new GeneralException(ArticleErrorCode.ARTICLE_NOT_FOUND));
+
         return ArticleResponse.fromEntity(article);
     }
 
-    public Page<ArticleResponse> getArticles(SearchArticleCondition condition, Pageable pageable) {
+    public Page<ArticleWithBookResponse> getArticles(SearchArticleCondition condition, Pageable pageable) {
         return articleRepository.searchByCondition(condition, pageable)
-                .map(ArticleResponse::fromEntity);
+                .map(article -> ArticleWithBookResponse.fromEntity(article, getBookArticleList(article.getId())));
     }
 
-    public Page<ArticleResponse> getArticlesByMember(UUID memberId, Pageable pageable) {
+    public Page<ArticleWithBookResponse> getArticlesByMember(UUID memberId, Pageable pageable) {
         return articleRepository.findAllByMemberId(memberId, pageable)
-                .map(ArticleResponse::fromEntity);
+                .map(article -> ArticleWithBookResponse.fromEntity(article, getBookArticleList(article.getId())));
     }
 
     public CategoryCountResponse getArticleCountByCategory(UUID memberId) {
@@ -191,7 +202,7 @@ public class ArticleService {
         return CategoryCountResponse.fromObjectList(completeResult);
     }
 
-    public Page<ArticleResponse> getHomeArticles(UUID myId, Pageable pageable) {
+    public Page<ArticleWithBookResponse> getHomeArticles(UUID myId, Pageable pageable) {
         List<UUID> friendIds = friendshipRepository.findFriendIdsOf(myId, FriendshipStatus.ACCEPTED);
         List<UUID> cheererIds = cheeringRepository.findDistinctCheererIdsWhoCheeredMyArticles(myId);
 
@@ -204,8 +215,8 @@ public class ArticleService {
                 .filter(id -> !friendSet.contains(id))
                 .toList();
 
-        Page<Article> page = articleRepository.findCombinedFeedWithoutBookTitle(friendIds, cheererOnly, pageable);
-        return page.map(ArticleResponse::fromEntity);
+        Page<Article> page = articleRepository.findCombinedFeed(friendIds, cheererOnly, pageable);
+        return page.map(article -> ArticleWithBookResponse.fromEntity(article, getBookArticleList(article.getId())));
     }
 
 
@@ -242,7 +253,7 @@ public class ArticleService {
         a.changeCategoryAndSeq(newCategory, newSeq);
     }
 
-    public Page<ArticleResponse> getMemberInterestFeed(UUID memberId, Pageable pageable) {
+    public Page<ArticleWithBookResponse> getMemberInterestFeed(UUID memberId, Pageable pageable) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new GeneralException(MemberErrorCode.MEMBER_NOT_FOUND));
 
@@ -260,7 +271,7 @@ public class ArticleService {
         }
 
         Page<Article> page = articleRepository.findByCategoryIn(cats, sorted);
-        return page.map(ArticleResponse::fromEntity);
+        return page.map(article -> ArticleWithBookResponse.fromEntity(article, getBookArticleList(article.getId())));
     }
 
     private MemberCategoryCounter initCounter(MemberCategoryKey key) {
@@ -285,8 +296,8 @@ public class ArticleService {
         return memberCategoryCounterRepository.saveAndFlush(c);
     }
 
-    public Page<ArticleResponse> getArticlesByMemberAndCateogry(UUID memberId, String category, Pageable pageable) {
+    public Page<ArticleWithBookResponse> getArticlesByMemberAndCateogry(UUID memberId, String category, Pageable pageable) {
         return articleRepository.findByMemberIdWithCategory(memberId, Category.fromDisplayName(category), pageable)
-                .map(ArticleResponse::fromEntity);
+                .map(article -> ArticleWithBookResponse.fromEntity(article, getBookArticleList(article.getId())));
     }
 }

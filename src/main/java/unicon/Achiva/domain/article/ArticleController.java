@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import unicon.Achiva.domain.article.dto.ArticleRequest;
 import unicon.Achiva.domain.article.dto.ArticleResponse;
+import unicon.Achiva.domain.article.dto.ArticleWithBookResponse;
 import unicon.Achiva.domain.article.dto.SearchArticleCondition;
 import unicon.Achiva.domain.auth.AuthService;
 import unicon.Achiva.domain.s3.S3Service;
@@ -61,11 +62,11 @@ public class ArticleController {
 
     @Operation(summary = "게시글 검색")
     @GetMapping("/api/articles")
-    public ResponseEntity<ApiResponseForm<Page<ArticleResponse>>> searchArticles(
+    public ResponseEntity<ApiResponseForm<Page<ArticleWithBookResponse>>> searchArticles(
             SearchArticleCondition condition,
             @ParameterObject Pageable pageable
     ) {
-        Page<ArticleResponse> response = articleService.getArticles(condition, pageable);
+        Page<ArticleWithBookResponse> response = articleService.getArticles(condition, pageable);
         return ResponseEntity.ok(ApiResponseForm.success(response, "게시글 검색 성공"));
     }
 
@@ -80,33 +81,33 @@ public class ArticleController {
 
     @Operation(summary = "내 게시글 목록 조회")
     @GetMapping("/api/articles/my-articles")
-    public ResponseEntity<ApiResponseForm<Page<ArticleResponse>>> getMyArticles(
+    public ResponseEntity<ApiResponseForm<Page<ArticleWithBookResponse>>> getMyArticles(
             @ParameterObject Pageable pageable
     ) {
         UUID memberId = authService.getMemberIdFromToken();
-        Page<ArticleResponse> response = articleService.getArticlesByMember(memberId, pageable);
+        Page<ArticleWithBookResponse> response = articleService.getArticlesByMember(memberId, pageable);
         return ResponseEntity.ok(ApiResponseForm.success(response, "내 게시글 목록 조회 성공"));
     }
 
     @Operation(summary = "특정 유저 게시글 목록 조회")
     @GetMapping("/api/member/{memberId}/articles")
-    public ResponseEntity<ApiResponseForm<Page<ArticleResponse>>> getArticlesByMember(
+    public ResponseEntity<ApiResponseForm<Page<ArticleWithBookResponse>>> getArticlesByMember(
             @PathVariable UUID memberId,
             @ParameterObject Pageable pageable
     ) {
-        Page<ArticleResponse> response = articleService.getArticlesByMember(memberId, pageable);
+        Page<ArticleWithBookResponse> response = articleService.getArticlesByMember(memberId, pageable);
         return ResponseEntity.ok(ApiResponseForm.success(response, "특정 유저 게시글 목록 조회 성공"));
     }
 
     @Operation(summary = "특정 유저 특정 카테고리 게시글 목록 최신순 조회")
     @GetMapping("/api/members/{memberId}/categories/{category}/articles")
-    public ResponseEntity<ApiResponseForm<Page<ArticleResponse>>> getArticlesByMemberAndCategory(
+    public ResponseEntity<ApiResponseForm<Page<ArticleWithBookResponse>>> getArticlesByMemberAndCategory(
             @PathVariable UUID memberId,
             @PathVariable String category,
             @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC)
             @ParameterObject Pageable pageable
     ) {
-        Page<ArticleResponse> response = articleService.getArticlesByMemberAndCateogry(memberId, category, pageable);
+        Page<ArticleWithBookResponse> response = articleService.getArticlesByMemberAndCateogry(memberId, category, pageable);
         return ResponseEntity.ok(ApiResponseForm.success(response, "특정 유저 특정 카테고리 게시글 목록 최신순 조회 성공"));
     }
 
@@ -123,22 +124,22 @@ public class ArticleController {
 
     @Operation(summary = "홈화면 게시글 목록 조회")
     @GetMapping("/api/articles/home")
-    public ResponseEntity<Page<ArticleResponse>> getCombinedFeed(
+    public ResponseEntity<Page<ArticleWithBookResponse>> getCombinedFeed(
             @PageableDefault(size = 10) Pageable pageable
     ) {
         UUID memberId = authService.getMemberIdFromToken();
-        Page<ArticleResponse> page = articleService.getHomeArticles(memberId, pageable);
+        Page<ArticleWithBookResponse> page = articleService.getHomeArticles(memberId, pageable);
         return ResponseEntity.ok(page);
     }
 
     @Operation(summary = "멤버 관심 카테고리 기반 최신글 게시글 목록")
     @GetMapping("/api/members/{memberId}/feed")
-    public ResponseEntity<ApiResponseForm<Page<ArticleResponse>>> getFeed(
+    public ResponseEntity<ApiResponseForm<Page<ArticleWithBookResponse>>> getFeed(
             @PathVariable UUID memberId,
             @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC)
             @ParameterObject Pageable pageable
     ) {
-        Page<ArticleResponse> response = articleService.getMemberInterestFeed(memberId, pageable);
+        Page<ArticleWithBookResponse> response = articleService.getMemberInterestFeed(memberId, pageable);
         return ResponseEntity.ok(ApiResponseForm.success(response, "멤버 관심 카테고리 기반 최신글 게시글 목록 조회 성공"));
     }
 }

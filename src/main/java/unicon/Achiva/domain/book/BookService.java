@@ -12,14 +12,19 @@ import unicon.Achiva.domain.article.infrastructure.ArticleRepository;
 import unicon.Achiva.domain.book.dto.BookRequest;
 import unicon.Achiva.domain.book.dto.BookResponse;
 import unicon.Achiva.domain.book.entity.Book;
+import unicon.Achiva.domain.book.entity.BookArticle;
 import unicon.Achiva.domain.book.infrastructure.BookRepository;
 import unicon.Achiva.domain.member.MemberErrorCode;
 import unicon.Achiva.domain.member.entity.Member;
 import unicon.Achiva.domain.member.infrastructure.MemberRepository;
 import unicon.Achiva.global.response.GeneralException;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -87,6 +92,31 @@ public class BookService {
                 .orElseThrow(() -> new GeneralException(BookErrorCode.UNAUTHORIZED_BOOK_ACCESS));
 
         book.update(request.getTitle(), request.getDescription());
+
+        List<UUID> newArticleIds = request.getArticleIds();
+        if (newArticleIds != null && !newArticleIds.isEmpty()) {
+
+            // [Step A] 기존 관계 싹 끊기 (OrphanRemoval로 인해 DB Delete 예정)
+            book.getBookArticles().clear();
+
+            // [Step B] DB에 DELETE 쿼리 즉시 전송 (인덱스 충돌 방지 & 빈 공간 확보)
+            bookRepository.flush();
+
+            // [Step C] 새 아티클 목록 조회
+            List<Article> articles = articleRepository.findAllById(newArticleIds);
+
+            if (articles.size() != new HashSet<>(newArticleIds).size()) {
+                throw new GeneralException(ArticleErrorCode.ARTICLE_NOT_FOUND);
+            }
+
+            Map<UUID, Article> articleMap = articles.stream()
+                    .collect(Collectors.toMap(Article::getId, Function.identity()));
+
+            for (UUID articleId : newArticleIds) {
+                book.addArticle(articleMap.get(articleId));
+            }
+        }
+
         return BookResponse.fromEntity(book);
     }
 
@@ -95,7 +125,6 @@ public class BookService {
     public void deleteBook(UUID bookId, UUID memberId) {
         Book book = bookRepository.findByIdAndMemberId(bookId, memberId)
                 .orElseThrow(() -> new GeneralException(BookErrorCode.UNAUTHORIZED_BOOK_ACCESS));
-
         bookRepository.delete(book);
     }
 
@@ -117,10 +146,22 @@ public class BookService {
     public BookResponse removeArticleFromBook(UUID bookId, UUID articleId, UUID memberId) {
         Book book = bookRepository.findByIdAndMemberId(bookId, memberId)
                 .orElseThrow(() -> new GeneralException(BookErrorCode.UNAUTHORIZED_BOOK_ACCESS));
-        Article article = articleRepository.findById(articleId)
+
+        BookArticle targetBookArticle = book.getBookArticles().stream()
+                .filter(ba -> ba.getArticle().getId().equals(articleId))
+                .findFirst()
                 .orElseThrow(() -> new GeneralException(ArticleErrorCode.ARTICLE_NOT_FOUND));
 
-        book.removeArticle(article);
+        book.getBookArticles().remove(targetBookArticle);
+
+        // [핵심] 3. 강제로 DB에 반영하여 DELETE 쿼리를 먼저 날림!
+        // 이렇게 하면 DB에서 해당 인덱스 자리가 비게 됨.
+        bookRepository.flush();
+
+        // 4. 이제 빈 자리가 생겼으니 안전하게 재정렬 (UPDATE)
+        book.reorderIndices();
+
+        // 트랜잭션이 끝나면서 재정렬된 UPDATE 쿼리가 나감
         return BookResponse.fromEntity(book);
     }
 
