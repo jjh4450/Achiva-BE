@@ -1,6 +1,5 @@
 package unicon.Achiva.domain.article.dto;
 
-import lombok.Builder;
 import unicon.Achiva.domain.book.entity.BookArticle;
 
 import java.util.UUID;

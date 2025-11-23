@@ -36,7 +36,9 @@ public class GlobalExceptionHandler {
     }
 
 
-    /** @Valid (DTO 유효성 검사) 실패 */
+    /**
+     * @Valid (DTO 유효성 검사) 실패
+     */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponseForm<Void>> handleValidationExceptions(MethodArgumentNotValidException ex,
                                                                             HttpServletRequest request) {
@@ -56,7 +58,9 @@ public class GlobalExceptionHandler {
                 .body(ApiResponseForm.error(400, errorMessage));
     }
 
-    /** Hibernate Entity Validation 실패 (ConstraintViolationException 감싸진 경우) */
+    /**
+     * Hibernate Entity Validation 실패 (ConstraintViolationException 감싸진 경우)
+     */
     @ExceptionHandler(TransactionSystemException.class)
     public ResponseEntity<ApiResponseForm<Void>> handleTransactionSystemException(TransactionSystemException ex,
                                                                                   HttpServletRequest request) {

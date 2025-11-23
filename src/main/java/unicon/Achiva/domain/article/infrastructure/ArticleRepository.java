@@ -42,13 +42,13 @@ public interface ArticleRepository extends JpaRepository<Article, UUID>, Article
                  a.createdAt DESC
             """,
             countQuery = """
-            SELECT COUNT(a)
-              FROM Article a
-              LEFT JOIN Book b ON a.id = b.mainArticle.id
-             WHERE (a.member.id IN :friendIds
-                 OR a.member.id IN :cheererIds)
-               AND b.id IS NULL
-            """)
+                    SELECT COUNT(a)
+                      FROM Article a
+                      LEFT JOIN Book b ON a.id = b.mainArticle.id
+                     WHERE (a.member.id IN :friendIds
+                         OR a.member.id IN :cheererIds)
+                       AND b.id IS NULL
+                    """)
     Page<Article> findCombinedFeed(
             @Param("friendIds") Collection<UUID> friendIds,
             @Param("cheererIds") Collection<UUID> cheererIds,

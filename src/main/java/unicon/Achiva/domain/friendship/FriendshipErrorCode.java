@@ -12,8 +12,7 @@ public enum FriendshipErrorCode implements ErrorCode {
 
     FRIENDSHIP_NOT_FRIENDS(3004, "친구 관계가 아닙니다.", HttpStatus.BAD_REQUEST),
 
-    FRIENDSHIP_HIDE_REASON(3005, "오류 사유를 공개할 수 없습니다. 관리자에게 문의하세요.", HttpStatus.FORBIDDEN)
-    ;
+    FRIENDSHIP_HIDE_REASON(3005, "오류 사유를 공개할 수 없습니다. 관리자에게 문의하세요.", HttpStatus.FORBIDDEN);
 
     private final Integer code;
     private final String message;

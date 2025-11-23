@@ -22,8 +22,7 @@ public enum Category {
     CULTURE("문화/예술"),
     PET("반려동물"),
     HOBBY("취미"),
-    RELIGION("종교")
-    ;
+    RELIGION("종교");
 
     private final String description;
 

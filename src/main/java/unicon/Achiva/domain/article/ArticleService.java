@@ -16,7 +16,6 @@ import unicon.Achiva.domain.article.entity.Article;
 import unicon.Achiva.domain.article.infrastructure.ArticleRepository;
 import unicon.Achiva.domain.book.entity.BookArticle;
 import unicon.Achiva.domain.book.infrastructure.BookArticleRepository;
-import unicon.Achiva.domain.book.infrastructure.BookRepository;
 import unicon.Achiva.domain.category.Category;
 import unicon.Achiva.domain.category.CategoryCountResponse;
 import unicon.Achiva.domain.cheering.infrastructure.CheeringRepository;
@@ -51,7 +50,7 @@ public class ArticleService {
 
 
     @Transactional(readOnly = true)
-    public List<BookArticle> getBookArticleList(UUID articleId){
+    public List<BookArticle> getBookArticleList(UUID articleId) {
         return bookArticleRepository.findBookInfosByArticleId(articleId).orElse(new ArrayList<>());
     }
 
@@ -59,22 +58,22 @@ public class ArticleService {
     public Article createArticleEntity(ArticleRequest request, UUID memberId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new GeneralException(MemberErrorCode.MEMBER_NOT_FOUND));
-        Category cat = request.getCategory();
+        Category cat = request.category();
 
         MemberCategoryCounter dst = counterHelper.lockOrInit(memberId, cat);
         long newSeq = dst.getSize() + 1;
         dst.setSize(newSeq);
 
         Article article = Article.builder()
-                .photoUrl(request.getPhotoUrl())
-                .title(request.getTitle())
-                .category(request.getCategory())
-                .questions(request.getQuestion().stream()
+                .photoUrl(request.photoUrl())
+                .title(request.title())
+                .category(request.category())
+                .questions(request.question().stream()
                         .map(ArticleRequest.QuestionDTO::toEntity)
                         .collect(Collectors.toList()))
                 .member(member)
                 .authorCategorySeq(newSeq)
-                .backgroundColor(request.getBackgroundColor())
+                .backgroundColor(request.backgroundColor())
                 .build();
 
         article.getQuestions().forEach(q -> q.setArticle(article));
@@ -101,7 +100,7 @@ public class ArticleService {
 
         Category oldCat = article.getCategory();
         long oldSeq = article.getAuthorCategorySeq();
-        Category newCat = request.getCategory();
+        Category newCat = request.category();
 
         if (oldCat.equals(newCat)) {
             // 카테고리 동일 → 내용만 갱신 (densify 불필요)

@@ -11,8 +11,6 @@ import unicon.Achiva.domain.friendship.FriendshipStatus;
 import unicon.Achiva.domain.member.entity.Member;
 import unicon.Achiva.global.common.LongBaseEntity;
 
-import java.util.UUID;
-
 @Getter
 @Entity
 @NoArgsConstructor

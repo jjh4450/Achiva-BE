@@ -58,12 +58,12 @@ public class Article extends UuidBaseEntity {
 
     // ---- 로직 ----
     public void update(ArticleRequest request) {
-        this.photoUrl = request.getPhotoUrl();
-        this.title = request.getTitle();
-        this.backgroundColor = request.getBackgroundColor();
+        this.photoUrl = request.photoUrl();
+        this.title = request.title();
+        this.backgroundColor = request.backgroundColor();
 
         this.questions.clear();
-        for (ArticleRequest.QuestionDTO questionDTO : request.getQuestion()) {
+        for (ArticleRequest.QuestionDTO questionDTO : request.question()) {
             Question question = ArticleRequest.QuestionDTO.toEntity(questionDTO);
             question.setArticle(this);
             this.questions.add(question);

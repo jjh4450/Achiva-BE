@@ -1,11 +1,8 @@
 package unicon.Achiva.domain.article.dto;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 import unicon.Achiva.domain.article.entity.Article;
-import unicon.Achiva.domain.book.dto.BookResponse;
-import unicon.Achiva.domain.book.entity.BookArticle;
 import unicon.Achiva.domain.category.Category;
 
 import java.time.LocalDateTime;

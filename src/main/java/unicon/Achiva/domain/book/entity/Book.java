@@ -38,7 +38,9 @@ public class Book extends UuidBaseEntity {
     @OrderBy("pageIndex ASC")
     private List<BookArticle> bookArticles = new ArrayList<>();
 
-    /** 새 페이지 추가 */
+    /**
+     * 새 페이지 추가
+     */
     public void addArticle(Article article, int index) {
         // 중복 체크
         boolean alreadyExists = bookArticles.stream()
@@ -56,7 +58,9 @@ public class Book extends UuidBaseEntity {
         }
     }
 
-    /** 페이지 순서 변경 */
+    /**
+     * 페이지 순서 변경
+     */
     public void updateArticleIndex(Article article, int newIndex) {
         bookArticles.stream()
                 .filter(ba -> ba.getArticle().equals(article))
@@ -64,7 +68,9 @@ public class Book extends UuidBaseEntity {
                 .ifPresent(ba -> ba.updatePageIndex(newIndex));
     }
 
-    /** 제목/설명 변경 */
+    /**
+     * 제목/설명 변경
+     */
     public void update(String newTitle, String newDesc) {
         this.title = newTitle;
         this.description = newDesc;

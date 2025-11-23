@@ -21,9 +21,9 @@ public class DebugTokenController {
     @Operation(
             summary = "로그인된 DOCS 유저의 ID Token 및 클레임 조회",
             description = """
-        Swagger UI에서 Cognito OIDC로 로그인한 사용자의 정보를 확인합니다.
-        이 엔드포인트는 개발·디버깅용이며, 외부 토큰이나 익명 접근은 허용되지 않습니다.
-        """
+                    Swagger UI에서 Cognito OIDC로 로그인한 사용자의 정보를 확인합니다.
+                    이 엔드포인트는 개발·디버깅용이며, 외부 토큰이나 익명 접근은 허용되지 않습니다.
+                    """
     )
     public Map<String, Object> getTokenInfo(
             @AuthenticationPrincipal OidcUser user,

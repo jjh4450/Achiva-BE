@@ -42,7 +42,9 @@ public class BookService {
                 .orElseThrow(() -> new GeneralException(MemberErrorCode.MEMBER_NOT_FOUND));
     }
 
-    /** 책 생성 */
+    /**
+     * 책 생성
+     */
     @Transactional
     public BookResponse createBook(BookRequest request, UUID memberId) {
 
@@ -69,7 +71,10 @@ public class BookService {
 
         return BookResponse.fromEntity(savedBook);
     }
-    /** 책 단건 조회 */
+
+    /**
+     * 책 단건 조회
+     */
     @Transactional(readOnly = true)
     public BookResponse getBook(UUID bookId) {
         Book book = bookRepository.findById(bookId)
@@ -77,14 +82,18 @@ public class BookService {
         return BookResponse.fromEntity(book);
     }
 
-    /** 모든 책 조회 (페이징) */
+    /**
+     * 모든 책 조회 (페이징)
+     */
     @Transactional(readOnly = true)
     public Page<BookResponse> getAllBooks(Pageable pageable) {
         return bookRepository.findAll(pageable)
                 .map(BookResponse::fromEntity);
     }
 
-    /** 책 수정 */
+    /**
+     * 책 수정
+     */
     @Transactional
     public BookResponse updateBook(UUID bookId, BookRequest request, UUID memberId) {
 
@@ -120,7 +129,9 @@ public class BookService {
         return BookResponse.fromEntity(book);
     }
 
-    /** 책 삭제 */
+    /**
+     * 책 삭제
+     */
     @Transactional
     public void deleteBook(UUID bookId, UUID memberId) {
         Book book = bookRepository.findByIdAndMemberId(bookId, memberId)
@@ -128,7 +139,9 @@ public class BookService {
         bookRepository.delete(book);
     }
 
-    /** 페이지(Article) 추가 */
+    /**
+     * 페이지(Article) 추가
+     */
     @Transactional
     public BookResponse addArticleToBook(UUID bookId, UUID articleId, UUID memberId) {
         Book book = bookRepository.findByIdAndMemberId(bookId, memberId)
@@ -141,7 +154,9 @@ public class BookService {
         return BookResponse.fromEntity(book);
     }
 
-    /** 페이지(Article) 제거 */
+    /**
+     * 페이지(Article) 제거
+     */
     @Transactional
     public BookResponse removeArticleFromBook(UUID bookId, UUID articleId, UUID memberId) {
         Book book = bookRepository.findByIdAndMemberId(bookId, memberId)
@@ -165,7 +180,9 @@ public class BookService {
         return BookResponse.fromEntity(book);
     }
 
-    /** 특정 사용자가 만든 책 목록 조회 (페이징) */
+    /**
+     * 특정 사용자가 만든 책 목록 조회 (페이징)
+     */
     @Transactional(readOnly = true)
     public Page<BookResponse> getBooksByMember(UUID memberId, Pageable pageable) {
         return bookRepository.findAllByMemberId(memberId, pageable)

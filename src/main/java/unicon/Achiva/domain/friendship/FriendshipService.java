@@ -125,9 +125,9 @@ public class FriendshipService {
             throw new GeneralException(FriendshipErrorCode.FRIENDSHIP_NOT_FRIENDS);
         }
 
-        if(friendship.getReceiver().getId().equals(memberId)){
+        if (friendship.getReceiver().getId().equals(memberId)) {
             friendship.updateStatus(FriendshipStatus.BLOCKED);
-        }else{
+        } else {
             throw new GeneralException(FriendshipErrorCode.FRIENDSHIP_NOT_RECEIVER);
         }
     }

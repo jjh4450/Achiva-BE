@@ -9,7 +9,8 @@ import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Table(name = "member_category_counter")
-@Getter @Setter
+@Getter
+@Setter
 @NoArgsConstructor
 public class MemberCategoryCounter {
 

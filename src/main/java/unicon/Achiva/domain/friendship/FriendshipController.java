@@ -104,9 +104,9 @@ public class FriendshipController {
             @PathVariable Long friendshipId
     ) {
         UUID memberId = authService.getMemberIdFromToken();
-        try{ //분쟁 및 친구 목록 크롤링 방지를 위해 외부로 나가는 친구 차단/삭제 요청 에러는 FRIENDSHIP_HIDE_REASON 통일
+        try { //분쟁 및 친구 목록 크롤링 방지를 위해 외부로 나가는 친구 차단/삭제 요청 에러는 FRIENDSHIP_HIDE_REASON 통일
             friendshipService.blockFriendship(friendshipId, memberId);
-        } catch (GeneralException e){
+        } catch (GeneralException e) {
             log.error("친구 차단 실패: {}", e.getMessage());
             throw new GeneralException(FriendshipErrorCode.FRIENDSHIP_HIDE_REASON);
         }
@@ -120,9 +120,9 @@ public class FriendshipController {
             @PathVariable Long friendshipId
     ) {
         UUID memberId = authService.getMemberIdFromToken();
-        try{ //분쟁 및 친구 목록 크롤링 방지를 위해 외부로 나가는 친구 차단/삭제 요청 에러는 FRIENDSHIP_HIDE_REASON 통일
+        try { //분쟁 및 친구 목록 크롤링 방지를 위해 외부로 나가는 친구 차단/삭제 요청 에러는 FRIENDSHIP_HIDE_REASON 통일
             friendshipService.cancelFriendRequest(friendshipId, memberId);
-        } catch (GeneralException e){
+        } catch (GeneralException e) {
             log.error("친구 신청 취소 실패: {}", e.getMessage());
             throw new GeneralException(FriendshipErrorCode.FRIENDSHIP_HIDE_REASON);
         }
