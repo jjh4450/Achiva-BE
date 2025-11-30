@@ -18,7 +18,7 @@ import java.util.List;
 public class MemberRequest {
     @URL(protocol = "https")
     @Builder.Default
-    private String profileImageUrl = "https://achiva-bucket.s3.ap-northeast-2.amazonaws.com/default-profile-image.png";
+    private String profileImageUrl = "https://achivadata.s3.ap-northeast-2.amazonaws.com/default-profile-image.png";
     @NotNull
     private LocalDate birth;
     private Gender gender;
