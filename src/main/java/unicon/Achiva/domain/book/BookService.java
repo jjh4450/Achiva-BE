@@ -54,8 +54,8 @@ public class BookService {
 
         Book book = Book.builder()
                 .member(member)
-                .title(request.getTitle())
-                .description(request.getDescription())
+//                .title(request.getTitle())
+//                .description(request.getDescription())
                 .build();
 
         if (request.getArticleIds() != null && !request.getArticleIds().isEmpty()) {
@@ -100,7 +100,7 @@ public class BookService {
         Book book = bookRepository.findByIdAndMemberId(bookId, memberId)
                 .orElseThrow(() -> new GeneralException(BookErrorCode.UNAUTHORIZED_BOOK_ACCESS));
 
-        book.update(request.getTitle(), request.getDescription());
+//        book.update(request.getTitle(), request.getDescription());
 
         List<UUID> newArticleIds = request.getArticleIds();
         if (newArticleIds != null && !newArticleIds.isEmpty()) {

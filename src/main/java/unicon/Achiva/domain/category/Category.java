@@ -13,7 +13,7 @@ public enum Category {
     CAREER("커리어"),
     READING("독서"),
     MINDSET("루틴/다짐"),
-    PASSION("패션"),
+    FASHION("패션"),
     INVESTMENT("투자/머니로그"),
     TRAVEL("여행"),
     DIET("식단"),

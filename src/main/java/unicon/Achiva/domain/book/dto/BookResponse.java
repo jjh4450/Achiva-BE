@@ -25,8 +25,8 @@ public class BookResponse {
     public static BookResponse fromEntity(Book book) {
         return BookResponse.builder()
                 .id(book.getId())
-                .title(book.getTitle())
-                .description(book.getDescription())
+//                .title(book.getTitle())
+//                .description(book.getDescription())
                 .mainArticle(book.getMainArticle() != null
                         ? ArticleResponse.fromEntity(book.getMainArticle())
                         : null)

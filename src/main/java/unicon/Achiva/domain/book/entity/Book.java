@@ -24,8 +24,8 @@ public class Book extends UuidBaseEntity {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Member member; // ✅ Book 생성자 (소유자)
 
-    private String title; // 책 제목
-    private String description; // 설명
+//    private String title; // 책 제목
+//    private String description; // 설명
 
     @Setter
     @ManyToOne(fetch = FetchType.LAZY)
@@ -71,10 +71,10 @@ public class Book extends UuidBaseEntity {
     /**
      * 제목/설명 변경
      */
-    public void update(String newTitle, String newDesc) {
-        this.title = newTitle;
-        this.description = newDesc;
-    }
+//    public void update(String newTitle, String newDesc) {
+//        this.title = newTitle;
+//        this.description = newDesc;
+//    }
 
     public void addArticle(Article article) {
         BookArticle bookArticle = BookArticle.builder()
